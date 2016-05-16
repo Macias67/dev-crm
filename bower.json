@@ -30,7 +30,11 @@
     "jquery-input-ip-address-control": "^0.1.0",
     "pwstrength-bootstrap": "^2.0.0",
     "bootstrap-maxlength": "^1.7.0",
-    "bootstrap-touchspin": "^3.1.1"
+    "bootstrap-touchspin": "^3.1.1",
+    "select2": "^4.0.2",
+    "select2-bootstrap-css": "^1.4.6",
+    "jquery-validation": "^1.15.0",
+    "jquery-backstretch": "^2.0.4"
   },
   "devDependencies": {
     "angular-mocks": "^1.4.0"
