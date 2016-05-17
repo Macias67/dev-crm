@@ -1,3 +1,4 @@
+"use strict";
 /***
  Metronic AngularJS App Main Script
  ***/
@@ -133,7 +134,7 @@ MetronicApp.controller('QuickSidebarController', [
 		$scope.$on('$includeContentLoaded', function () {
 			setTimeout(function () {
 				QuickSidebar.init(); // init quick sidebar
-			}, 2000)
+			}, 2000);
 		});
 	}
 ]);
@@ -184,7 +185,7 @@ MetronicApp.config([
 						}
 					]
 				}
-			})
+			});
 	}
 ]);
 

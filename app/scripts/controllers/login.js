@@ -7,9 +7,11 @@
  * # LoginCtrl
  * Controller of the MetronicApp
  */
-var app = angular.module('MetronicApp', []);
+var Loginapp = angular.module('MetronicApp', [
+	"ui.router"
+]);
 
-app.controller('LoginCtrl', [
+Loginapp.controller('LoginCtrl', [
 	'$scope', function ($scope) {
 		$scope.formLogin = {};
 		$scope.formLogin.usuario = 'Macias';
