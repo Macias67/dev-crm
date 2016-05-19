@@ -13,6 +13,12 @@ var Loginapp = angular.module('MetronicApp', [
 
 Loginapp.controller('LoginCtrl', [
 	'$scope', function ($scope) {
+		$scope.$on('$viewContentLoaded', function () {
+			// initialize core components
+			App.initAjax();
+			Login.init();
+		});
+
 		$scope.formLogin = {};
 		$scope.formLogin.usuario = 'Macias';
 	}

@@ -99,7 +99,7 @@ MetronicApp.controller('AppController', [
 	'$scope', '$rootScope', function ($scope, $rootScope) {
 		$scope.$on('$viewContentLoaded', function () {
 			App.initComponents(); // init core components
-			//Layout.init(); //  Init entire layout(header, footer, sidebar, etc) on page load if the partials included in server side instead of loading with ng-include directive
+			Layout.init(); //  Init entire layout(header, footer, sidebar, etc) on page load if the partials included in server side instead of loading with ng-include directive
 		});
 	}
 ]);
@@ -161,25 +161,82 @@ MetronicApp.controller('FooterController', [
 MetronicApp.config([
 	'$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
 		// Redirect any unmatched url
-		$urlRouterProvider.otherwise("/dashboard");
+		$urlRouterProvider.otherwise("/login");
 
 		$stateProvider
-			
+
+			// Login
+			.state('login', {
+				url        : "/login",
+				templateUrl: "views/login.html",
+				data       : {
+					pageTitle: 'Admin Dashboard Template',
+					bodyClass: 'login'
+				},
+				controller : "LoginCtrl",
+				resolve    : {
+					deps: [
+						'$ocLazyLoad', function ($ocLazyLoad) {
+							return $ocLazyLoad.load([
+								{
+									name        : 'LoginCss',
+									insertBefore: '#ng_load_plugins_css',
+									files       : [
+										'bower_components/select2/dist/css/select2.min.css',
+										'bower_components/select2-bootstrap-css/select2-bootstrap.min.css'
+									],
+									serie: true
+								},
+								{
+									name        : 'LoginJs',
+									insertBefore: '#ng_load_plugins_js',
+									files       : [
+										'bower_components/jquery-validation/dist/jquery.validate.min.js',
+										'bower_components/jquery-validation/dist/additional-methods.min.js',
+									        'bower_components/select2/dist/js/select2.full.min.js',
+									        'bower_components/jquery-backstretch/src/jquery.backstretch.js'
+									]
+								},
+								{
+									name        : 'LoginNG',
+									insertBefore: '#ng_load_plugins_ng',
+									files       : [
+										'scripts/controllers/login.js',
+										'assets/pages/scripts/login-5.js'
+									]
+								}
+							]);
+						}
+					]
+				}
+			})
+
+			.state('tmpl', {
+				templateUrl: "views/tmpl.html",
+				data       : {
+					bodyClass: 'page-header-fixed page-sidebar-closed-hide-logo page-container-bg-solid page-sidebar-closed-hide-logo page-on-load'
+				},
+				abstract: true
+			})
+
 			// Dashboard
 			.state('dashboard', {
 				url        : "/dashboard",
+				parent: 'tmpl',
 				templateUrl: "views/dashboard.html",
-				data       : {pageTitle: 'Admin Dashboard Template'},
+				data       : {
+					pageTitle: 'Admin Dashboard Template'
+				},
 				controller : "DashboardController",
 				resolve    : {
 					deps: [
 						'$ocLazyLoad', function ($ocLazyLoad) {
 							return $ocLazyLoad.load({
 								name        : 'MetronicApp',
-								insertBefore: '#ng_load_plugins_before', // load the above css files before a LINK element with this ID. Dynamic CSS files must be loaded between core and theme css files
+								insertBefore: '#ng_load_plugins_ng',
 								files       : [
 									'scripts/scripts/dashboard.min.js',
-									'scripts/controllers/DashboardController.js',
+									'scripts/controllers/DashboardController.js'
 								]
 							});
 						}
