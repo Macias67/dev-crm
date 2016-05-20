@@ -16,7 +16,7 @@ MetronicApp.config([
 	'$ocLazyLoadProvider', function ($ocLazyLoadProvider) {
 		$ocLazyLoadProvider.config({
 			// global configs go here
-			debug: false
+			debug: true
 		});
 	}
 ]);
@@ -78,6 +78,7 @@ MetronicApp.factory('settings', [
 		// supported languages
 		var settings = {
 			layout    : {
+				pageOnLoad : true,
 				pageSidebarClosed   : false, // sidebar menu state
 				pageContentWhite    : true, // set page content layout
 				pageBodySolid       : false, // solid body color state
@@ -99,7 +100,7 @@ MetronicApp.controller('AppController', [
 	'$scope', '$rootScope', function ($scope, $rootScope) {
 		$scope.$on('$viewContentLoaded', function () {
 			App.initComponents(); // init core components
-			Layout.init(); //  Init entire layout(header, footer, sidebar, etc) on page load if the partials included in server side instead of loading with ng-include directive
+			//Layout.init(); //  Init entire layout(header, footer, sidebar, etc) on page load if the partials included in server side instead of loading with ng-include directive
 		});
 	}
 ]);
@@ -170,7 +171,7 @@ MetronicApp.config([
 				url        : "/login",
 				templateUrl: "views/login.html",
 				data       : {
-					pageTitle: 'Admin Dashboard Template',
+					pageTitle: 'Bienvenido',
 					bodyClass: 'login'
 				},
 				controller : "LoginCtrl",
@@ -202,7 +203,7 @@ MetronicApp.config([
 									insertBefore: '#ng_load_plugins_ng',
 									files       : [
 										'scripts/controllers/login.js',
-										'assets/pages/scripts/login-5.js'
+										'assets/pages/scripts/login-5.min.js'
 									]
 								}
 							]);
@@ -211,10 +212,11 @@ MetronicApp.config([
 				}
 			})
 
+			// Template
 			.state('tmpl', {
 				templateUrl: "views/tmpl.html",
 				data       : {
-					bodyClass: 'page-header-fixed page-sidebar-closed-hide-logo page-container-bg-solid page-sidebar-closed-hide-logo page-on-load'
+					bodyClass: 'page-header-fixed page-sidebar-closed-hide-logo page-container-bg-solid page-sidebar-closed-hide-logo'
 				},
 				abstract: true
 			})
@@ -235,7 +237,6 @@ MetronicApp.config([
 								name        : 'MetronicApp',
 								insertBefore: '#ng_load_plugins_ng',
 								files       : [
-									'scripts/scripts/dashboard.min.js',
 									'scripts/controllers/DashboardController.js'
 								]
 							});

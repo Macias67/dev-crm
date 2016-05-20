@@ -20,6 +20,5 @@ Loginapp.controller('LoginCtrl', [
 		});
 
 		$scope.formLogin = {};
-		$scope.formLogin.usuario = 'Macias';
 	}
 ]);

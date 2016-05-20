@@ -14,12 +14,14 @@ MetronicApp.directive('ngSpinnerBar', [
 				// display the spinner bar whenever the route changes(the content part started loading)
 				$rootScope.$on('$stateChangeStart', function () {
 					element.removeClass('hide'); // show spinner bar
+					$rootScope.settings.layout.pageOnLoad = true;
 				});
 				
 				// hide the spinner bar on rounte change success(after the content loaded)
 				$rootScope.$on('$stateChangeSuccess', function () {
 					element.addClass('hide'); // hide spinner bar
 					$('body').removeClass('page-on-load'); // remove page loading indicator
+					$rootScope.settings.layout.pageOnLoad = false;
 					Layout.setSidebarMenuActiveLink('match'); // activate selected link in the sidebar menu
 					
 					// auto scorll to page top
@@ -31,11 +33,13 @@ MetronicApp.directive('ngSpinnerBar', [
 				// handle errors
 				$rootScope.$on('$stateNotFound', function () {
 					element.addClass('hide'); // hide spinner bar
+					$rootScope.settings.layout.pageOnLoad = false;
 				});
 				
 				// handle errors
 				$rootScope.$on('$stateChangeError', function () {
 					element.addClass('hide'); // hide spinner bar
+					$rootScope.settings.layout.pageOnLoad = false;
 				});
 			}
 		};
