@@ -211,7 +211,6 @@ MetronicApp.config([
 					]
 				}
 			})
-
 			// Template
 			.state('tmpl', {
 				templateUrl: "views/tmpl.html",
@@ -220,7 +219,6 @@ MetronicApp.config([
 				},
 				abstract: true
 			})
-
 			// Dashboard
 			.state('dashboard', {
 				url        : "/dashboard",
@@ -239,6 +237,54 @@ MetronicApp.config([
 								files       : [
 									'scripts/controllers/DashboardController.js'
 								]
+							});
+						}
+					]
+				}
+			})
+			//Ejecutivos
+			.state('ejecutivos', {
+				url        : "/ejecutivos",
+				parent: 'tmpl',
+				templateUrl: "views/ejecutivos/ejecutivos.html",
+				data       : {
+					pageTitle: 'Ejecutivos'
+				},
+				controller : "EjecutivosCtrl",
+				resolve    : {
+					deps: [
+						'$ocLazyLoad', function ($ocLazyLoad) {
+							return $ocLazyLoad.load({
+								name        : 'MetronicApp',
+								insertBefore: '#ng_load_plugins_ng',
+								files       : [
+									'scripts/controllers/ejecutivos.js'
+								],
+								serie: true
+							});
+						}
+					]
+				}
+			})
+			//Gestor general
+			.state('oficinas', {
+				url        : "/gestion/oficinas",
+				parent: 'tmpl',
+				templateUrl: "views/gestor_general/oficinas.html",
+				data       : {
+					pageTitle: 'Oficinas'
+				},
+				controller : "OficinasCtrl",
+				resolve    : {
+					deps: [
+						'$ocLazyLoad', function ($ocLazyLoad) {
+							return $ocLazyLoad.load({
+								name        : 'GestorGeneralOficinas',
+								insertBefore: '#ng_load_plugins_ng',
+								files       : [
+									'scripts/controllers/gestor_general/oficinas.js'
+								],
+								serie: true
 							});
 						}
 					]
