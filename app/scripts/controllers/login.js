@@ -7,18 +7,24 @@
  * # LoginCtrl
  * Controller of the MetronicApp
  */
-var Loginapp = angular.module('MetronicApp', [
-	"ui.router"
-]);
+var Loginapp = angular.module('MetronicApp', ['authService']);
 
 Loginapp.controller('LoginCtrl', [
-	'$scope', function ($scope) {
+	'$scope', 'authUser', function ($scope, authUser) {
 		$scope.$on('$viewContentLoaded', function () {
 			// initialize core components
 			App.initAjax();
 			Login.init();
 		});
 
-		$scope.formLogin = {};
+		var vm       = this;
+		vm.formLogin = {
+			email   : 'luismacias.angulo@gmail.com',
+			password: 'secret'
+		};
+
+		vm.login = function () {
+			authUser.loginApi(vm.formLogin);
+		}
 	}
 ]);

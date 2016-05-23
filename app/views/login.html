@@ -1,14 +1,14 @@
-	<!-- BEGIN : LOGIN PAGE 5-1 -->
+<!-- BEGIN : LOGIN PAGE 5-1 -->
 	<div class = "user-login-5">
 		<div class = "row bs-reset">
 			<div class = "col-md-6 bs-reset">
-				<div class = "login-bg" style = "background-image:url(assets/pages/img/login/bg1.jpg)">
+				<div class = "login-bg" style = "background-image:url('assets/pages/img/login/bg1.jpg')">
 					<img class = "login-logo" src = "assets/pages/img/login/logo.png"/>
 				</div>
 			</div>
 			<div class = "col-md-6 login-container bs-reset">
 				<div class = "login-content">
-					<h1>{{ formLogin.usuario }} Login</h1>
+					<h1>Login</h1>
 					<p> Lorem ipsum dolor sit amet, coectetuer adipiscing elit sed diam nonummy et nibh euismod aliquam erat volutpat. Lorem ipsum dolor sit amet, coectetuer adipiscing. </p>
 
 					<form action = "javascript:;" class = "login-form" method = "post">
@@ -18,9 +18,9 @@
 						</div>
 						<div class = "row">
 							<div class = "col-xs-6">
-							<input class = "form-control form-control-solid placeholder-no-fix form-group" type = "text" autocomplete = "off" placeholder = "Email" ng-model = "formLogin.usuario" required/> </div>
+							<input class = "form-control form-control-solid placeholder-no-fix form-group" type = "text" autocomplete = "off" placeholder = "Email" ng-model = "login.formLogin.email" required/> </div>
 							<div class = "col-xs-6">
-							<input class = "form-control form-control-solid placeholder-no-fix form-group" type = "password" autocomplete = "off" placeholder = "Contraseña" ng-model = "formLogin.password" required/> </div>
+							<input class = "form-control form-control-solid placeholder-no-fix form-group" type = "password" autocomplete = "off" placeholder = "Contraseña" ng-model = "login.formLogin.password" required/> </div>
 						</div>
 						<div class = "row">
 							<div class = "col-sm-4">
@@ -35,7 +35,7 @@
 								<div class = "forgot-password">
 									<a href = "javascript:;" id = "forget-password" class = "forget-password">¿Olvidaste la contraseña?</a>
 								</div>
-								<button class = "btn green" type = "submit">Entrar</button>
+								<button class = "btn green" ng-click="login.login()">Entrar</button>
 							</div>
 						</div>
 					</form>

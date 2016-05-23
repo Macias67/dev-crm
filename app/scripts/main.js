@@ -8,7 +8,9 @@ var MetronicApp = angular.module("MetronicApp", [
 	"ui.router",
 	"ui.bootstrap",
 	"oc.lazyLoad",
-	"ngSanitize"
+	"ngSanitize",
+	"LocalStorageModule",
+        "satellizer"
 ]);
 
 /* Configure ocLazyLoader(refer: https://github.com/ocombe/ocLazyLoad) */
@@ -78,7 +80,7 @@ MetronicApp.factory('settings', [
 		// supported languages
 		var settings = {
 			layout    : {
-				pageOnLoad : true,
+				pageOnLoad          : true,
 				pageSidebarClosed   : false, // sidebar menu state
 				pageContentWhite    : true, // set page content layout
 				pageBodySolid       : false, // solid body color state
@@ -160,12 +162,15 @@ MetronicApp.controller('FooterController', [
 
 /* Setup Rounting For All Pages */
 MetronicApp.config([
-	'$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
+	'$stateProvider', '$urlRouterProvider', '$authProvider', function ($stateProvider, $urlRouterProvider, $authProvider) {
+		
+		$authProvider.loginUrl = 'http://crm.api/api/auth';
+		//$authProvider.httpInterceptor = true;
+		//$authProvider.withCredentials = false;
+
 		// Redirect any unmatched url
 		$urlRouterProvider.otherwise("/login");
-
 		$stateProvider
-
 			// Login
 			.state('login', {
 				url        : "/login",
@@ -174,7 +179,7 @@ MetronicApp.config([
 					pageTitle: 'Bienvenido',
 					bodyClass: 'login'
 				},
-				controller : "LoginCtrl",
+				controller : "LoginCtrl as login",
 				resolve    : {
 					deps: [
 						'$ocLazyLoad', function ($ocLazyLoad) {
@@ -186,7 +191,7 @@ MetronicApp.config([
 										'bower_components/select2/dist/css/select2.min.css',
 										'bower_components/select2-bootstrap-css/select2-bootstrap.min.css'
 									],
-									serie: true
+									serie       : true
 								},
 								{
 									name        : 'LoginJs',
@@ -194,8 +199,8 @@ MetronicApp.config([
 									files       : [
 										'bower_components/jquery-validation/dist/jquery.validate.min.js',
 										'bower_components/jquery-validation/dist/additional-methods.min.js',
-									        'bower_components/select2/dist/js/select2.full.min.js',
-									        'bower_components/jquery-backstretch/src/jquery.backstretch.js'
+										'bower_components/select2/dist/js/select2.full.min.js',
+										'bower_components/jquery-backstretch/src/jquery.backstretch.js'
 									]
 								},
 								{
@@ -217,12 +222,12 @@ MetronicApp.config([
 				data       : {
 					bodyClass: 'page-header-fixed page-sidebar-closed-hide-logo page-container-bg-solid page-sidebar-closed-hide-logo'
 				},
-				abstract: true
+				abstract   : true
 			})
 			// Dashboard
 			.state('dashboard', {
 				url        : "/dashboard",
-				parent: 'tmpl',
+				parent     : 'tmpl',
 				templateUrl: "views/dashboard.html",
 				data       : {
 					pageTitle: 'Admin Dashboard Template'
@@ -245,7 +250,7 @@ MetronicApp.config([
 			//Ejecutivos
 			.state('ejecutivos', {
 				url        : "/ejecutivos",
-				parent: 'tmpl',
+				parent     : 'tmpl',
 				templateUrl: "views/ejecutivos/ejecutivos.html",
 				data       : {
 					pageTitle: 'Ejecutivos'
@@ -260,7 +265,7 @@ MetronicApp.config([
 								files       : [
 									'scripts/controllers/ejecutivos.js'
 								],
-								serie: true
+								serie       : true
 							});
 						}
 					]
@@ -269,7 +274,7 @@ MetronicApp.config([
 			//Gestor general
 			.state('oficinas', {
 				url        : "/gestion/oficinas",
-				parent: 'tmpl',
+				parent     : 'tmpl',
 				templateUrl: "views/gestor_general/oficinas.html",
 				data       : {
 					pageTitle: 'Oficinas'
@@ -284,7 +289,7 @@ MetronicApp.config([
 								files       : [
 									'scripts/controllers/gestor_general/oficinas.js'
 								],
-								serie: true
+								serie       : true
 							});
 						}
 					]
