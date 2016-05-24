@@ -10,7 +10,8 @@ var MetronicApp = angular.module("MetronicApp", [
 	"oc.lazyLoad",
 	"ngSanitize",
 	"LocalStorageModule",
-        "satellizer"
+	"satellizer",
+	"authService",
 ]);
 
 /* Configure ocLazyLoader(refer: https://github.com/ocombe/ocLazyLoad) */
@@ -165,15 +166,21 @@ MetronicApp.config([
 	'$stateProvider', '$urlRouterProvider', '$authProvider', '$httpProvider', function ($stateProvider, $urlRouterProvider, $authProvider, $httpProvider) {
 
 		$httpProvider.defaults.headers.post['Accept'] = 'application/vnd.crm.v1+json';
-		$httpProvider.defaults.useXDomain = true;
-		$authProvider.loginUrl = 'http://api.crm/api/auth';
-		//$authProvider.httpInterceptor = true;
-		//$authProvider.withCredentials = false;
+		$httpProvider.defaults.useXDomain             = true;
+
+		//$authProvider.loginUrl    = 'http://api.crm/api/auth';
+		$authProvider.signupUrl       = 'http://api.crm/api/auth';
+		$authProvider.tokenName       = 'token';
+		$authProvider.tokenPrefix     = 'crm';
+		$authProvider.httpInterceptor = function () {
+			return false;
+		};
+		$authProvider.withCredentials = false;
 
 		// Redirect any unmatched url
-		$urlRouterProvider.otherwise("/login");
+		$urlRouterProvider.otherwise("/dashboard");
 		$stateProvider
-			// Login
+		// Login
 			.state('login', {
 				url        : "/login",
 				templateUrl: "views/login.html",
@@ -222,7 +229,8 @@ MetronicApp.config([
 			.state('tmpl', {
 				templateUrl: "views/tmpl.html",
 				data       : {
-					bodyClass: 'page-header-fixed page-sidebar-closed-hide-logo page-container-bg-solid page-sidebar-closed-hide-logo'
+					requiredLogin: true,
+					bodyClass    : 'page-header-fixed page-sidebar-closed-hide-logo page-container-bg-solid page-sidebar-closed-hide-logo'
 				},
 				abstract   : true
 			})
@@ -302,8 +310,22 @@ MetronicApp.config([
 
 /* Init global settings and run the app */
 MetronicApp.run([
-	"$rootScope", "settings", "$state", function ($rootScope, settings, $state) {
+	"$rootScope", "settings", "$state", "$auth", "$location", function ($rootScope, settings, $state, $auth, $location) {
 		$rootScope.$state    = $state; // state to be accessed from view
 		$rootScope.$settings = settings; // state to be accessed from view
+
+		$rootScope.$on('$stateChangeStart', function (event, toState) {
+			var requiredLogin = false;
+			// check if this state need login
+			if (toState.data && toState.data.requiredLogin) {
+				requiredLogin = true;
+			}
+
+			// if yes and if this user is not logged in, redirect him to login page
+			if (requiredLogin && !$auth.isAuthenticated()) {
+				event.preventDefault();
+				$state.go('login');
+			}
+		});
 	}
 ]);

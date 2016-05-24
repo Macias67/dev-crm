@@ -8,14 +8,16 @@
  * Service in the devCrmApp.
  */
 angular.module('authService', [])
-	.service('authUser', function ($auth) {
+	.service('authUser', function ($auth, $state) {
 		var login = function (loginForm) {
-			$auth.login(loginForm).then(
+			$auth.signup(loginForm).then(
 				function (response) {
-					console.log(response);
+					console.log(response.data.data);
+					$auth.setToken(response.data.data.token);
+					$state.go('dashboard');
 				},
 				function (error) {
-					console.log(error);
+					console.error('Error: ' + error);
 				}
 			);
 		};
