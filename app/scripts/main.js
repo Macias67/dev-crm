@@ -18,7 +18,7 @@ MetronicApp.config([
 	'$ocLazyLoadProvider', function ($ocLazyLoadProvider) {
 		$ocLazyLoadProvider.config({
 			// global configs go here
-			debug: true
+			debug: false
 		});
 	}
 ]);
@@ -162,9 +162,11 @@ MetronicApp.controller('FooterController', [
 
 /* Setup Rounting For All Pages */
 MetronicApp.config([
-	'$stateProvider', '$urlRouterProvider', '$authProvider', function ($stateProvider, $urlRouterProvider, $authProvider) {
-		
-		$authProvider.loginUrl = 'http://crm.api/api/auth';
+	'$stateProvider', '$urlRouterProvider', '$authProvider', '$httpProvider', function ($stateProvider, $urlRouterProvider, $authProvider, $httpProvider) {
+
+		$httpProvider.defaults.headers.post['Accept'] = 'application/vnd.crm.v1+json';
+		$httpProvider.defaults.useXDomain = true;
+		$authProvider.loginUrl = 'http://api.crm/api/auth';
 		//$authProvider.httpInterceptor = true;
 		//$authProvider.withCredentials = false;
 
