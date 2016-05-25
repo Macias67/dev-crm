@@ -33,27 +33,27 @@ MetronicApp.config([
  for use in examples, demos, and toy apps. We found that allowing global controller
  functions encouraged poor practices, so we resolved to disable this behavior by
  default.
-
+ 
  To migrate, register your controllers with modules rather than exposing them
  as globals:
-
+ 
  Before:
-
+ 
  ```javascript
  function MyController() {
   // ...
 }
  ```
-
+ 
  After:
-
+ 
  ```javascript
  angular.module('myApp', []).controller('MyController', [function() {
   // ...
 }]);
-
+ 
  Although it's not recommended, you can re-enable the old behavior like this:
-
+ 
  ```javascript
  angular.module('myModule').config(['$controllerProvider', function($controllerProvider) {
   // this option might be handy for migrating old apps, but please don't use it
@@ -91,9 +91,9 @@ MetronicApp.factory('settings', [
 			globalPath: 'assets/global',
 			layoutPath: 'assets/layouts/layout2',
 		};
-
+		
 		$rootScope.settings = settings;
-
+		
 		return settings;
 	}
 ]);
@@ -116,10 +116,15 @@ MetronicApp.controller('AppController', [
 
 /* Setup Layout Part - Header */
 MetronicApp.controller('HeaderController', [
-	'$scope', function ($scope) {
+	'$scope', 'authUser', function ($scope, authUser) {
+		var vm = this;
 		$scope.$on('$includeContentLoaded', function () {
 			Layout.initHeader(); // init header
 		});
+		
+		vm.logout = function () {
+			authUser.logout();
+		};
 	}
 ]);
 
@@ -164,10 +169,10 @@ MetronicApp.controller('FooterController', [
 /* Setup Rounting For All Pages */
 MetronicApp.config([
 	'$stateProvider', '$urlRouterProvider', '$authProvider', '$httpProvider', function ($stateProvider, $urlRouterProvider, $authProvider, $httpProvider) {
-
+		
 		$httpProvider.defaults.headers.post['Accept'] = 'application/vnd.crm.v1+json';
 		$httpProvider.defaults.useXDomain             = true;
-
+		
 		//$authProvider.loginUrl    = 'http://api.crm/api/auth';
 		$authProvider.signupUrl       = 'http://api.crm/api/auth';
 		$authProvider.tokenName       = 'token';
@@ -176,7 +181,7 @@ MetronicApp.config([
 			return false;
 		};
 		$authProvider.withCredentials = false;
-
+		
 		// Redirect any unmatched url
 		$urlRouterProvider.otherwise("/dashboard");
 		$stateProvider
@@ -310,21 +315,24 @@ MetronicApp.config([
 
 /* Init global settings and run the app */
 MetronicApp.run([
-	"$rootScope", "settings", "$state", "$auth", "$location", function ($rootScope, settings, $state, $auth, $location) {
+	"$rootScope", "settings", "$state", "$auth", "$location", "authUser", function ($rootScope, settings, $state, $auth, $location, authUser) {
 		$rootScope.$state    = $state; // state to be accessed from view
 		$rootScope.$settings = settings; // state to be accessed from view
-
+		
 		$rootScope.$on('$stateChangeStart', function (event, toState) {
 			var requiredLogin = false;
 			// check if this state need login
 			if (toState.data && toState.data.requiredLogin) {
 				requiredLogin = true;
 			}
-
+			
 			// if yes and if this user is not logged in, redirect him to login page
 			if (requiredLogin && !$auth.isAuthenticated()) {
 				event.preventDefault();
 				$state.go('login');
+			}
+			else {
+				$rootScope.ejecutivo = authUser.getSessionData();
 			}
 		});
 	}
