@@ -51,7 +51,7 @@ angular.module('authService', [])
 					$state.go('dashboard');
 				},
 				function (error) {
-					console.error('Error: ' + error);
+					console.error(error);
 					deleteSession();
 				}
 			);
