@@ -9,11 +9,13 @@ var MetronicApp = angular.module("MetronicApp", [
 	"ui.bootstrap",
 	"oc.lazyLoad",
 	"ngSanitize",
+	"ngResource",
 	"LocalStorageModule",
 	"satellizer",
 	"authService",
 	"permission",
 	"permission.ui",
+	"datatables"
 ]);
 
 /* Configure ocLazyLoader(refer: https://github.com/ocombe/ocLazyLoad) */
@@ -21,7 +23,7 @@ MetronicApp.config([
 	'$ocLazyLoadProvider', function ($ocLazyLoadProvider) {
 		$ocLazyLoadProvider.config({
 			// global configs go here
-			debug: false
+			debug: true
 		});
 	}
 ]);
@@ -274,7 +276,7 @@ MetronicApp.config([
 				parent     : 'tmpl',
 				templateUrl: "views/ejecutivos/ejecutivos.html",
 				data       : {
-					pageTitle  : 'Ejecutivos'
+					pageTitle: 'Ejecutivos'
 				},
 				controller : "EjecutivosCtrl",
 				resolve    : {
@@ -300,21 +302,8 @@ MetronicApp.config([
 				data       : {
 					pageTitle: 'Oficinas'
 				},
-				controller : "OficinasCtrl",
-				resolve    : {
-					deps: [
-						'$ocLazyLoad', function ($ocLazyLoad) {
-							return $ocLazyLoad.load({
-								name        : 'GestorGeneralOficinas',
-								insertBefore: '#ng_load_plugins_ng',
-								files       : [
-									'scripts/controllers/gestor_general/oficinas.js'
-								],
-								serie       : true
-							});
-						}
-					]
-				}
+				controller : "OficinasCtrl as dataTableOficina",
+
 			});
 	}
 ]);
