@@ -12,6 +12,8 @@ var MetronicApp = angular.module("MetronicApp", [
 	"LocalStorageModule",
 	"satellizer",
 	"authService",
+	"permission",
+	"permission.ui",
 ]);
 
 /* Configure ocLazyLoader(refer: https://github.com/ocombe/ocLazyLoad) */
@@ -183,7 +185,11 @@ MetronicApp.config([
 		$authProvider.withCredentials = false;
 		
 		// Redirect any unmatched url
-		$urlRouterProvider.otherwise("/dashboard");
+		$urlRouterProvider.otherwise(function ($injector) {
+			var $state = $injector.get('$state');
+			$state.go('dashboard');
+		});
+		
 		$stateProvider
 		// Login
 			.state('login', {
@@ -268,7 +274,7 @@ MetronicApp.config([
 				parent     : 'tmpl',
 				templateUrl: "views/ejecutivos/ejecutivos.html",
 				data       : {
-					pageTitle: 'Ejecutivos'
+					pageTitle  : 'Ejecutivos'
 				},
 				controller : "EjecutivosCtrl",
 				resolve    : {
@@ -315,7 +321,8 @@ MetronicApp.config([
 
 /* Init global settings and run the app */
 MetronicApp.run([
-	"$rootScope", "settings", "$state", "$auth", "$location", "authUser", function ($rootScope, settings, $state, $auth, $location, authUser) {
+	"$rootScope", "settings", "$state", "$auth", "$location", "authUser", "PermissionStore", "RoleStore",
+	function ($rootScope, settings, $state, $auth, $location, authUser, PermissionStore, RoleStore) {
 		$rootScope.$state    = $state; // state to be accessed from view
 		$rootScope.$settings = settings; // state to be accessed from view
 		
@@ -335,5 +342,11 @@ MetronicApp.run([
 				$rootScope.ejecutivo = authUser.getSessionData();
 			}
 		});
+		
+		PermissionStore.definePermission('seeDashboard', function () {
+			return true;
+		});
+		
+		RoleStore.defineRole('USER', ['seeDashboard']);
 	}
 ]);
