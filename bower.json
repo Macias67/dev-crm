@@ -34,13 +34,15 @@
     "select2": "^4.0.2",
     "select2-bootstrap-css": "^1.4.6",
     "jquery-validation": "^1.15.0",
-    "jquery-backstretch": "^2.0.4"
+    "jquery-backstretch": "^2.0.4",
+    "angular-datatables": "^0.5.4",
+    "datatables": "DataTables#^1.10.12"
   },
   "devDependencies": {
     "angular-mocks": "^1.4.0"
   },
   "appPath": "app",
-  "moduleName": "devCrmApp",
+  "moduleName": "MetronicApp",
   "overrides": {
     "bootstrap": {
       "main": [
