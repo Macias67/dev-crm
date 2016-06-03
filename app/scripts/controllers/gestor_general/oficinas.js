@@ -13,7 +13,7 @@ angular.module('MetronicApp')
 			var vm = this;
 			vm.dtOptions = DTOptionsBuilder.fromFnPromise(function () {
 				return $resource('http://beta.json-generator.com/api/json/get/Vyh1La-mW').query().$promise;
-			}).withPaginationType('full_numbers');
+			});
 
 			vm.dtColumns = [
 				DTColumnBuilder.newColumn('id').withTitle('ID'),

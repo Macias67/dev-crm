@@ -303,7 +303,6 @@ MetronicApp.config([
 					pageTitle: 'Oficinas'
 				},
 				controller : "OficinasCtrl as dataTableOficina",
-
 			});
 	}
 ]);
