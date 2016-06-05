@@ -1,21 +1,22 @@
-"use strict";
+'use strict';
 /***
  Metronic AngularJS App Main Script
  ***/
 
 /* Metronic App */
-var MetronicApp = angular.module("MetronicApp", [
-	"ui.router",
-	"ui.bootstrap",
-	"oc.lazyLoad",
-	"ngSanitize",
-	"ngResource",
-	"LocalStorageModule",
-	"satellizer",
-	"authService",
-	"permission",
-	"permission.ui",
-	"datatables"
+var MetronicApp = angular.module('MetronicApp', [
+	'ui.router',
+	'ui.bootstrap',
+	'oc.lazyLoad',
+	'ngSanitize',
+	'LocalStorageModule',
+	'satellizer',
+	'authService',
+	'permission',
+	'permission.ui',
+	'datatables',
+	'datatables.bootstrap',
+        'ngMask'
 ]);
 
 /* Configure ocLazyLoader(refer: https://github.com/ocombe/ocLazyLoad) */
@@ -193,15 +194,15 @@ MetronicApp.config([
 		});
 		
 		$stateProvider
-		// Login
+			// Login
 			.state('login', {
-				url        : "/login",
-				templateUrl: "views/login.html",
+				url        : '/login',
+				templateUrl: 'views/login.html',
 				data       : {
 					pageTitle: 'Bienvenido',
 					bodyClass: 'login'
 				},
-				controller : "LoginCtrl as login",
+				controller : 'LoginCtrl as login',
 				resolve    : {
 					deps: [
 						'$ocLazyLoad', function ($ocLazyLoad) {
@@ -240,7 +241,7 @@ MetronicApp.config([
 			})
 			// Template
 			.state('tmpl', {
-				templateUrl: "views/tmpl.html",
+				templateUrl: 'views/tmpl.html',
 				data       : {
 					requiredLogin: true,
 					bodyClass    : 'page-header-fixed page-sidebar-closed-hide-logo page-container-bg-solid page-sidebar-closed-hide-logo'
@@ -249,13 +250,13 @@ MetronicApp.config([
 			})
 			// Dashboard
 			.state('dashboard', {
-				url        : "/dashboard",
+				url        : '/dashboard',
 				parent     : 'tmpl',
-				templateUrl: "views/dashboard.html",
+				templateUrl: 'views/dashboard.html',
 				data       : {
-					pageTitle: 'Admin Dashboard Template'
+					pageTitle: 'Bienvenido'
 				},
-				controller : "DashboardController",
+				controller : 'DashboardController',
 				resolve    : {
 					deps: [
 						'$ocLazyLoad', function ($ocLazyLoad) {
@@ -272,18 +273,18 @@ MetronicApp.config([
 			})
 			//Ejecutivos
 			.state('ejecutivos', {
-				url        : "/ejecutivos",
+				url        : '/ejecutivos',
 				parent     : 'tmpl',
-				templateUrl: "views/ejecutivos/ejecutivos.html",
+				templateUrl: 'views/ejecutivos/ejecutivos.html',
 				data       : {
 					pageTitle: 'Ejecutivos'
 				},
-				controller : "EjecutivosCtrl",
+				controller : 'EjecutivosCtrl',
 				resolve    : {
 					deps: [
 						'$ocLazyLoad', function ($ocLazyLoad) {
 							return $ocLazyLoad.load({
-								name        : 'MetronicApp',
+								name        : 'EjecutivosNG',
 								insertBefore: '#ng_load_plugins_ng',
 								files       : [
 									'scripts/controllers/ejecutivos.js'
@@ -296,23 +297,49 @@ MetronicApp.config([
 			})
 			//Gestor general
 			.state('oficinas', {
-				url        : "/gestion/oficinas",
+				url        : '/gestion/oficinas',
 				parent     : 'tmpl',
-				templateUrl: "views/gestor_general/oficinas.html",
+				templateUrl: 'views/gestor_general/oficinas.html',
 				data       : {
 					pageTitle: 'Oficinas'
 				},
-				controller : "OficinasCtrl as dataTableOficina",
+				controller : 'OficinasCtrl as oficinaCtrl',
+				resolve    : {
+					deps: [
+						'$ocLazyLoad', function ($ocLazyLoad) {
+							return $ocLazyLoad.load([
+								{
+									name        : 'OficinasCss',
+									insertBefore: '#ng_load_plugins_css',
+									files       : [
+										'assets/global/plugins/datatables/datatables.min.css',
+										'assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css'
+									],
+									serie       : true
+								},
+								{
+									name        : 'OficinasNG',
+									insertBefore: '#ng_load_plugins_ng',
+									files       : [
+										'scripts/controllers/gestor_general/oficinas.js',
+									]
+								}
+							]);
+						}
+					]
+				}
 			});
 	}
 ]);
 
 /* Init global settings and run the app */
 MetronicApp.run([
-	"$rootScope", "settings", "$state", "$auth", "$location", "authUser", "PermissionStore", "RoleStore",
+	'$rootScope', 'settings', '$state', '$auth', '$location', 'authUser', 'PermissionStore', 'RoleStore',
 	function ($rootScope, settings, $state, $auth, $location, authUser, PermissionStore, RoleStore) {
+
 		$rootScope.$state    = $state; // state to be accessed from view
 		$rootScope.$settings = settings; // state to be accessed from view
+		
 		
 		$rootScope.$on('$stateChangeStart', function (event, toState) {
 			var requiredLogin = false;
@@ -328,6 +355,7 @@ MetronicApp.run([
 			}
 			else {
 				$rootScope.ejecutivo = authUser.getSessionData();
+				$rootScope.vista = {};
 			}
 		});
 		

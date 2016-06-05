@@ -26,7 +26,6 @@
     "bootstrap-markdown": "^2.10.0",
     "typeahead.js": "^0.11.1",
     "fuelux": "^3.15.3",
-    "jquery.inputmask": "^3.3.1",
     "jquery-input-ip-address-control": "^0.1.0",
     "pwstrength-bootstrap": "^2.0.0",
     "bootstrap-maxlength": "^1.7.0",
@@ -37,7 +36,8 @@
     "jquery-backstretch": "^2.0.4",
     "angular-permission": "^3.1.4",
     "angular-datatables": "^0.5.4",
-    "angular-resource": "^1.5.6"
+    "angular-resource": "^1.5.6",
+    "ngMask": "angular-mask#^3.1.1"
   },
   "devDependencies": {
     "angular-mocks": "^1.4.0"
