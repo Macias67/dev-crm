@@ -9,6 +9,7 @@ var MetronicApp = angular.module('MetronicApp', [
 	'ui.bootstrap',
 	'oc.lazyLoad',
 	'ngSanitize',
+	'ngAnimate',
 	'LocalStorageModule',
 	'satellizer',
 	'authService',
@@ -16,7 +17,8 @@ var MetronicApp = angular.module('MetronicApp', [
 	'permission.ui',
 	'datatables',
 	'datatables.bootstrap',
-        'ngMask'
+	'ngMask',
+	'toastr'
 ]);
 
 /* Configure ocLazyLoader(refer: https://github.com/ocombe/ocLazyLoad) */
@@ -194,7 +196,7 @@ MetronicApp.config([
 		});
 		
 		$stateProvider
-			// Login
+		// Login
 			.state('login', {
 				url        : '/login',
 				templateUrl: 'views/login.html',
@@ -212,7 +214,8 @@ MetronicApp.config([
 									insertBefore: '#ng_load_plugins_css',
 									files       : [
 										'bower_components/select2/dist/css/select2.min.css',
-										'bower_components/select2-bootstrap-css/select2-bootstrap.min.css'
+										'bower_components/select2-bootstrap-css/select2-bootstrap.min.css',
+										'bower_components/angular-toastr/dist/angular-toastr.min.css'
 									],
 									serie       : true
 								},
@@ -223,7 +226,7 @@ MetronicApp.config([
 										'bower_components/jquery-validation/dist/jquery.validate.min.js',
 										'bower_components/jquery-validation/dist/additional-methods.min.js',
 										'bower_components/select2/dist/js/select2.full.min.js',
-										'bower_components/jquery-backstretch/src/jquery.backstretch.js'
+										'bower_components/jquery-backstretch/src/jquery.backstretch.js',
 									]
 								},
 								{
@@ -336,7 +339,7 @@ MetronicApp.config([
 MetronicApp.run([
 	'$rootScope', 'settings', '$state', '$auth', '$location', 'authUser', 'PermissionStore', 'RoleStore',
 	function ($rootScope, settings, $state, $auth, $location, authUser, PermissionStore, RoleStore) {
-
+		
 		$rootScope.$state    = $state; // state to be accessed from view
 		$rootScope.$settings = settings; // state to be accessed from view
 		
@@ -355,7 +358,7 @@ MetronicApp.run([
 			}
 			else {
 				$rootScope.ejecutivo = authUser.getSessionData();
-				$rootScope.vista = {};
+				$rootScope.vista     = {};
 			}
 		});
 		
