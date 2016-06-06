@@ -9,16 +9,17 @@ var MetronicApp = angular.module('MetronicApp', [
 	'ui.bootstrap',
 	'oc.lazyLoad',
 	'ngSanitize',
-	'ngAnimate',
+	//'ngAnimate',
 	'LocalStorageModule',
 	'satellizer',
-	'authService',
 	'permission',
 	'permission.ui',
 	'datatables',
 	'datatables.bootstrap',
 	'ngMask',
-	'toastr'
+	'toastr',
+	'jcs-autoValidate',
+	'authService', //Servicios
 ]);
 
 /* Configure ocLazyLoader(refer: https://github.com/ocombe/ocLazyLoad) */
@@ -337,13 +338,16 @@ MetronicApp.config([
 
 /* Init global settings and run the app */
 MetronicApp.run([
-	'$rootScope', 'settings', '$state', '$auth', '$location', 'authUser', 'PermissionStore', 'RoleStore',
-	function ($rootScope, settings, $state, $auth, $location, authUser, PermissionStore, RoleStore) {
+	'$rootScope', 'settings', '$state', '$auth', '$location', 'authUser', 'PermissionStore', 'RoleStore', 'validator', 'defaultErrorMessageResolver',
+	function ($rootScope, settings, $state, $auth, $location, authUser, PermissionStore, RoleStore, validator, defaultErrorMessageResolver) {
 		
 		$rootScope.$state    = $state; // state to be accessed from view
 		$rootScope.$settings = settings; // state to be accessed from view
-		
-		
+
+		validator.setValidElementStyling(false);
+		defaultErrorMessageResolver.setI18nFileRootPath('bower_components/angular-auto-validate/dist/lang/');
+		defaultErrorMessageResolver.setCulture('es-CO');
+
 		$rootScope.$on('$stateChangeStart', function (event, toState) {
 			var requiredLogin = false;
 			// check if this state need login

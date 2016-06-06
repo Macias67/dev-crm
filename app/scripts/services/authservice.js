@@ -74,6 +74,7 @@ angular.module('authService', [])
 						App.unblockUI();
 						$state.go('dashboard');
 					}, 3000);
+
 				},
 				function (error) {
 					App.unblockUI();
