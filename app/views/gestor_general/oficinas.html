@@ -1,51 +1,114 @@
-<h3 class = "page-title"> Oficinas
-	<small>blank page layout</small>
+<h3 class = "page-title"> {{vista.titulo}}
+	<small>{{vista.subtitulo}}</small>
 </h3>
 <div class = "page-bar">
 	<ul class = "page-breadcrumb">
 		<li>
-			<i class = "icon-home"></i>
-			<a href = "index.html">Home</a>
+			<i class = "fa fa-home"></i>
+			<a href = "#/dashboard">Inicio</a>
 			<i class = "fa fa-angle-right"></i>
 		</li>
 		<li>
-			<a href = "#">Blank Page</a>
+			<i class = "fa fa-cogs"></i>
+			<span>Gestor General</span>
 			<i class = "fa fa-angle-right"></i>
 		</li>
 		<li>
-			<span>Page Layouts</span>
+			<i class = "fa fa-building-o"></i>
+			<span>Oficinas</span>
 		</li>
 	</ul>
-	<div class = "page-toolbar">
-		<div class = "btn-group pull-right">
-			<button type = "button" class = "btn btn-fit-height grey-salt dropdown-toggle" data-toggle = "dropdown" data-hover = "dropdown" data-delay = "1000" data-close-others = "true"> Actions
-				<i class = "fa fa-angle-down"></i>
-			</button>
-			<ul class = "dropdown-menu pull-right" role = "menu">
-				<li>
-					<a href = "#">
-						<i class = "icon-bell"></i>
-					</a>
-				</li>
-				<li>
-					<a href = "#">
-						<i class = "icon-shield"></i> Another action
-					</a>
-				</li>
-				<li>
-					<a href = "#">
-						<i class = "icon-user"></i> Something else here
-					</a>
-				</li>
-				<li class = "divider"> </li>
-				<li>
-					<a href = "#">
-						<i class = "icon-bag"></i> Separated link
-					</a>
-				</li>
-			</ul>
+</div>
+
+<div class = "row">
+	<div class = "col-md-6">
+		<div class = "portlet light portlet-fit portlet-datatable ">
+			<div class = "portlet-title">
+				<div class = "caption">
+					<i class = " fa fa-building-o font-green"></i>
+					<span class = "caption-subject font-green sbold uppercase">Oficinas</span>
+				</div>
+				<div class = "actions">
+					<button type = "button" class = "btn btn-xs green" ng-click = "oficinaCtrl.openModalForm()">
+						<i class = "fa fa-plus"></i>
+						 Nueva oficina
+					</button>
+				</div>
+			</div>
+			<div class = "portlet-body">
+				<table datatable = "" dt-options = "oficinaCtrl.tableOficinas.dtOptions" dt-columns = "oficinaCtrl.tableOficinas.dtColumns" dt-instance = "oficinaCtrl.tableOficinas.dtInstance" class = "table table-striped table-bordered table-hover">
+				</table>
+			</div>
 		</div>
 	</div>
 </div>
 
-<p>{{'Hola'}}</p>
+<script type = "text/ng-template" id = "OficinaNuevaForm.html">
+	<div class = "modal-header">
+		<button type = "button" class = "close" aria-hidden = "true" ng-click = "modalOficinaNueva.cancel()"></button>
+		<h4 class = "modal-title font-green-sharp"><i class = "fa fa-building-o"></i> Nueva Oficina </h4>
+	</div>
+	<div class = "modal-body">
+		<!-- BEGIN FORM-->
+		<form action = "#" class = "form-horizontal">
+			<div class = "form-body">
+				<div class = "form-group">
+					<label class = "col-md-3 control-label">Calle </label>
+					<div class = "col-md-9">
+						<input type = "text" class = "form-control input-circle" placeholder = "Calle" ng-model="modalOficinaNueva.form.calle"
+						       ng-minlength="3"
+						       ng-maxlength="10" required>
+					</div>
+				</div>
+				<div class = "form-group">
+					<label class = "col-md-3 control-label">Número </label>
+					<div class = "col-md-9">
+						<input type = "text" class = "form-control input-circle" placeholder = "Número" ng-model="modalOficinaNueva.form.numero">
+					</div>
+				</div>
+				<div class = "form-group">
+					<label class = "col-md-3 control-label">Colonia </label>
+					<div class = "col-md-9">
+						<input type = "text" class = "form-control input-circle" placeholder = "Colonia" ng-model="modalOficinaNueva.form.colonia">
+					</div>
+				</div>
+				<div class = "form-group">
+					<label class = "col-md-3 control-label">C.P. </label>
+					<div class = "col-md-9">
+						<input type = "text" class = "form-control input-circle" placeholder = "C.P." ng-model="modalOficinaNueva.form.cp" mask = "9999" restrict="reject" clean="true">
+					</div>
+				</div>
+				<div class = "form-group">
+					<label class = "col-md-3 control-label">Ciudad </label>
+					<div class = "col-md-9">
+						<input type = "text" class = "form-control input-circle" placeholder = "Ciudad" ng-model="modalOficinaNueva.form.ciudad">
+					</div>
+				</div>
+				<div class = "form-group">
+					<label class = "col-md-3 control-label">Estado </label>
+					<div class = "col-md-9">
+						<input type = "text" class = "form-control input-circle" placeholder = "Estado" ng-model="modalOficinaNueva.form.estado">
+					</div>
+				</div>
+				<div class = "form-group">
+					<label class = "col-md-3 control-label">Teléfonos </label>
+					<div class = "col-md-9">
+						<input type = "text" class = "form-control input-circle" placeholder = "Teléfonos" ng-model="modalOficinaNueva.form.telefonos">
+					</div>
+				</div>
+				<div class = "form-group">
+					<label class = "col-md-3 control-label">Email </label>
+					<div class = "col-md-9">
+						<input type = "text" class = "form-control input-circle" placeholder = "Email" ng-model="modalOficinaNueva.form.email">
+					</div>
+				</div>
+			</div>
+		</form>
+		<!-- END FORM-->
+	</div>
+	<div class = "modal-footer">
+		<button class = "btn green-jungle btn-outline sbold uppercase" ng-click = "modalOficinaNueva.guarda()">Guardar</button>
+		<button class = "btn grey-mint btn-outline" ng-click = "modalOficinaNueva.cancel()">Cancelar</button>
+	</div>
+</script>
+

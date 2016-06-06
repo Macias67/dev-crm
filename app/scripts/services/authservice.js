@@ -21,16 +21,12 @@ angular.module('authService', [])
 			}
 		};
 	})
-	.factory('authUser', function ($auth, $state, sessionControl) {
+	.factory('authUser', function ($auth, $state, $rootScope, sessionControl, toastr) {
 		
 		var storeSession = function (data) {
 			sessionControl.set('ec_data', data);
 		};
 
-		/**
-		 * Todo Promesa para obtener datos del ejecutivo si no estan en sessionStorage
-		 * @returns {Object|Array|string|number}
-		 */
 		var getSession = function () {
 			return angular.fromJson(sessionControl.get('ec_data'));
 		};
@@ -38,21 +34,53 @@ angular.module('authService', [])
 		var deleteSession = function () {
 			sessionControl.unset('ec_data');
 		};
+
+		var logout = function () {
+
+			$auth.logout();
+			deleteSession();
+			
+			App.blockUI({
+				target: 'body',
+				message     : '<b> Cerrando Sesión </b>',
+				boxed       : true,
+				overlayColor: App.getBrandColor('grey')
+			});
+
+			setTimeout(function () {
+				App.unblockUI();
+				$state.go('login');
+			}, 3000);
+		};
 		
 		var login = function (loginForm) {
+
+			App.blockUI({
+				target: 'body',
+				message     : '<b> Iniciando Sesión </b>',
+				boxed       : true,
+				overlayColor: App.getBrandColor('grey')
+			});
+
 			$auth.signup(loginForm).then(
 				function (response) {
-					console.log(angular.toJson(response.data.data, true));
-					
+					//console.log(angular.toJson(response.data.data, true));
+
 					$auth.setToken(response.data.data.token);
-					
 					delete response.data.data.token;
 					storeSession(angular.toJson(response.data.data));
-					$state.go('dashboard');
+
+					setTimeout(function () {
+						App.unblockUI();
+						$state.go('dashboard');
+					}, 3000);
+
 				},
 				function (error) {
-					console.error(error);
+					App.unblockUI();
 					deleteSession();
+					
+					toastr.error(error.data.message, 'Ups...');
 				}
 			);
 		};
@@ -64,10 +92,8 @@ angular.module('authService', [])
 			getSessionData: function () {
 				return getSession();
 			},
-			logout : function () {
-				$auth.logout();
-				deleteSession();
-				$state.go('login');
+			logout        : function () {
+				logout();
 			}
 		}
 	});
