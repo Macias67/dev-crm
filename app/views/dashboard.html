@@ -48,4 +48,12 @@
 	</div>
 </div>
 
-<p permission permission-only = "['USER']">{{ejecutivo}}</p>
+<!--<p permission permission-only = "['USER']">{{ejecutivo}}</p>-->
+
+<span>{{dashboardCtrl.center}}</span>
+
+<div class = "col-md-8">
+	<ng-map center = " {{dashboardCtrl.center}}" style = "height: 300px">
+		 <marker position = "{{dashboardCtrl.center}}" title = "how" animation = "Animation.BOUNCE"></marker>
+	</ng-map>
+</div>

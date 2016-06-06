@@ -9,8 +9,8 @@
  */
 angular.module('MetronicApp')
 	.controller('OficinasCtrl', [
-		'DTOptionsBuilder', 'DTColumnBuilder', '$compile', '$scope', '$rootScope', '$uibModal',
-		function (DTOptionsBuilder, DTColumnBuilder, $compile, $scope, $rootScope, $uibModal) {
+		'DTOptionsBuilder', 'DTColumnBuilder', '$compile', '$scope', '$rootScope', '$uibModal', 'NgMap',
+		function (DTOptionsBuilder, DTColumnBuilder, $compile, $scope, $rootScope, $uibModal, NgMap) {
 			var vm = this;
 			
 			//Nombres
@@ -50,11 +50,13 @@ angular.module('MetronicApp')
 			
 			vm.openModalForm = function () {
 				$uibModal.open({
-					backdrop: 'static',
+					backdrop   : 'static',
 					templateUrl: 'OficinaNuevaForm.html',
-					controller: 'ModalOficinaNuevaCtrl as modalOficinaNueva'
+					controller : 'ModalOficinaNuevaCtrl as modalOficinaNueva',
+					size       : 'lg'
 				})
 			};
+			
 			function edit(person) {
 				vm.tableOficinas.message = 'You are trying to edit the row: ' + JSON.stringify(person);
 				// Edit some data and call server to make changes...
@@ -89,17 +91,64 @@ angular.module('MetronicApp')
 		}
 	])
 	.controller('ModalOficinaNuevaCtrl', [
-		'$scope', '$uibModalInstance', function ($scope, $uibModalInstance) {
+		'$scope', '$uibModalInstance', '$filter', function ($scope, $uibModalInstance, $filter) {
 			var vm = this;
 			
-			vm.form = {};
+			vm.centroMapa = '[40.74, -74.18]';
+			vm.form       = {
+				calle  : '',
+				numero : '',
+				colonia: '',
+				cp     : '',
+				ciudad : '',
+				estado : ''
+			};
+
+			$scope.$watch('modalOficinaNueva.form.calle', function () {
+				vm.form.calle = $filter('ucfirst')(vm.form.calle);
+			});
+
+			$scope.$watch('modalOficinaNueva.form.colonia', function () {
+				vm.form.colonia = $filter('ucfirst')(vm.form.colonia);
+			});
+
+			$scope.$watch('modalOficinaNueva.form.ciudad', function () {
+				vm.form.ciudad = $filter('ucfirst')(vm.form.ciudad);
+			});
+
+			$scope.$watch('modalOficinaNueva.form.estado', function () {
+				vm.form.estado = $filter('ucfirst')(vm.form.estado);
+			});
+
+			$scope.$watchGroup(
+				[
+					'modalOficinaNueva.form.calle',
+					'modalOficinaNueva.form.numero',
+					'modalOficinaNueva.form.colonia',
+					'modalOficinaNueva.form.ciudad',
+					'modalOficinaNueva.form.estado'
+				],
+				function (newValues, oldValues, scope) {
+					// newValues array contains the current values of the watch expressions
+					// with the indexes matching those of the watchExpression array
+					// i.e.
+					// newValues[0] -> $scope.foo
+					// and
+					// newValues[1] -> $scope.bar
+
+					vm.paraBuscar = vm.form.calle + ' '
+						+ vm.form.numero + ', '
+						+ vm.form.colonia + ', '
+						+ vm.form.ciudad + ', '
+						+ vm.form.estado;
+				});
 			
 			vm.guarda = function () {
 				$uibModalInstance.close();
-
+				
 				console.log(vm.form);
 			};
-
+			
 			vm.cancel = function () {
 				$uibModalInstance.dismiss('cancel');
 			};

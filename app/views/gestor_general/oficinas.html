@@ -49,62 +49,75 @@
 		<h4 class = "modal-title font-green-sharp"><i class = "fa fa-building-o"></i> Nueva Oficina </h4>
 	</div>
 	<div class = "modal-body">
-		<!-- BEGIN FORM-->
-		<form action = "#" class = "form-horizontal">
-			<div class = "form-body">
-				<div class = "form-group">
-					<label class = "col-md-3 control-label">Calle </label>
-					<div class = "col-md-9">
-						<input type = "text" class = "form-control input-circle" placeholder = "Calle" ng-model="modalOficinaNueva.form.calle"
-						       ng-minlength="3"
-						       ng-maxlength="10" required>
+		<div class="col-md-6">
+			<!-- BEGIN FORM-->
+			<form action = "#" class = "form-horizontal">
+				<div class = "form-body">
+					<div class = "form-group">
+						<label class = "col-md-3 control-label">Calle </label>
+						<div class = "col-md-9">
+							<input type = "text" class = "form-control input-circle" placeholder = "Calle" ng-model = "modalOficinaNueva.form.calle"
+							       ng-minlength = "3"
+							       ng-maxlength = "10" required>
+						</div>
+					</div>
+					<div class = "form-group">
+						<label class = "col-md-3 control-label">Número </label>
+						<div class = "col-md-9">
+							<input type = "text" class = "form-control input-circle" placeholder = "Número" ng-model = "modalOficinaNueva.form.numero">
+						</div>
+					</div>
+					<div class = "form-group">
+						<label class = "col-md-3 control-label">Colonia </label>
+						<div class = "col-md-9">
+							<input type = "text" class = "form-control input-circle" placeholder = "Colonia" ng-model = "modalOficinaNueva.form.colonia">
+						</div>
+					</div>
+					<div class = "form-group">
+						<label class = "col-md-3 control-label">C.P. </label>
+						<div class = "col-md-9">
+							<input type = "text" class = "form-control input-circle" placeholder = "C.P."
+							       ng-model = "modalOficinaNueva.form.cp"
+							       ui-mask = "99999"
+							       ui-mask-placeholder ui-mask-placeholder-char = "_"
+							       required>
+						</div>
+					</div>
+					<div class = "form-group">
+						<label class = "col-md-3 control-label">Ciudad </label>
+						<div class = "col-md-9">
+							<input type = "text" class = "form-control input-circle" placeholder = "Ciudad" ng-model = "modalOficinaNueva.form.ciudad">
+						</div>
+					</div>
+					<div class = "form-group">
+						<label class = "col-md-3 control-label">Estado </label>
+						<div class = "col-md-9">
+							<input type = "text" class = "form-control input-circle" placeholder = "Estado" ng-model = "modalOficinaNueva.form.estado">
+						</div>
+					</div>
+					<div class = "form-group">
+						<label class = "col-md-3 control-label">Teléfonos </label>
+						<div class = "col-md-9">
+							<input type = "text" class = "form-control input-circle" placeholder = "Teléfonos" ng-model = "modalOficinaNueva.form.telefonos">
+						</div>
+					</div>
+					<div class = "form-group">
+						<label class = "col-md-3 control-label">Email </label>
+						<div class = "col-md-9">
+							<input type = "text" class = "form-control input-circle" placeholder = "Email" ng-model = "modalOficinaNueva.form.email">
+						</div>
 					</div>
 				</div>
-				<div class = "form-group">
-					<label class = "col-md-3 control-label">Número </label>
-					<div class = "col-md-9">
-						<input type = "text" class = "form-control input-circle" placeholder = "Número" ng-model="modalOficinaNueva.form.numero">
-					</div>
-				</div>
-				<div class = "form-group">
-					<label class = "col-md-3 control-label">Colonia </label>
-					<div class = "col-md-9">
-						<input type = "text" class = "form-control input-circle" placeholder = "Colonia" ng-model="modalOficinaNueva.form.colonia">
-					</div>
-				</div>
-				<div class = "form-group">
-					<label class = "col-md-3 control-label">C.P. </label>
-					<div class = "col-md-9">
-						<input type = "text" class = "form-control input-circle" placeholder = "C.P." ng-model="modalOficinaNueva.form.cp" mask = "9999" restrict="reject" clean="true">
-					</div>
-				</div>
-				<div class = "form-group">
-					<label class = "col-md-3 control-label">Ciudad </label>
-					<div class = "col-md-9">
-						<input type = "text" class = "form-control input-circle" placeholder = "Ciudad" ng-model="modalOficinaNueva.form.ciudad">
-					</div>
-				</div>
-				<div class = "form-group">
-					<label class = "col-md-3 control-label">Estado </label>
-					<div class = "col-md-9">
-						<input type = "text" class = "form-control input-circle" placeholder = "Estado" ng-model="modalOficinaNueva.form.estado">
-					</div>
-				</div>
-				<div class = "form-group">
-					<label class = "col-md-3 control-label">Teléfonos </label>
-					<div class = "col-md-9">
-						<input type = "text" class = "form-control input-circle" placeholder = "Teléfonos" ng-model="modalOficinaNueva.form.telefonos">
-					</div>
-				</div>
-				<div class = "form-group">
-					<label class = "col-md-3 control-label">Email </label>
-					<div class = "col-md-9">
-						<input type = "text" class = "form-control input-circle" placeholder = "Email" ng-model="modalOficinaNueva.form.email">
-					</div>
-				</div>
-			</div>
-		</form>
-		<!-- END FORM-->
+			</form>
+			<!-- END FORM-->
+		</div>
+		<div class="col-md-6">
+			<input type = "text" class = "form-control input-circle" placeholder = "Email" ng-model = "modalOficinaNueva.paraBuscar">
+			<br>
+			<ng-map center="{{modalOficinaNueva.centroMapa}}" zoom="6">
+			</ng-map>
+		</div>
+		<div class="clearfix"></div>
 	</div>
 	<div class = "modal-footer">
 		<button class = "btn green-jungle btn-outline sbold uppercase" ng-click = "modalOficinaNueva.guarda()">Guardar</button>

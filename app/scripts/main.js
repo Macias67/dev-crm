@@ -9,16 +9,18 @@ var MetronicApp = angular.module('MetronicApp', [
 	'ui.bootstrap',
 	'oc.lazyLoad',
 	'ngSanitize',
-	//'ngAnimate',
+	'ngAnimate',
 	'LocalStorageModule',
 	'satellizer',
 	'permission',
 	'permission.ui',
 	'datatables',
 	'datatables.bootstrap',
-	'ngMask',
+	'ui.mask',
+	'ngMap',
 	'toastr',
 	'jcs-autoValidate',
+	'angular.filter',
 	'authService', //Servicios
 ]);
 
@@ -197,7 +199,7 @@ MetronicApp.config([
 		});
 		
 		$stateProvider
-		// Login
+			// Login
 			.state('login', {
 				url        : '/login',
 				templateUrl: 'views/login.html',
@@ -215,8 +217,7 @@ MetronicApp.config([
 									insertBefore: '#ng_load_plugins_css',
 									files       : [
 										'bower_components/select2/dist/css/select2.min.css',
-										'bower_components/select2-bootstrap-css/select2-bootstrap.min.css',
-										'bower_components/angular-toastr/dist/angular-toastr.min.css'
+										'bower_components/select2-bootstrap-css/select2-bootstrap.min.css'
 									],
 									serie       : true
 								},
@@ -260,7 +261,7 @@ MetronicApp.config([
 				data       : {
 					pageTitle: 'Bienvenido'
 				},
-				controller : 'DashboardController',
+				controller : 'DashboardController as dashboardCtrl',
 				resolve    : {
 					deps: [
 						'$ocLazyLoad', function ($ocLazyLoad) {
@@ -332,6 +333,41 @@ MetronicApp.config([
 						}
 					]
 				}
+			})
+			//Departamentos
+			.state('departamentos', {
+				url        : '/gestion/departamentos',
+				parent     : 'tmpl',
+				templateUrl: 'views/gestor_general/departamentos.html',
+				data       : {
+					pageTitle: 'Departamentos'
+				},
+				controller : 'DepartamentosCtrl as departamentosCtrl',
+				resolve    : {
+					deps: [
+						'$ocLazyLoad', function ($ocLazyLoad) {
+							return $ocLazyLoad.load([
+								{
+									name        : 'DepartamentosCss',
+									insertBefore: '#ng_load_plugins_css',
+									files       : [
+										'assets/global/plugins/datatables/datatables.min.css',
+										'assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css'
+									],
+									serie       : true
+								},
+								{
+									name        : 'DepartamentosNG',
+									insertBefore: '#ng_load_plugins_ng',
+									files       : [
+										'scripts/controllers/gestor_general/departamentos.js',
+									],
+									serie: true
+								}
+							]);
+						}
+					]
+				}
 			});
 	}
 ]);
@@ -344,7 +380,7 @@ MetronicApp.run([
 		$rootScope.$state    = $state; // state to be accessed from view
 		$rootScope.$settings = settings; // state to be accessed from view
 
-		validator.setValidElementStyling(false);
+		//validator.setValidElementStyling(false);
 		defaultErrorMessageResolver.setI18nFileRootPath('bower_components/angular-auto-validate/dist/lang/');
 		defaultErrorMessageResolver.setCulture('es-CO');
 
