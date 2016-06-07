@@ -91,7 +91,7 @@ angular.module('MetronicApp')
 		}
 	])
 	.controller('ModalOficinaNuevaCtrl', [
-		'$scope', '$uibModalInstance', '$filter', function ($scope, $uibModalInstance, $filter) {
+		'$scope', '$uibModalInstance', '$filter','GeoCoder', function ($scope, $uibModalInstance, $filter, GeoCoder) {
 			var vm = this;
 			
 			vm.centroMapa = '[40.74, -74.18]';
@@ -103,23 +103,23 @@ angular.module('MetronicApp')
 				ciudad : '',
 				estado : ''
 			};
-
+			
 			$scope.$watch('modalOficinaNueva.form.calle', function () {
 				vm.form.calle = $filter('ucfirst')(vm.form.calle);
 			});
-
+			
 			$scope.$watch('modalOficinaNueva.form.colonia', function () {
 				vm.form.colonia = $filter('ucfirst')(vm.form.colonia);
 			});
-
+			
 			$scope.$watch('modalOficinaNueva.form.ciudad', function () {
 				vm.form.ciudad = $filter('ucfirst')(vm.form.ciudad);
 			});
-
+			
 			$scope.$watch('modalOficinaNueva.form.estado', function () {
 				vm.form.estado = $filter('ucfirst')(vm.form.estado);
 			});
-
+			
 			$scope.$watchGroup(
 				[
 					'modalOficinaNueva.form.calle',
@@ -135,7 +135,7 @@ angular.module('MetronicApp')
 					// newValues[0] -> $scope.foo
 					// and
 					// newValues[1] -> $scope.bar
-
+					
 					vm.paraBuscar = vm.form.calle + ' '
 						+ vm.form.numero + ', '
 						+ vm.form.colonia + ', '
@@ -143,10 +143,19 @@ angular.module('MetronicApp')
 						+ vm.form.estado;
 				});
 			
+			vm.geoCode = function () {
+				GeoCoder.geocode({address: vm.paraBuscar}).then(function (result) {
+					//... do something with result
+					
+					var lat = result[0].geometry.location.lat();
+					var lng = result[0].geometry.location.lng();
+					vm.centroMapa = result[0].geometry.location;
+					toastr.info('Lat: ' + lat + "\n Lng: " + lng, 'Ubicación');
+				});
+			};
+			
 			vm.guarda = function () {
 				$uibModalInstance.close();
-				
-				console.log(vm.form);
 			};
 			
 			vm.cancel = function () {

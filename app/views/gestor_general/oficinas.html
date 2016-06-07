@@ -49,28 +49,26 @@
 		<h4 class = "modal-title font-green-sharp"><i class = "fa fa-building-o"></i> Nueva Oficina </h4>
 	</div>
 	<div class = "modal-body">
-		<div class="col-md-6">
+		<div class = "col-md-6">
 			<!-- BEGIN FORM-->
 			<form action = "#" class = "form-horizontal">
 				<div class = "form-body">
 					<div class = "form-group">
 						<label class = "col-md-3 control-label">Calle </label>
 						<div class = "col-md-9">
-							<input type = "text" class = "form-control input-circle" placeholder = "Calle" ng-model = "modalOficinaNueva.form.calle"
-							       ng-minlength = "3"
-							       ng-maxlength = "10" required>
+							<input type = "text" class = "form-control input-circle" placeholder = "Calle" ng-model = "modalOficinaNueva.form.calle" required>
 						</div>
 					</div>
 					<div class = "form-group">
 						<label class = "col-md-3 control-label">Número </label>
 						<div class = "col-md-9">
-							<input type = "text" class = "form-control input-circle" placeholder = "Número" ng-model = "modalOficinaNueva.form.numero">
+							<input type = "text" class = "form-control input-circle" placeholder = "Número" ng-model = "modalOficinaNueva.form.numero" required>
 						</div>
 					</div>
 					<div class = "form-group">
 						<label class = "col-md-3 control-label">Colonia </label>
 						<div class = "col-md-9">
-							<input type = "text" class = "form-control input-circle" placeholder = "Colonia" ng-model = "modalOficinaNueva.form.colonia">
+							<input type = "text" class = "form-control input-circle" placeholder = "Colonia" ng-model = "modalOficinaNueva.form.colonia" required>
 						</div>
 					</div>
 					<div class = "form-group">
@@ -86,13 +84,13 @@
 					<div class = "form-group">
 						<label class = "col-md-3 control-label">Ciudad </label>
 						<div class = "col-md-9">
-							<input type = "text" class = "form-control input-circle" placeholder = "Ciudad" ng-model = "modalOficinaNueva.form.ciudad">
+							<input type = "text" class = "form-control input-circle" placeholder = "Ciudad" ng-model = "modalOficinaNueva.form.ciudad" required>
 						</div>
 					</div>
 					<div class = "form-group">
 						<label class = "col-md-3 control-label">Estado </label>
 						<div class = "col-md-9">
-							<input type = "text" class = "form-control input-circle" placeholder = "Estado" ng-model = "modalOficinaNueva.form.estado">
+							<input type = "text" class = "form-control input-circle" placeholder = "Estado" ng-model = "modalOficinaNueva.form.estado" required>
 						</div>
 					</div>
 					<div class = "form-group">
@@ -111,13 +109,22 @@
 			</form>
 			<!-- END FORM-->
 		</div>
-		<div class="col-md-6">
-			<input type = "text" class = "form-control input-circle" placeholder = "Email" ng-model = "modalOficinaNueva.paraBuscar">
+		<div class = "col-md-6">
+			<!--<input type = "text" class = "form-control input-circle" placeholder = "Email" ng-model = "modalOficinaNueva.paraBuscar">-->
+			<div class = "input-group input-group-sm">
+				<input type = "text" class = "form-control" ng-model = "modalOficinaNueva.paraBuscar" readonly>
+				<span class = "input-group-btn">
+					<button class = "btn red" type = "button" ng-click="modalOficinaNueva.geoCode()">
+						<i class = "fa fa-search"></i>
+					</button>
+				</span>
+			</div>
 			<br>
-			<ng-map center="{{modalOficinaNueva.centroMapa}}" zoom="6">
+			<ng-map center = "{{modalOficinaNueva.centroMapa}}" zoom = "16">
+				<marker position="{{modalOficinaNueva.centroMapa}}" title="Nueva oficina" animation="Animation.BOUNCE"></marker>
 			</ng-map>
 		</div>
-		<div class="clearfix"></div>
+		<div class = "clearfix"></div>
 	</div>
 	<div class = "modal-footer">
 		<button class = "btn green-jungle btn-outline sbold uppercase" ng-click = "modalOficinaNueva.guarda()">Guardar</button>

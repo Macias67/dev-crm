@@ -348,15 +348,6 @@ MetronicApp.config([
 						'$ocLazyLoad', function ($ocLazyLoad) {
 							return $ocLazyLoad.load([
 								{
-									name        : 'DepartamentosCss',
-									insertBefore: '#ng_load_plugins_css',
-									files       : [
-										'assets/global/plugins/datatables/datatables.min.css',
-										'assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css'
-									],
-									serie       : true
-								},
-								{
 									name        : 'DepartamentosNG',
 									insertBefore: '#ng_load_plugins_ng',
 									files       : [
