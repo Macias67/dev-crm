@@ -9,8 +9,8 @@
  */
 angular.module('MetronicApp')
 	.controller('OficinasCtrl', [
-		'DTOptionsBuilder', 'DTColumnBuilder', '$compile', '$scope', '$rootScope', '$uibModal', 'NgMap',
-		function (DTOptionsBuilder, DTColumnBuilder, $compile, $scope, $rootScope, $uibModal, NgMap) {
+		'DTOptionsBuilder', 'DTColumnBuilder', '$compile', '$scope', '$rootScope', '$uibModal',
+		function (DTOptionsBuilder, DTColumnBuilder, $compile, $scope, $rootScope, $uibModal) {
 			var vm = this;
 			
 			//Nombres
@@ -91,11 +91,18 @@ angular.module('MetronicApp')
 		}
 	])
 	.controller('ModalOficinaNuevaCtrl', [
-		'$scope', '$uibModalInstance', '$filter','GeoCoder', function ($scope, $uibModalInstance, $filter, GeoCoder) {
+		'$scope', '$uibModalInstance', '$filter', 'GeoCoder', 'toastr', 'NavigatorGeolocation', 'NgMap',
+		function ($scope, $uibModalInstance, $filter, GeoCoder, toastr, NavigatorGeolocation, NgMap) {
 			var vm = this;
-			
-			vm.centroMapa = '[40.74, -74.18]';
-			vm.form       = {
+
+			vm.paraBuscar = '';
+			vm.centroMapa = [
+				20.3417485,
+				-102.76523259999999
+			];
+			vm.zoomMapa   = 13;
+
+			vm.form = {
 				calle  : '',
 				numero : '',
 				colonia: '',
@@ -107,19 +114,15 @@ angular.module('MetronicApp')
 			$scope.$watch('modalOficinaNueva.form.calle', function () {
 				vm.form.calle = $filter('ucfirst')(vm.form.calle);
 			});
-			
 			$scope.$watch('modalOficinaNueva.form.colonia', function () {
 				vm.form.colonia = $filter('ucfirst')(vm.form.colonia);
 			});
-			
 			$scope.$watch('modalOficinaNueva.form.ciudad', function () {
 				vm.form.ciudad = $filter('ucfirst')(vm.form.ciudad);
 			});
-			
 			$scope.$watch('modalOficinaNueva.form.estado', function () {
 				vm.form.estado = $filter('ucfirst')(vm.form.estado);
 			});
-			
 			$scope.$watchGroup(
 				[
 					'modalOficinaNueva.form.calle',
@@ -141,16 +144,48 @@ angular.module('MetronicApp')
 						+ vm.form.colonia + ', '
 						+ vm.form.ciudad + ', '
 						+ vm.form.estado;
+				}
+			);
+
+			// Obtengo posicion actual
+			NavigatorGeolocation.getCurrentPosition()
+				.then(function (position) {
+					var lat       = position.coords.latitude, lng = position.coords.longitude;
+					vm.centroMapa = [lat, lng];
+					vm.zoomMapa   = 16;
 				});
+
+			/**
+			 * Obtengo propiesdades del mapa, en especial el marcador,
+			 * para poder añadirle el evento drag y dragend
+			 */
+			NgMap.getMap().then(function (map) {
+				var marker = map.markers[0];
+
+				marker.addListener('drag', function (event) {
+					$scope.$apply(function () {
+						vm.centroMapa = [
+							event.latLng.lat(),
+							event.latLng.lng()
+						];
+					});
+					map.setCenter(marker.getPosition());
+				});
+				
+				marker.addListener('dragend', function (event) {
+					var latlng = {lat: vm.centroMapa[0], lng: vm.centroMapa[1]};
+					GeoCoder.geocode({location: latlng}).then(function (result) {
+						vm.paraBuscar = result[0].formatted_address;
+					});
+				});
+			});
 			
 			vm.geoCode = function () {
 				GeoCoder.geocode({address: vm.paraBuscar}).then(function (result) {
-					//... do something with result
-					
-					var lat = result[0].geometry.location.lat();
-					var lng = result[0].geometry.location.lng();
-					vm.centroMapa = result[0].geometry.location;
-					toastr.info('Lat: ' + lat + "\n Lng: " + lng, 'Ubicación');
+					var lat       = result[0].geometry.location.lat();
+					var lng       = result[0].geometry.location.lng();
+					vm.centroMapa = [lat, lng];
+					vm.zoomMapa   = 16;
 				});
 			};
 			

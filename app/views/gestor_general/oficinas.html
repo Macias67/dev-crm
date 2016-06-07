@@ -114,14 +114,17 @@
 			<div class = "input-group input-group-sm">
 				<input type = "text" class = "form-control" ng-model = "modalOficinaNueva.paraBuscar" readonly>
 				<span class = "input-group-btn">
-					<button class = "btn red" type = "button" ng-click="modalOficinaNueva.geoCode()">
+					<button class = "btn red" type = "button" ng-click = "modalOficinaNueva.geoCode()">
 						<i class = "fa fa-search"></i>
 					</button>
 				</span>
+				<input type = "hidden" ng-model="modalOficinaNueva.form.telefonos">
 			</div>
 			<br>
-			<ng-map center = "{{modalOficinaNueva.centroMapa}}" zoom = "16">
-				<marker position="{{modalOficinaNueva.centroMapa}}" title="Nueva oficina" animation="Animation.BOUNCE"></marker>
+			<ng-map center = "{{modalOficinaNueva.centroMapa}}" zoom = "{{modalOficinaNueva.zoomMapa}}">
+				<marker position = "{{modalOficinaNueva.centroMapa}}"
+				        title = "Nueva oficina"
+				        draggable = "true"></marker>
 			</ng-map>
 		</div>
 		<div class = "clearfix"></div>

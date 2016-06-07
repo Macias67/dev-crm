@@ -1,13 +1,14 @@
+/* here you can put your own css to customize and override the theme */
 .login {
-    background-color: white;
+    background-color: #fff
 }
 
 div[ui-view].ng-enter {
-    -webkit-animation: fadeInUp 0.8s;
-    animation: fadeInUp 0.8s;
+    -webkit-animation: fadeInUp .8s;
+    animation: fadeInUp .8s;
 }
 
-.ng-leave {
+div[ui-view].ng-leave {
 }
 
 .ng-hide-remove {

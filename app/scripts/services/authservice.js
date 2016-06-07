@@ -21,7 +21,7 @@ angular.module('authService', [])
 			}
 		};
 	})
-	.factory('authUser', function ($auth, $state, $rootScope, sessionControl, toastr) {
+	.factory('authUser', function ($rootScope, $auth, $state, sessionControl, toastr) {
 		
 		var storeSession = function (data) {
 			sessionControl.set('ec_data', data);
@@ -41,7 +41,7 @@ angular.module('authService', [])
 			deleteSession();
 			
 			App.blockUI({
-				target: 'body',
+				target      : 'body',
 				message     : '<b> Cerrando Sesión </b>',
 				boxed       : true,
 				overlayColor: App.getBrandColor('grey')
@@ -56,7 +56,7 @@ angular.module('authService', [])
 		var login = function (loginForm) {
 
 			App.blockUI({
-				target: 'body',
+				target      : 'body',
 				message     : '<b> Iniciando Sesión </b>',
 				boxed       : true,
 				overlayColor: App.getBrandColor('grey')
@@ -65,7 +65,6 @@ angular.module('authService', [])
 			$auth.signup(loginForm).then(
 				function (response) {
 					//console.log(angular.toJson(response.data.data, true));
-
 					$auth.setToken(response.data.data.token);
 					delete response.data.data.token;
 					storeSession(angular.toJson(response.data.data));
@@ -74,12 +73,10 @@ angular.module('authService', [])
 						App.unblockUI();
 						$state.go('dashboard');
 					}, 3000);
-
 				},
 				function (error) {
 					App.unblockUI();
 					deleteSession();
-					
 					toastr.error(error.data.message, 'Ups...');
 				}
 			);
