@@ -8,43 +8,68 @@
  * Factory in the MetronicApp.
  */
 angular.module('MetronicApp')
-	.factory('oficinaservice', function () {
-		// Service logic
+	.factory('oficinaService', [
+		'$http', 'toastr', function ($http, toastr) {
+			// Service logic
+			
+			var oficina = {
+				calle    : '',
+				numero   : '',
+				colonia  : '',
+				cp       : '',
+				ciudad   : '',
+				estado   : '',
+				latitud  : '',
+				longitud : '',
+				telefonos: '',
+				email    : ''
+			};
 
-		var oficina = {
-			calle    : '',
-			numero   : '',
-			colonia  : '',
-			cp       : '',
-			ciudad   : '',
-			estado   : '',
-			latitud  : '',
-			longitud : '',
-			telefonos: '',
-			email    : ''
-		};
-		
-		var storeOficina = function (data) {
+			var instance = function () {
+				return oficina;
+			};
+						
+			var storeOficina = function () {
 
-		};
+				App.blockUI({
+					target      : 'body',
+					message     : '<b> Guardando oficina </b>',
+					boxed       : true,
+					overlayColor: App.getBrandColor('grey')
+				});
 
-		var getOficina = function (id) {
+				console.info("Guardo oficina con $http");
+				console.log(oficina);
 
-		};
+				setTimeout(function () {
+					App.unblockUI();
+					toastr.success('Se añadió nueva oficina', 'Nueva oficina');
+				}, 3000);
 
-		var setOficina = function (data) {
-			oficina = data;
-		};
 
-		// Public API here
-		return {
-			storeOficina: function (oficina) {
-			},
-			getOficina  : function (id) {
+
+
+			};
+			
+			var getOficina = function (id) {
 				
-			},
-			setOficina  : function (oficina) {
-				setOficina(oficina);
-			}
-		};
-	});
+			};
+			
+			var setOficina = function (data) {
+				oficina = data;
+			};
+			
+			// Public API here
+			return {
+				storeOficina: function () {
+					storeOficina();
+				},
+				getOficina  : function (id) {
+					
+				},
+				getInstance : function () {
+					return instance();
+				}
+			};
+		}
+	]);

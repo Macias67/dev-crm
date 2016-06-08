@@ -81,20 +81,21 @@ angular.module('MetronicApp')
 			
 			function actionsHtml(data, type, full, meta) {
 				vm.tableOficinas.persons[data.id] = data;
-				return '<button type="button" class="btn blue btn-xs" ng-click="showCase.tableOficinas.edit(showCase.tableOficinas.persons[' + data.id + '])">' +
+				return '<button type="button" class="btn blue btn-xs" ng-click="showCase.tableOficinas.edit(oficinaCtrl.tableOficinas.persons[' + data.id + '])">' +
 					'   <i class="fa fa-edit"></i>' +
 					'</button>&nbsp;' +
-					'<button type="button" class="btn red btn-xs" ng-click="showCase.tableOficinas.delete(showCase.tableOficinas.persons[' + data.id + '])" )"="">' +
+					'<button type="button" class="btn red btn-xs" ng-click="showCase.tableOficinas.delete(oficinaCtrl.tableOficinas.persons[' + data.id + '])" )"="">' +
 					'   <i class="fa fa-trash-o"></i>' +
 					'</button>';
 			}
 		}
 	])
 	.controller('ModalOficinaNuevaCtrl', [
-		'$scope', '$uibModalInstance', '$filter', 'GeoCoder', 'toastr', 'NavigatorGeolocation', 'NgMap',
-		function ($scope, $uibModalInstance, $filter, GeoCoder, toastr, NavigatorGeolocation, NgMap) {
+		'$scope', '$uibModalInstance', '$filter', 'GeoCoder', 'toastr', 'NavigatorGeolocation', 'NgMap', 'oficinaService',
+		function ($scope, $uibModalInstance, $filter, GeoCoder, toastr, NavigatorGeolocation, NgMap, oficinaService) {
 			var vm = this;
 
+			vm.oficinaForm = {};
 			vm.paraBuscar = '';
 			vm.centroMapa = [
 				20.3417485,
@@ -102,14 +103,7 @@ angular.module('MetronicApp')
 			];
 			vm.zoomMapa   = 13;
 
-			vm.form = {
-				calle  : '',
-				numero : '',
-				colonia: '',
-				cp     : '',
-				ciudad : '',
-				estado : ''
-			};
+			vm.form = oficinaService.getInstance();
 			
 			$scope.$watch('modalOficinaNueva.form.calle', function () {
 				vm.form.calle = $filter('ucfirst')(vm.form.calle);
@@ -122,6 +116,10 @@ angular.module('MetronicApp')
 			});
 			$scope.$watch('modalOficinaNueva.form.estado', function () {
 				vm.form.estado = $filter('ucfirst')(vm.form.estado);
+			});
+			$scope.$watch('modalOficinaNueva.centroMapa', function () {
+				vm.form.latitud  = vm.centroMapa[0];
+				vm.form.longitud = vm.centroMapa[1];
 			});
 			$scope.$watchGroup(
 				[
@@ -190,7 +188,10 @@ angular.module('MetronicApp')
 			};
 			
 			vm.guarda = function () {
-				$uibModalInstance.close();
+				oficinaService.storeOficina();
+				console.log(vm.oficinaForm);
+				//$uibModalInstance.close();
+				vm.oficinaForm.$setPristine();
 			};
 			
 			vm.cancel = function () {

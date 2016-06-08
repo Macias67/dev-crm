@@ -21,7 +21,8 @@ var MetronicApp = angular.module('MetronicApp', [
 	'toastr',
 	'jcs-autoValidate',
 	'angular.filter',
-	'authService', //Servicios
+	//Servicios
+	'authService'
 ]);
 
 /* Configure ocLazyLoader(refer: https://github.com/ocombe/ocLazyLoad) */
@@ -353,7 +354,7 @@ MetronicApp.config([
 									files       : [
 										'scripts/controllers/gestor_general/departamentos.js',
 									],
-									serie: true
+									serie       : true
 								}
 							]);
 						}
