@@ -31,7 +31,7 @@ angular.module('MetronicApp')
 				dtInstance: {},
 				persons   : {},
 				
-				dtOptions: DTOptionsBuilder.fromSource('http://beta.json-generator.com/api/json/get/Vyh1La-mW')
+				dtOptions: DTOptionsBuilder.fromSource('http://beta.json-generator.com/api/json/get/4ynvah-EW')
 					.withLanguageSource('//cdn.datatables.net/plug-ins/1.10.11/i18n/Spanish.json')
 					.withDataProp('data')
 					.withOption('createdRow', createdRow)
@@ -40,11 +40,14 @@ angular.module('MetronicApp')
 					.withBootstrap(),
 				
 				dtColumns: [
-					DTColumnBuilder.newColumn('id').withTitle('ID').withOption('sWidth', '15%'),
-					DTColumnBuilder.newColumn('firstName').withTitle('Nombre').renderWith(function (data, type, full) {
-						return full.firstName + ' ' + full.lastName;
+					DTColumnBuilder.newColumn('id').withTitle('ID').withOption('sWidth', '10%'),
+					DTColumnBuilder.newColumn('calle').withTitle('Calle').renderWith(function (data, type, full) {
+						return full.calle + ' ' + full.numero;
 					}),
-					DTColumnBuilder.newColumn(null).notSortable().renderWith(actionsHtml).withOption('sWidth', '15%'),
+					DTColumnBuilder.newColumn('ciudad').withTitle('Ciudad').renderWith(function (data, type, full) {
+						return full.ciudad + ', ' + full.estado;
+					}),
+					DTColumnBuilder.newColumn(null).notSortable().renderWith(actionsHtml).withOption('sWidth', '14%'),
 				]
 			};
 			
@@ -81,7 +84,7 @@ angular.module('MetronicApp')
 			
 			function actionsHtml(data, type, full, meta) {
 				vm.tableOficinas.persons[data.id] = data;
-				return '<button type="button" class="btn blue btn-xs" ng-click="showCase.tableOficinas.edit(showCase.tableOficinas.persons[' + data.id + '])">' +
+				return '<button type="button" class="btn blue btn-xs" ng-click = "oficinaCtrl.openModalForm()">' +
 					'   <i class="fa fa-edit"></i>' +
 					'</button>&nbsp;' +
 					'<button type="button" class="btn red btn-xs" ng-click="showCase.tableOficinas.delete(showCase.tableOficinas.persons[' + data.id + '])" )"="">' +
@@ -91,8 +94,8 @@ angular.module('MetronicApp')
 		}
 	])
 	.controller('ModalOficinaNuevaCtrl', [
-		'$scope', '$uibModalInstance', '$filter', 'GeoCoder', 'toastr', 'NavigatorGeolocation', 'NgMap',
-		function ($scope, $uibModalInstance, $filter, GeoCoder, toastr, NavigatorGeolocation, NgMap) {
+		'$scope', '$uibModalInstance', '$filter', 'GeoCoder', 'toastr', 'NavigatorGeolocation', 'NgMap', 'oficinaservice',
+		function ($scope, $uibModalInstance, $filter, GeoCoder, toastr, NavigatorGeolocation, NgMap, oficinaservice) {
 			var vm = this;
 
 			vm.paraBuscar = '';
@@ -102,14 +105,7 @@ angular.module('MetronicApp')
 			];
 			vm.zoomMapa   = 13;
 
-			vm.form = {
-				calle  : '',
-				numero : '',
-				colonia: '',
-				cp     : '',
-				ciudad : '',
-				estado : ''
-			};
+			vm.form = oficinaservice.getInstance();
 			
 			$scope.$watch('modalOficinaNueva.form.calle', function () {
 				vm.form.calle = $filter('ucfirst')(vm.form.calle);
@@ -122,6 +118,10 @@ angular.module('MetronicApp')
 			});
 			$scope.$watch('modalOficinaNueva.form.estado', function () {
 				vm.form.estado = $filter('ucfirst')(vm.form.estado);
+			});
+			$scope.$watch('modalOficinaNueva.centroMapa', function () {
+				vm.form.latitud  = vm.centroMapa[0];
+				vm.form.longitud = vm.centroMapa[1];
 			});
 			$scope.$watchGroup(
 				[
@@ -190,7 +190,22 @@ angular.module('MetronicApp')
 			};
 			
 			vm.guarda = function () {
+
 				$uibModalInstance.close();
+				
+				App.blockUI({
+					target      : 'body',
+					message     : '<b> Guardando nueva oficina </b>',
+					boxed       : true,
+					overlayColor: App.getBrandColor('grey')
+				});
+
+				setTimeout(function () {
+					App.unblockUI();
+					if (oficinaservice.storeOficina()) {
+						toastr.success('Se creó una nueva oficina', 'Nueva oficina');
+					}
+				}, 3000);
 			};
 			
 			vm.cancel = function () {

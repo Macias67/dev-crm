@@ -10,7 +10,7 @@
 angular.module('MetronicApp')
 	.factory('oficinaservice', function () {
 		// Service logic
-
+		
 		var oficina = {
 			calle    : '',
 			numero   : '',
@@ -24,27 +24,23 @@ angular.module('MetronicApp')
 			email    : ''
 		};
 		
-		var storeOficina = function (data) {
-
+		var instance = function () {
+			return oficina;
 		};
-
-		var getOficina = function (id) {
-
+		
+		var storeOficina = function () {
+			console.info('Se guardó nueva oficina');
+			console.log(angular.toJson(oficina, true));
+			return true;
 		};
-
-		var setOficina = function (data) {
-			oficina = data;
-		};
-
+		
 		// Public API here
 		return {
-			storeOficina: function (oficina) {
+			getInstance : function () {
+				return instance();
 			},
-			getOficina  : function (id) {
-				
-			},
-			setOficina  : function (oficina) {
-				setOficina(oficina);
+			storeOficina: function () {
+				return storeOficina();
 			}
 		};
 	});
