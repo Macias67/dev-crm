@@ -9,8 +9,8 @@
  */
 angular.module('MetronicApp')
 	.controller('OficinasCtrl', [
-		'DTOptionsBuilder', 'DTColumnBuilder', '$compile', '$scope', '$rootScope', '$uibModal',
-		function (DTOptionsBuilder, DTColumnBuilder, $compile, $scope, $rootScope, $uibModal) {
+		'DTOptionsBuilder', 'DTColumnBuilder', '$compile', '$auth', '$scope', '$rootScope', '$uibModal',
+		function (DTOptionsBuilder, DTColumnBuilder, $compile, $auth, $scope, $rootScope, $uibModal) {
 			var vm = this;
 			
 			//Nombres
@@ -31,7 +31,8 @@ angular.module('MetronicApp')
 				dtInstance: {},
 				persons   : {},
 				
-				dtOptions: DTOptionsBuilder.fromSource('http://beta.json-generator.com/api/json/get/4ynvah-EW')
+				dtOptions: DTOptionsBuilder.fromSource('http://api.crm/api/oficinas')
+					.withFnServerData(serverData)
 					.withLanguageSource('//cdn.datatables.net/plug-ins/1.10.11/i18n/Spanish.json')
 					.withDataProp('data')
 					.withOption('createdRow', createdRow)
@@ -59,6 +60,21 @@ angular.module('MetronicApp')
 					size       : 'lg'
 				})
 			};
+			
+			function serverData(sSource, aoData, fnCallback, oSettings) {
+				oSettings.jqXHR = $.ajax({
+					'dataType'  : 'json',
+					'type'      : 'GET',
+					'url'       : 'http://api.crm/api/oficinas',
+					'data'      : aoData,
+					'success'   : fnCallback,
+					'beforeSend': function (xhr) {
+						xhr.setRequestHeader('Accept', 'application/vnd.crm.v1+json');
+						xhr.setRequestHeader('Authorization', 'Bearer ' + $auth.getToken());
+						xhr.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
+					}
+				});
+			}
 			
 			function edit(person) {
 				vm.tableOficinas.message = 'You are trying to edit the row: ' + JSON.stringify(person);
@@ -91,22 +107,38 @@ angular.module('MetronicApp')
 					'   <i class="fa fa-trash-o"></i>' +
 					'</button>';
 			}
+			
+			$scope.$on('reloadTable', function () {
+				vm.tableOficinas.dtInstance.reloadData();
+			});
 		}
+	
 	])
 	.controller('ModalOficinaNuevaCtrl', [
-		'$scope', '$uibModalInstance', '$filter', 'GeoCoder', 'toastr', 'NavigatorGeolocation', 'NgMap', 'oficinaservice',
-		function ($scope, $uibModalInstance, $filter, GeoCoder, toastr, NavigatorGeolocation, NgMap, oficinaservice) {
+		'$rootScope', '$scope', '$uibModalInstance', '$filter', 'GeoCoder', 'toastr', 'NavigatorGeolocation', 'NgMap', 'oficinaservice',
+		function ($rootScope, $scope, $uibModalInstance, $filter, GeoCoder, toastr, NavigatorGeolocation, NgMap, oficinaservice) {
 			var vm = this;
-
+			
 			vm.oficinaForm = {};
-			vm.paraBuscar = '';
-			vm.centroMapa = [
+			vm.paraBuscar  = '';
+			vm.centroMapa  = [
 				20.3417485,
 				-102.76523259999999
 			];
-			vm.zoomMapa   = 13;
-			vm.form = oficinaservice.getInstance();
-
+			vm.zoomMapa    = 13;
+			vm.form        = {
+				calle    : 'Sócrates',
+				numero   : '244',
+				colonia  : 'Paso Blanco',
+				cp       : '47810',
+				ciudad   : 'Ocotlán',
+				estado   : 'Jalisco',
+				latitud  : 20.3417485,
+				longitud : -102.76523259999999,
+				telefonos: '3929418119',
+				email    : 'luis.macias@gmail.com'
+			};
+			
 			$scope.$watch('modalOficinaNueva.form.calle', function () {
 				vm.form.calle = $filter('ucfirst')(vm.form.calle);
 			});
@@ -146,7 +178,7 @@ angular.module('MetronicApp')
 						+ vm.form.estado;
 				}
 			);
-
+			
 			// Obtengo posicion actual
 			NavigatorGeolocation.getCurrentPosition()
 				.then(function (position) {
@@ -154,14 +186,14 @@ angular.module('MetronicApp')
 					vm.centroMapa = [lat, lng];
 					vm.zoomMapa   = 16;
 				});
-
+			
 			/**
 			 * Obtengo propiesdades del mapa, en especial el marcador,
 			 * para poder añadirle el evento drag y dragend
 			 */
 			NgMap.getMap().then(function (map) {
 				var marker = map.markers[0];
-
+				
 				marker.addListener('drag', function (event) {
 					$scope.$apply(function () {
 						vm.centroMapa = [
@@ -193,16 +225,16 @@ angular.module('MetronicApp')
 				$uibModalInstance.close();
 				
 				App.blockUI({
-					target      : 'body',
 					message     : '<b> Guardando nueva oficina </b>',
 					boxed       : true,
 					overlayColor: App.getBrandColor('grey')
 				});
-
+				
 				setTimeout(function () {
 					App.unblockUI();
-					if (oficinaservice.storeOficina()) {
+					if (oficinaservice.storeOficina(vm.form)) {
 						toastr.success('Se creó una nueva oficina', 'Nueva oficina');
+						$rootScope.$broadcast('reloadTable');
 					}
 				}, 3000);
 			};

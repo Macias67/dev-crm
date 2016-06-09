@@ -28,7 +28,7 @@ angular.module('MetronicApp')
 			return oficina;
 		};
 		
-		var storeOficina = function () {
+		var storeOficina = function (oficina) {
 			console.info('Se guardó nueva oficina');
 			console.log(angular.toJson(oficina, true));
 			return true;
@@ -39,8 +39,8 @@ angular.module('MetronicApp')
 			getInstance : function () {
 				return instance();
 			},
-			storeOficina: function () {
-				return storeOficina();
+			storeOficina: function (oficina) {
+				return storeOficina(oficina);
 			}
 		};
 	});
