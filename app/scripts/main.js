@@ -9,6 +9,7 @@ var MetronicApp = angular.module('MetronicApp', [
 	'ui.bootstrap',
 	'oc.lazyLoad',
 	'ngSanitize',
+	'ngResource',
 	'ngAnimate',
 	'LocalStorageModule',
 	'satellizer',
@@ -24,6 +25,11 @@ var MetronicApp = angular.module('MetronicApp', [
 	//Servicios
 	'authService'
 ]);
+
+/* Defino constantes */
+MetronicApp.constant('CRM_APP', {
+	url: '//api.dev/api/'
+});
 
 /* Configure ocLazyLoader(refer: https://github.com/ocombe/ocLazyLoad) */
 MetronicApp.config([
@@ -181,8 +187,9 @@ MetronicApp.controller('FooterController', [
 MetronicApp.config([
 	'$stateProvider', '$urlRouterProvider', '$authProvider', '$httpProvider', function ($stateProvider, $urlRouterProvider, $authProvider, $httpProvider) {
 		
-		$httpProvider.defaults.headers.post['Accept'] = 'application/vnd.crm.v1+json';
-		$httpProvider.defaults.useXDomain             = true;
+		$httpProvider.defaults.headers.post['Accept']      = 'application/vnd.crm.v1+json';
+		$httpProvider.defaults.headers.put['Content-Type'] = 'application/json; charset=utf-8';
+		$httpProvider.defaults.useXDomain                  = true;
 		
 		//$authProvider.loginUrl    = 'http://api.crm/api/auth';
 		$authProvider.signupUrl       = 'http://api.crm/api/auth';
@@ -200,7 +207,7 @@ MetronicApp.config([
 		});
 		
 		$stateProvider
-			// Login
+		// Login
 			.state('login', {
 				url        : '/login',
 				templateUrl: 'views/login.html',

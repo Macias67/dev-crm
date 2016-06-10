@@ -9,8 +9,8 @@
  */
 angular.module('MetronicApp')
 	.controller('OficinasCtrl', [
-		'DTOptionsBuilder', 'DTColumnBuilder', '$compile', '$auth', '$scope', '$rootScope', '$uibModal',
-		function (DTOptionsBuilder, DTColumnBuilder, $compile, $auth, $scope, $rootScope, $uibModal) {
+		'DTOptionsBuilder', 'DTColumnBuilder', '$compile', '$auth', '$scope', '$rootScope', '$uibModal', 'CRM_APP',
+		function (DTOptionsBuilder, DTColumnBuilder, $compile, $auth, $scope, $rootScope, $uibModal, CRM_APP) {
 			var vm = this;
 			
 			//Nombres
@@ -227,7 +227,7 @@ angular.module('MetronicApp')
 				App.blockUI({
 					message     : '<b> Guardando nueva oficina </b>',
 					boxed       : true,
-					overlayColor: App.getBrandColor('grey')
+					overlayColor: App.getBrandColor('blue')
 				});
 				
 				setTimeout(function () {
@@ -241,6 +241,8 @@ angular.module('MetronicApp')
 			
 			vm.cancel = function () {
 				$uibModalInstance.dismiss('cancel');
+
+				console.log(oficinaservice.API().query());
 			};
 		}
 	]);
