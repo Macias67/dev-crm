@@ -9,7 +9,7 @@
  */
 angular.module('MetronicApp')
 	.factory('oficinaservice', [
-		'$resource', 'CRM_APP', '$auth', function ($resource, CRM_APP, $auth) {
+		'$resource', 'CRM_APP',function ($resource, CRM_APP) {
 			// Service logic
 			
 			var oficina = {
@@ -31,18 +31,31 @@ angular.module('MetronicApp')
 				return true;
 			};
 			
-			var api = function () {
-				return $resource('http://api.crm/api/ejecutivos', {}, {
-					get: {
-						method: 'GET',
-						headers: {
-							'Accept'       : 'application/vnd.crm.v1+json',
-							'Authorization': 'Bearer ' + $auth.getToken(),
-							'Content-Type' : 'application/json; charset=utf-8'
-						}
-					}
-				});
-			};
+// 			var api = function () {
+// 				return $resource('http://api.crm/api/oficinas/:id', {}, {
+// 					get  : {
+// 						isArray: false,
+// 						headers: {
+// 							'Accept'       : 'application/vnd.crm.v1+json',
+// 							'Authorization': 'Bearer ' + $auth.getToken(),
+// 							'Content-Type' : 'application/json; charset=utf-8'
+// 						}
+// 					},
+// 					save : {
+// 						headers: {
+// 							'Accept'       : 'application/vnd.crm.v1+json',
+// 							'Authorization': 'Bearer ' + $auth.getToken(),
+// 							'Content-Type' : 'application/json; charset=utf-8'
+// 						}
+// 					},
+// 					query: {
+// 						isArray: false,
+// 						headers: {
+// 							'Authorization': 'Bearer ' + $auth.getToken()
+// 						}
+// 					}
+// 				});
+// 			};
 			
 			// Public API here
 			return {
@@ -50,7 +63,7 @@ angular.module('MetronicApp')
 					return storeOficina(oficina);
 				},
 				API         : function () {
-					return api();
+					
 				}
 			};
 		}

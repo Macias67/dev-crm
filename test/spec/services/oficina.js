@@ -1,18 +1,18 @@
 'use strict';
 
-describe('Service: oficina', function () {
+describe('Service: Oficina', function () {
 
   // load the service's module
   beforeEach(module('MetronicApp'));
 
   // instantiate service
-  var oficina;
-  beforeEach(inject(function (_oficina_) {
-    oficina = _oficina_;
+  var Oficina;
+  beforeEach(inject(function (_Oficina_) {
+    Oficina = _Oficina_;
   }));
 
   it('should do something', function () {
-    expect(!!oficina).toBe(true);
+    expect(!!Oficina).toBe(true);
   });
 
 });

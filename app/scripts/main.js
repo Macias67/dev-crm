@@ -28,7 +28,7 @@ var MetronicApp = angular.module('MetronicApp', [
 
 /* Defino constantes */
 MetronicApp.constant('CRM_APP', {
-	url: '//api.dev/api/'
+	url: '//api.crm/api/'
 });
 
 /* Configure ocLazyLoader(refer: https://github.com/ocombe/ocLazyLoad) */
@@ -183,36 +183,38 @@ MetronicApp.controller('FooterController', [
 	}
 ]);
 
-MetronicApp.factory('Interceptor', function () {
-	return {
-		request: function (config) {
-			console.log('Envio peticion de interceptor');
-			return config;
-		},
-
-		requestError: function (config) {
-			return config;
-		},
-
-		response: function (res) {
-			return res;
-		},
-
-		responseError: function (res) {
-			return res;
+MetronicApp.factory('interceptor',
+	function () {
+		return {
+			request: function (config) {
+				config.headers['Accept']       = 'application/vnd.crm.v1+json';
+				config.headers['Content-Type'] = 'application/json; charset=utf-8';
+				return config;
+			},
+			
+			requestError: function (config) {
+				return config;
+			},
+			
+			response: function (res) {
+				return res;
+			},
+			
+			responseError: function (res) {
+				alert('Error!');
+				console.error(res);
+				return res;
+			}
 		}
 	}
-});
+);
 
 /* Setup Rounting For All Pages */
 MetronicApp.config([
 	'$stateProvider', '$urlRouterProvider', '$authProvider', '$httpProvider', function ($stateProvider, $urlRouterProvider, $authProvider, $httpProvider) {
-
-		$httpProvider.interceptors.push('Interceptor');
-
-// 		$httpProvider.defaults.headers.post['Accept']      = 'application/vnd.crm.v1+json';
-// 		$httpProvider.defaults.headers.put['Content-Type'] = 'application/json; charset=utf-8';
-// 		$httpProvider.defaults.useXDomain                  = true;
+		
+		$httpProvider.interceptors.push('interceptor');
+		$httpProvider.defaults.useXDomain = true;
 		
 		//$authProvider.loginUrl    = 'http://api.crm/api/auth';
 		$authProvider.signupUrl       = 'http://api.crm/api/auth';
@@ -357,7 +359,7 @@ MetronicApp.config([
 									name        : 'OficinasNG',
 									insertBefore: '#ng_load_plugins_ng',
 									files       : [
-										'scripts/controllers/gestor_general/oficinas.js',
+										'scripts/controllers/gestor_general/oficinas.js'
 									]
 								}
 							]);
@@ -401,11 +403,11 @@ MetronicApp.run([
 		
 		$rootScope.$state    = $state; // state to be accessed from view
 		$rootScope.$settings = settings; // state to be accessed from view
-
+		
 		//validator.setValidElementStyling(false);
 		defaultErrorMessageResolver.setI18nFileRootPath('bower_components/angular-auto-validate/dist/lang/');
 		defaultErrorMessageResolver.setCulture('es-CO');
-
+		
 		$rootScope.$on('$stateChangeStart', function (event, toState) {
 			var requiredLogin = false;
 			// check if this state need login

@@ -31,7 +31,7 @@ angular.module('MetronicApp')
 				dtInstance: {},
 				persons   : {},
 				
-				dtOptions: DTOptionsBuilder.fromSource('http://api.crm/api/oficinas')
+				dtOptions: DTOptionsBuilder.fromSource(CRM_APP.url + 'oficinas')
 					.withFnServerData(serverData)
 					.withLanguageSource('//cdn.datatables.net/plug-ins/1.10.11/i18n/Spanish.json')
 					.withDataProp('data')
@@ -65,7 +65,7 @@ angular.module('MetronicApp')
 				oSettings.jqXHR = $.ajax({
 					'dataType'  : 'json',
 					'type'      : 'GET',
-					'url'       : 'http://api.crm/api/oficinas',
+					'url'       : CRM_APP.url + 'oficinas',
 					'data'      : aoData,
 					'success'   : fnCallback,
 					'beforeSend': function (xhr) {
@@ -115,8 +115,8 @@ angular.module('MetronicApp')
 	
 	])
 	.controller('ModalOficinaNuevaCtrl', [
-		'$rootScope', '$scope', '$uibModalInstance', '$filter', 'GeoCoder', 'toastr', 'NavigatorGeolocation', 'NgMap', 'oficinaservice',
-		function ($rootScope, $scope, $uibModalInstance, $filter, GeoCoder, toastr, NavigatorGeolocation, NgMap, oficinaservice) {
+		'$rootScope', '$scope', '$uibModalInstance', '$filter', 'GeoCoder', 'toastr', 'NavigatorGeolocation', 'NgMap', 'oficinaservice', 'Oficina',
+		function ($rootScope, $scope, $uibModalInstance, $filter, GeoCoder, toastr, NavigatorGeolocation, NgMap, oficinaservice, Oficina) {
 			var vm = this;
 			
 			vm.oficinaForm = {};
@@ -222,27 +222,30 @@ angular.module('MetronicApp')
 			};
 			
 			vm.guarda = function () {
+
 				$uibModalInstance.close();
-				
+
 				App.blockUI({
 					message     : '<b> Guardando nueva oficina </b>',
 					boxed       : true,
 					overlayColor: App.getBrandColor('blue')
 				});
-				
-				setTimeout(function () {
+
+				var oficina = new Oficina(vm.form);
+				oficina.$save(function (data) {
+					console.log(data);
+					$rootScope.$broadcast('reloadTable');
+					toastr.success('Se creó una nueva oficina', 'Nueva oficina');
 					App.unblockUI();
-					if (oficinaservice.storeOficina(vm.form)) {
-						toastr.success('Se creó una nueva oficina', 'Nueva oficina');
-						$rootScope.$broadcast('reloadTable');
-					}
-				}, 3000);
+				});
 			};
 			
 			vm.cancel = function () {
 				$uibModalInstance.dismiss('cancel');
-
-				console.log(oficinaservice.API().query());
+//
+// 				oficinaservice.API().query().$promise.then(function (response) {
+// 					console.log(response.data);
+// 				});
 			};
 		}
 	]);

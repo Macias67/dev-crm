@@ -61,7 +61,10 @@ angular.module('authService', [])
 				boxed       : true,
 				overlayColor: App.getBrandColor('grey')
 			});
-
+			
+			/**
+			 * @TODO Validar que la respuesta tenga el token de JWT
+			 */
 			$auth.signup(loginForm).then(
 				function (response) {
 					//console.log(angular.toJson(response.data.data, true));
