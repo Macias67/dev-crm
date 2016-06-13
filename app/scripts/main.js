@@ -183,13 +183,36 @@ MetronicApp.controller('FooterController', [
 	}
 ]);
 
+MetronicApp.factory('Interceptor', function () {
+	return {
+		request: function (config) {
+			console.log('Envio peticion de interceptor');
+			return config;
+		},
+
+		requestError: function (config) {
+			return config;
+		},
+
+		response: function (res) {
+			return res;
+		},
+
+		responseError: function (res) {
+			return res;
+		}
+	}
+});
+
 /* Setup Rounting For All Pages */
 MetronicApp.config([
 	'$stateProvider', '$urlRouterProvider', '$authProvider', '$httpProvider', function ($stateProvider, $urlRouterProvider, $authProvider, $httpProvider) {
-		
-		$httpProvider.defaults.headers.post['Accept']      = 'application/vnd.crm.v1+json';
-		$httpProvider.defaults.headers.put['Content-Type'] = 'application/json; charset=utf-8';
-		$httpProvider.defaults.useXDomain                  = true;
+
+		$httpProvider.interceptors.push('Interceptor');
+
+// 		$httpProvider.defaults.headers.post['Accept']      = 'application/vnd.crm.v1+json';
+// 		$httpProvider.defaults.headers.put['Content-Type'] = 'application/json; charset=utf-8';
+// 		$httpProvider.defaults.useXDomain                  = true;
 		
 		//$authProvider.loginUrl    = 'http://api.crm/api/auth';
 		$authProvider.signupUrl       = 'http://api.crm/api/auth';
