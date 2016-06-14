@@ -61,6 +61,21 @@ angular.module('MetronicApp')
 				})
 			};
 			
+			vm.reloadTable = function () {
+
+				App.blockUI({
+					target      : '#tableOficinas',
+					animate     : true,
+					overlayColor: App.getBrandColor('grey')
+				});
+
+				vm.tableOficinas.dtInstance.reloadData();
+
+				setTimeout(function () {
+					App.unblockUI('#tableOficinas');
+				}, 1500);
+			};
+			
 			function serverData(sSource, aoData, fnCallback, oSettings) {
 				oSettings.jqXHR = $.ajax({
 					'dataType'  : 'json',
@@ -115,8 +130,8 @@ angular.module('MetronicApp')
 	
 	])
 	.controller('ModalOficinaNuevaCtrl', [
-		'$rootScope', '$scope', '$uibModalInstance', '$filter', 'GeoCoder', 'toastr', 'NavigatorGeolocation', 'NgMap', 'oficinaservice', 'Oficina',
-		function ($rootScope, $scope, $uibModalInstance, $filter, GeoCoder, toastr, NavigatorGeolocation, NgMap, oficinaservice, Oficina) {
+		'$rootScope', '$scope', '$uibModalInstance', '$filter', 'GeoCoder', 'toastr', 'NavigatorGeolocation', 'NgMap', 'Oficina',
+		function ($rootScope, $scope, $uibModalInstance, $filter, GeoCoder, toastr, NavigatorGeolocation, NgMap, Oficina) {
 			var vm = this;
 			
 			vm.oficinaForm = {};

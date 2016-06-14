@@ -85,12 +85,26 @@ angular.module('authService', [])
 			);
 		};
 		
+		var isAuthenticated = function () {
+			return $auth.isAuthenticated();
+		}
+		
+		var getToken = function () {
+			return $auth.getToken();
+		};
+		
 		return {
 			loginApi      : function (loginForm) {
 				login(loginForm);
 			},
+			isAuthenticated: function () {
+				return isAuthenticated();
+			},
 			getSessionData: function () {
 				return getSession();
+			},
+			getToken: function () {
+				return getToken
 			},
 			logout        : function () {
 				logout();

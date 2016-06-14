@@ -36,7 +36,7 @@ MetronicApp.config([
 	'$ocLazyLoadProvider', function ($ocLazyLoadProvider) {
 		$ocLazyLoadProvider.config({
 			// global configs go here
-			debug: true
+			debug: false
 		});
 	}
 ]);
@@ -183,8 +183,8 @@ MetronicApp.controller('FooterController', [
 	}
 ]);
 
-MetronicApp.factory('interceptor',
-	function () {
+MetronicApp.service('interceptor',
+	function ($injector) {
 		return {
 			request: function (config) {
 				config.headers['Accept']       = 'application/vnd.crm.v1+json';
@@ -201,8 +201,8 @@ MetronicApp.factory('interceptor',
 			},
 			
 			responseError: function (res) {
-				alert('Error!');
-				console.error(res);
+				var $toastr = $injector.get('toastr');
+				$toastr.error('Error', 'Error');
 				return res;
 			}
 		}
