@@ -287,10 +287,25 @@ angular.module('MetronicApp')
 				});
 
 				if (formEdit) {
-					var oficina = Oficina.get({id: dtOficina.data.id}, function () {
-						oficina.data = vm.form;
-						console.log(oficina);
-						Oficina.$update({id:vm.form.id}, oficina);
+// 					var oficina = Oficina.get({id: dtOficina.data.id}, function () {
+// 						oficina.data = vm.form;
+// 						oficina.$update();
+// 					});
+
+					//vm.form.telefonos.toString();
+					Oficina.update({id: dtOficina.data.id}, vm.form, function (response) {
+						if (response.hasOwnProperty('errors')) {
+							for (var key in response.errors) {
+								if (response.errors.hasOwnProperty(key)) {
+									toastr.error(response.errors[key][0], 'Error con el formulario.');
+								}
+							}
+						}
+						else {
+							$uibModalInstance.close();
+							$rootScope.$broadcast('reloadTable');
+							toastr.success('Se actualizó los datos de la oficina', 'Edición de oficina');
+						}
 					});
 				}
 				else {

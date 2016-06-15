@@ -9,7 +9,7 @@
  */
 angular.module('MetronicApp')
 	.factory('Oficina', function ($resource, CRM_APP, $auth) {
-		return $resource(CRM_APP.url + 'oficinas/:id', {id: "@_id"}, {
+		return $resource(CRM_APP.url + 'oficinas/:id', {id: "@data.id"}, {
 			get   : {
 				isArray: false,
 				headers: {
@@ -30,9 +30,6 @@ angular.module('MetronicApp')
 			},
 			update: {
 				method : 'PUT',
-				params : {
-					id: "@id"
-				},
 				headers: {
 					'Authorization': 'Bearer ' + $auth.getToken()
 				}
