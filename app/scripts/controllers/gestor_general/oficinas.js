@@ -9,8 +9,8 @@
  */
 angular.module('MetronicApp')
 	.controller('OficinasCtrl', [
-		'DTOptionsBuilder', 'DTColumnBuilder', '$compile', '$auth', '$scope', '$rootScope', '$uibModal', 'CRM_APP',
-		function (DTOptionsBuilder, DTColumnBuilder, $compile, $auth, $scope, $rootScope, $uibModal, CRM_APP) {
+		'DTOptionsBuilder', 'DTColumnBuilder', '$compile', '$auth', '$scope', '$rootScope', '$uibModal', 'CRM_APP', 'Oficina',
+		function (DTOptionsBuilder, DTColumnBuilder, $compile, $auth, $scope, $rootScope, $uibModal, CRM_APP, Oficina) {
 			var vm = this;
 			
 			//Nombres
@@ -57,20 +57,46 @@ angular.module('MetronicApp')
 					backdrop   : 'static',
 					templateUrl: 'OficinaNuevaForm.html',
 					controller : 'ModalOficinaNuevaCtrl as modalOficinaNueva',
-					size       : 'lg'
-				})
+					size       : 'lg',
+					resolve    : {
+						dtOficina: null
+					}
+				});
+			};
+
+			vm.openModalEditForm = function (id) {
+
+				App.blockUI({
+					target      : '#ui-view',
+					animate     : true,
+					overlayColor: App.getBrandColor('grey'),
+					zIndex      : 99999
+				});
+
+				var oficina = Oficina.get({id: id}, function () {
+					App.unblockUI('#ui-view');
+					$uibModal.open({
+						backdrop   : 'static',
+						templateUrl: 'OficinaNuevaForm.html',
+						controller : 'ModalOficinaNuevaCtrl as modalOficinaNueva',
+						size       : 'lg',
+						resolve    : {
+							dtOficina: oficina
+						}
+					});
+				});
 			};
 			
 			vm.reloadTable = function () {
-
+				
 				App.blockUI({
 					target      : '#tableOficinas',
 					animate     : true,
 					overlayColor: App.getBrandColor('grey')
 				});
-
+				
 				vm.tableOficinas.dtInstance.reloadData();
-
+				
 				setTimeout(function () {
 					App.unblockUI('#tableOficinas');
 				}, 1500);
@@ -115,7 +141,7 @@ angular.module('MetronicApp')
 			
 			function actionsHtml(data, type, full, meta) {
 				vm.tableOficinas.persons[data.id] = data;
-				return '<button type="button" class="btn blue btn-xs" ng-click = "oficinaCtrl.openModalForm()">' +
+				return '<button type="button" class="btn blue btn-xs" ng-click = "oficinaCtrl.openModalEditForm(' + data.id + ')">' +
 					'   <i class="fa fa-edit"></i>' +
 					'</button>&nbsp;' +
 					'<button type="button" class="btn red btn-xs" ng-click="showCase.tableOficinas.delete(oficinaCtrl.tableOficinas.persons[' + data.id + '])" )"="">' +
@@ -124,35 +150,47 @@ angular.module('MetronicApp')
 			}
 			
 			$scope.$on('reloadTable', function () {
-				vm.tableOficinas.dtInstance.reloadData();
+				vm.reloadTable();
 			});
 		}
-	
 	])
 	.controller('ModalOficinaNuevaCtrl', [
-		'$rootScope', '$scope', '$uibModalInstance', '$filter', 'GeoCoder', 'toastr', 'NavigatorGeolocation', 'NgMap', 'Oficina',
-		function ($rootScope, $scope, $uibModalInstance, $filter, GeoCoder, toastr, NavigatorGeolocation, NgMap, Oficina) {
+		'$rootScope', '$scope', '$uibModalInstance', '$filter', 'GeoCoder', 'toastr', 'NavigatorGeolocation', 'NgMap', 'Oficina', 'dtOficina',
+		function ($rootScope, $scope, $uibModalInstance, $filter, GeoCoder, toastr, NavigatorGeolocation, NgMap, Oficina, dtOficina) {
 			var vm = this;
-			
+
+			var formEdit   = false;
 			vm.oficinaForm = {};
 			vm.paraBuscar  = '';
-			vm.centroMapa  = [
-				20.3417485,
-				-102.76523259999999
-			];
 			vm.zoomMapa    = 13;
-			vm.form        = {
-				calle    : 'Sócrates',
-				numero   : '244',
-				colonia  : 'Paso Blanco',
-				cp       : '47810',
-				ciudad   : 'Ocotlán',
-				estado   : 'Jalisco',
-				latitud  : 20.3417485,
-				longitud : -102.76523259999999,
-				telefonos: '3929418119',
-				email    : 'luis.macias@gmail.com'
-			};
+
+			if (dtOficina != null && dtOficina.hasOwnProperty('data')) {
+				vm.form       = dtOficina.data;
+				vm.centroMapa = [
+					dtOficina.data.latitud,
+					dtOficina.data.longitud
+				];
+				vm.zoomMapa   = 16;
+				formEdit      = true;
+			}
+			else {
+				vm.form       = {
+					calle    : 'Sócrates',
+					numero   : '244',
+					colonia  : 'Paso Blanco',
+					cp       : '47810',
+					ciudad   : 'Ocotlán',
+					estado   : 'Jalisco',
+					latitud  : 20.3417485,
+					longitud : -102.76523259999999,
+					telefonos: '3929418119',
+					email    : 'luis.macias@gmail.com'
+				};
+				vm.centroMapa = [
+					20.3417485,
+					-102.76523259999999
+				];
+			}
 			
 			$scope.$watch('modalOficinaNueva.form.calle', function () {
 				vm.form.calle = $filter('ucfirst')(vm.form.calle);
@@ -193,22 +231,25 @@ angular.module('MetronicApp')
 						+ vm.form.estado;
 				}
 			);
-			
-			// Obtengo posicion actual
-			NavigatorGeolocation.getCurrentPosition()
-				.then(function (position) {
-					var lat       = position.coords.latitude, lng = position.coords.longitude;
-					vm.centroMapa = [lat, lng];
-					vm.zoomMapa   = 16;
-				});
-			
+
+
+			if (!formEdit) {
+				// Obtengo posicion actual
+				NavigatorGeolocation.getCurrentPosition()
+					.then(function (position) {
+						var lat       = position.coords.latitude, lng = position.coords.longitude;
+						vm.centroMapa = [lat, lng];
+						vm.zoomMapa   = 16;
+					});
+			}
+
 			/**
 			 * Obtengo propiesdades del mapa, en especial el marcador,
 			 * para poder añadirle el evento drag y dragend
 			 */
 			NgMap.getMap().then(function (map) {
 				var marker = map.markers[0];
-				
+
 				marker.addListener('drag', function (event) {
 					$scope.$apply(function () {
 						vm.centroMapa = [
@@ -237,22 +278,40 @@ angular.module('MetronicApp')
 			};
 			
 			vm.guarda = function () {
-
-				$uibModalInstance.close();
-
 				App.blockUI({
+					target      : '#ui-view',
 					message     : '<b> Guardando nueva oficina </b>',
 					boxed       : true,
-					overlayColor: App.getBrandColor('blue')
+					overlayColor: App.getBrandColor('grey'),
+					zIndex      : 99999
 				});
 
-				var oficina = new Oficina(vm.form);
-				oficina.$save(function (data) {
-					console.log(data);
-					$rootScope.$broadcast('reloadTable');
-					toastr.success('Se creó una nueva oficina', 'Nueva oficina');
-					App.unblockUI();
-				});
+				if (formEdit) {
+					var oficina = Oficina.get({id: dtOficina.data.id}, function () {
+						oficina.data = vm.form;
+						console.log(oficina);
+						Oficina.$update({id:vm.form.id}, oficina);
+					});
+				}
+				else {
+					var oficina = new Oficina(vm.form);
+					oficina.$save(function (response) {
+						if (response.hasOwnProperty('errors')) {
+							for (var key in response.errors) {
+								if (response.errors.hasOwnProperty(key)) {
+									toastr.error(response.errors[key][0], 'Error con el formulario.');
+								}
+							}
+						}
+						else {
+							$uibModalInstance.close();
+							$rootScope.$broadcast('reloadTable');
+							toastr.success('Se creó una nueva oficina', 'Nueva oficina');
+						}
+					});
+				}
+
+				App.unblockUI('#ui-view');
 			};
 			
 			vm.cancel = function () {

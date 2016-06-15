@@ -183,7 +183,9 @@ MetronicApp.controller('FooterController', [
 	}
 ]);
 
-MetronicApp.service('interceptor',
+/* Interceptor para las peticiones */
+MetronicApp.service('interceptor', [
+	'$injector',
 	function ($injector) {
 		return {
 			request: function (config) {
@@ -191,27 +193,34 @@ MetronicApp.service('interceptor',
 				config.headers['Content-Type'] = 'application/json; charset=utf-8';
 				return config;
 			},
-			
+
 			requestError: function (config) {
 				return config;
 			},
-			
+
 			response: function (res) {
 				return res;
 			},
-			
-			responseError: function (res) {
-				var $toastr = $injector.get('toastr');
-				$toastr.error('Error', 'Error');
-				return res;
+
+			responseError: function (response) {
+				if (response.hasOwnProperty('error') && response.error == "token_expired") {
+					var toastr = $injector.get('toastr');
+					var $state = $injector.get('$state');
+
+					toastr.error('El token de sesión ha expirado, inicia de nuevo sesión.', 'La sesión ha expirado.');
+					$state.go('login');
+				}
+				return response;
 			}
 		}
 	}
-);
+]);
 
 /* Setup Rounting For All Pages */
 MetronicApp.config([
-	'$stateProvider', '$urlRouterProvider', '$authProvider', '$httpProvider', function ($stateProvider, $urlRouterProvider, $authProvider, $httpProvider) {
+	'$stateProvider', '$urlRouterProvider', '$authProvider', '$httpProvider', 'toastrConfig',
+
+	function ($stateProvider, $urlRouterProvider, $authProvider, $httpProvider, toastrConfig) {
 		
 		$httpProvider.interceptors.push('interceptor');
 		$httpProvider.defaults.useXDomain = true;
@@ -393,6 +402,27 @@ MetronicApp.config([
 					]
 				}
 			});
+
+		angular.extend(toastrConfig, {
+			allowHtml      : true,
+			closeButton    : true,
+			extendedTimeOut: 1000,
+			iconClasses    : {
+				error  : 'toast-error',
+				info   : 'toast-info',
+				success: 'toast-success',
+				warning: 'toast-warning'
+			},
+			messageClass   : 'toast-message',
+			onHidden       : null,
+			onShown        : null,
+			onTap          : null,
+			progressBar    : true,
+			tapToDismiss   : true,
+			timeOut        : 5000,
+			titleClass     : 'toast-title',
+			toastClass     : 'toast'
+		});
 	}
 ]);
 

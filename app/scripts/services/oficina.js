@@ -9,21 +9,30 @@
  */
 angular.module('MetronicApp')
 	.factory('Oficina', function ($resource, CRM_APP, $auth) {
-		return $resource(CRM_APP.url + 'oficinas/:id', {}, {
-			get  : {
+		return $resource(CRM_APP.url + 'oficinas/:id', {id: "@_id"}, {
+			get   : {
 				isArray: false,
 				headers: {
 					'Authorization': 'Bearer ' + $auth.getToken()
 				}
 			},
-			save : {
+			save  : {
 				method : 'POST',
 				headers: {
 					'Authorization': 'Bearer ' + $auth.getToken()
 				}
 			},
-			query: {
+			query : {
 				isArray: false,
+				headers: {
+					'Authorization': 'Bearer ' + $auth.getToken()
+				}
+			},
+			update: {
+				method : 'PUT',
+				params : {
+					id: "@id"
+				},
 				headers: {
 					'Authorization': 'Bearer ' + $auth.getToken()
 				}
