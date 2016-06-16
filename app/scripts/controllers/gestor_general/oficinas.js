@@ -9,8 +9,8 @@
  */
 angular.module('MetronicApp')
 	.controller('OficinasCtrl', [
-		'DTOptionsBuilder', 'DTColumnBuilder', '$compile', '$auth', '$scope', '$rootScope', '$uibModal', 'CRM_APP', 'Oficina',
-		function (DTOptionsBuilder, DTColumnBuilder, $compile, $auth, $scope, $rootScope, $uibModal, CRM_APP, Oficina) {
+		'DTOptionsBuilder', 'DTColumnBuilder', '$compile', '$auth', '$scope', '$rootScope', '$uibModal', 'CRM_APP', 'Oficina', '$ngBootbox', 'toastr',
+		function (DTOptionsBuilder, DTColumnBuilder, $compile, $auth, $scope, $rootScope, $uibModal, CRM_APP, Oficina, $ngBootbox, toastr) {
 			var vm = this;
 			
 			//Nombres
@@ -86,6 +86,31 @@ angular.module('MetronicApp')
 					});
 				});
 			};
+
+			vm.deleteOficina = function (id) {
+				$ngBootbox.confirm('<b>¿Seguro de eliminar esta oficina?</b>')
+					.then(function () {
+
+						App.blockUI({
+							target      : '#ui-view',
+							message     : '<b> Eliminado oficina </b>',
+							boxed       : true,
+							overlayColor: App.getBrandColor('grey'),
+							zIndex      : 99999
+						});
+
+						console.info('Eliminando oficina con id: ' + id);
+
+						setTimeout(function () {
+							App.unblockUI('#ui-view');
+							toastr.success('La oficina se eliminó correctamete', 'Oficina eliminada');
+							vm.reloadTable();
+						}, 1000);
+
+					}, function () {
+						console.log('cancelo');
+					});
+			};
 			
 			vm.reloadTable = function () {
 				
@@ -144,7 +169,7 @@ angular.module('MetronicApp')
 				return '<button type="button" class="btn blue btn-xs" ng-click = "oficinaCtrl.openModalEditForm(' + data.id + ')">' +
 					'   <i class="fa fa-edit"></i>' +
 					'</button>&nbsp;' +
-					'<button type="button" class="btn red btn-xs" ng-click="showCase.tableOficinas.delete(oficinaCtrl.tableOficinas.persons[' + data.id + '])" )"="">' +
+					'<button type="button" class="btn red btn-xs" ng-click="oficinaCtrl.deleteOficina(' + data.id + ')">' +
 					'   <i class="fa fa-trash-o"></i>' +
 					'</button>';
 			}
@@ -278,21 +303,17 @@ angular.module('MetronicApp')
 			};
 			
 			vm.guarda = function () {
+
 				App.blockUI({
 					target      : '#ui-view',
-					message     : '<b> Guardando nueva oficina </b>',
+					message     : '<b> Guardando  oficina </b>',
 					boxed       : true,
 					overlayColor: App.getBrandColor('grey'),
 					zIndex      : 99999
 				});
 
 				if (formEdit) {
-// 					var oficina = Oficina.get({id: dtOficina.data.id}, function () {
-// 						oficina.data = vm.form;
-// 						oficina.$update();
-// 					});
-
-					//vm.form.telefonos.toString();
+					vm.form.telefonos = vm.form.telefonos.toString();
 					Oficina.update({id: dtOficina.data.id}, vm.form, function (response) {
 						if (response.hasOwnProperty('errors')) {
 							for (var key in response.errors) {
@@ -326,15 +347,14 @@ angular.module('MetronicApp')
 					});
 				}
 
-				App.unblockUI('#ui-view');
+				setTimeout(function () {
+					App.unblockUI('#ui-view');
+				}, 1000);
+
 			};
 			
 			vm.cancel = function () {
 				$uibModalInstance.dismiss('cancel');
-//
-// 				oficinaservice.API().query().$promise.then(function (response) {
-// 					console.log(response.data);
-// 				});
 			};
 		}
 	]);

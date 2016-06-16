@@ -11,6 +11,7 @@ var MetronicApp = angular.module('MetronicApp', [
 	'ngSanitize',
 	'ngResource',
 	'ngAnimate',
+	'ngBootbox',
 	'LocalStorageModule',
 	'satellizer',
 	'permission',
@@ -203,9 +204,13 @@ MetronicApp.service('interceptor', [
 			},
 
 			responseError: function (response) {
+				console.error('responseERROR: ');
+				console.error(response);
 				if (response.hasOwnProperty('error') && response.error == "token_expired") {
 					var toastr = $injector.get('toastr');
 					var $state = $injector.get('$state');
+
+					console.log('Entro a la validación de token_expired')
 
 					toastr.error('El token de sesión ha expirado, inicia de nuevo sesión.', 'La sesión ha expirado.');
 					$state.go('login');

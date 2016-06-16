@@ -59,16 +59,16 @@
 						<h1>{{ formLogin.usuario }} Login</h1>
 						<p> Lorem ipsum dolor sit amet, coectetuer adipiscing elit sed diam nonummy et nibh euismod aliquam erat volutpat. Lorem ipsum dolor sit amet, coectetuer adipiscing. </p>
 
-						<form action = "javascript:;" class = "login-form" method = "post">
+						<form action = "javascript:;" class = "login-form" method = "post" autocomplete = "off">
 							<div class = "alert alert-danger display-hide">
 								<button class = "close" data-close = "alert"></button>
 								<span>Enter any username and password. </span>
 							</div>
 							<div class = "row">
 								<div class = "col-xs-6">
-								<input class = "form-control form-control-solid placeholder-no-fix form-group" type = "text" autocomplete = "off" placeholder = "Email" ng-model = "formLogin.usuario" required/> </div>
+								<input class = "form-control form-control-solid placeholder-no-fix form-group" type = "email" placeholder = "Email" ng-model = "formLogin.usuario" required/> </div>
 								<div class = "col-xs-6">
-								<input class = "form-control form-control-solid placeholder-no-fix form-group" type = "password" autocomplete = "off" placeholder = "Contraseña" ng-model = "formLogin.password" required/> </div>
+								<input class = "form-control form-control-solid placeholder-no-fix form-group" type = "password" placeholder = "Contraseña" ng-model = "formLogin.password" required/> </div>
 							</div>
 							<div class = "row">
 								<div class = "col-sm-4">
@@ -91,9 +91,9 @@
 						<!-- BEGIN FORGOT PASSWORD FORM -->
 						<form class = "forget-form" action = "javascript:;" method = "post">
 							<h3 class = "font-green">¿Olvidaste la contraseña?</h3>
-							<p> Enter your e-mail address below to reset your password. </p>
+							<p>Escribe tu correo electrónico para recuperar tu contraseña. </p>
 							<div class = "form-group">
-								<input class = "form-control placeholder-no-fix form-group" type = "text" autocomplete = "off" placeholder = "Email" name = "email"/>
+								<input class = "form-control placeholder-no-fix form-group" type = "email" autocomplete = "off" placeholder = "Email" name = "email" required/>
 							</div>
 							<div class = "form-actions">
 								<button type = "button" id = "back-btn" class = "btn green btn-outline">Atrás</button>
