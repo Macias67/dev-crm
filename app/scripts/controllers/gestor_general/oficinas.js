@@ -11,6 +11,12 @@ angular.module('MetronicApp')
 	.controller('OficinasCtrl', [
 		'DTOptionsBuilder', 'DTColumnBuilder', '$compile', '$auth', '$scope', '$rootScope', '$uibModal', 'CRM_APP', 'Oficina', '$ngBootbox', 'toastr',
 		function (DTOptionsBuilder, DTColumnBuilder, $compile, $auth, $scope, $rootScope, $uibModal, CRM_APP, Oficina, $ngBootbox, toastr) {
+			
+			$scope.$on('$viewContentLoaded', function () {
+				// initialize core components
+				App.initAjax();
+			});
+			
 			var vm = this;
 			
 			//Nombres

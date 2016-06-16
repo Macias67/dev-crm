@@ -338,6 +338,20 @@ MetronicApp.config([
 				templateUrl: 'views/clientes/form_cliente.html',
 				data       : {
 					pageTitle: 'Nuevo Cliente'
+				},
+				controller : 'NuevoClienteCtrl as nuevoClienteCtrl',
+				resolve    : {
+					deps: [
+						'$ocLazyLoad', function ($ocLazyLoad) {
+							return $ocLazyLoad.load({
+								name        : 'MetronicApp',
+								insertBefore: '#ng_load_plugins_ng',
+								files       : [
+									'scripts/controllers/clientes/nuevocliente.js'
+								]
+							});
+						}
+					]
 				}
 			})
 			// Cotizaciones

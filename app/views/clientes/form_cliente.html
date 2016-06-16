@@ -1,6 +1,7 @@
-<h3 class = "page-title"> Nuevo Cliente
-	<small>blank page layout</small>
+<h3 class = "page-title"> {{vista.titulo}}
+	<small>{{vista.subtitulo}}</small>
 </h3>
+
 <div class = "page-bar">
 	<ul class = "page-breadcrumb">
 		<li>
@@ -16,34 +17,279 @@
 			<span>Page Layouts</span>
 		</li>
 	</ul>
-	<div class = "page-toolbar">
-		<div class = "btn-group pull-right">
-			<button type = "button" class = "btn btn-fit-height grey-salt dropdown-toggle" data-toggle = "dropdown" data-hover = "dropdown" data-delay = "1000" data-close-others = "true"> Actions
-				<i class = "fa fa-angle-down"></i>
-			</button>
-			<ul class = "dropdown-menu pull-right" role = "menu">
-				<li>
-					<a href = "#">
-						<i class = "icon-bell"></i>
-					</a>
-				</li>
-				<li>
-					<a href = "#">
-						<i class = "icon-shield"></i> Another action
-					</a>
-				</li>
-				<li>
-					<a href = "#">
-						<i class = "icon-user"></i> Something else here
-					</a>
-				</li>
-				<li class = "divider"> </li>
-				<li>
-					<a href = "#">
-						<i class = "icon-bag"></i> Separated link
-					</a>
-				</li>
-			</ul>
+</div>
+
+<div class = "row">
+	<div class = "col-md-12">
+		<!-- BEGIN SAMPLE FORM PORTLET-->
+		<div class = "portlet light ">
+			<div class = "portlet-title">
+				<div class = "caption font-red-sunglo">
+					<i class = "fa fa-user font-red-sunglo"></i>
+					<span class = "caption-subject bold uppercase"> Nuevo Cliente</span>
+				</div>
+			</div>
+			<div class = "portlet-body form">
+
+					<form role = "form">
+						<div class = "form-body">
+							<div class = "col-md-6">
+								<h5 class = "form-section">
+									<b>Información Básica</b>
+								</h5>
+								<div class = "form-group">
+									<label>
+										Razón Social
+										<span class = "required" aria-required = "true">*</span>
+									</label>
+									<div class = "input-icon input-icon-lg right">
+										<i class = "fa fa-asterisk"></i>
+										<input type = "text" class = "form-control input-lg" placeholder = "Razón Social">
+									</div>
+								</div>
+								<div class = "form-group">
+									<label>
+										R.F.C.
+										<span class = "required" aria-required = "true">*</span>
+									</label>
+									<div class = "input-icon input-icon-lg right">
+										<i class = "fa fa-bell-o"></i>
+										<input type = "text" class = "form-control input-lg" placeholder = "R.F.C">
+									</div>
+								</div>
+								<div class = "form-group">
+									<label>
+										Email
+										<span class = "required" aria-required = "true">*</span>
+									</label>
+									<div class = "input-icon input-icon-sm right">
+										<i class = "fa fa-envelope"></i>
+										<input type = "text" class = "form-control input-sm" placeholder = "Email">
+									</div>
+								</div>
+								<div class = "form-group">
+									<label>
+										Tipo de cliente
+										<span class = "required" aria-required = "true">*</span>
+									</label>
+									<div class = "mt-radio-inline">
+										<label class = "mt-radio">
+											<input type = "radio" name = "optionsRadios" id = "optionsRadios4" value = "option1" checked> <b>Normal</b>
+											<span></span>
+										</label>
+										<label class = "mt-radio">
+											<input type = "radio" name = "optionsRadios" id = "optionsRadios5" value = "option2"> <b>Distribuidor</b>
+											<span></span>
+										</label>
+									</div>
+								</div>
+
+								<h5 class = "form-section">
+									<b>Domicilio</b>
+								</h5>
+								<div class = "form-group">
+									<label>
+										Calle
+										<span class = "required" aria-required = "true">*</span>
+									</label>
+									<div class = "input-icon input-icon-sm right">
+										<i class = "fa fa-map-marker"></i>
+										<input type = "text" class = "form-control input-sm" placeholder = "Calle">
+									</div>
+								</div>
+								<div class = "form-group">
+									<label>
+										No. Exterior
+										<span class = "required" aria-required = "true">*</span>
+									</label>
+									<div class = "input-icon input-icon-sm right">
+										<i class = "fa fa-hashtag"></i>
+										<input type = "text" class = "form-control input-sm" placeholder = "No. Exterior">
+									</div>
+								</div>
+								<div class = "form-group">
+									<label>
+										No. Interior
+									</label>
+									<div class = "input-icon input-icon-sm right">
+										<i class = "fa fa-hashtag"></i>
+										<input type = "text" class = "form-control input-sm" placeholder = "No. Interior">
+									</div>
+								</div>
+								<div class = "form-group">
+									<label>
+										Colonia
+										<span class = "required" aria-required = "true">*</span>
+									</label>
+									<div class = "input-icon input-icon-sm right">
+										<i class = "fa fa-map-marker"></i>
+										<input type = "text" class = "form-control input-sm" placeholder = "Colonia">
+									</div>
+								</div>
+								<div class = "form-group">
+									<label>
+										C.P.
+										<span class = "required" aria-required = "true">*</span>
+									</label>
+									<div class = "input-icon input-icon-sm right">
+										<i class = "fa fa-map-marker"></i>
+										<input type = "text" class = "form-control input-sm" placeholder = "C.P.">
+									</div>
+								</div>
+								<div class = "form-group">
+									<label>
+										Ciudad
+										<span class = "required" aria-required = "true">*</span>
+									</label>
+									<div class = "input-icon input-icon-sm right">
+										<i class = "fa fa-map-marker"></i>
+										<input type = "text" class = "form-control input-sm" placeholder = "Ciudad">
+									</div>
+								</div>
+								<div class = "form-group">
+									<label>
+										Municipio
+									</label>
+									<div class = "input-icon input-icon-sm right">
+										<i class = "fa fa-map-marker"></i>
+										<input type = "text" class = "form-control input-sm" placeholder = "Municipio">
+									</div>
+								</div>
+								<div class = "form-group">
+									<label>
+										Estado
+										<span class = "required" aria-required = "true">*</span>
+									</label>
+									<select class = "form-control">
+										<option>Option 1</option>
+										<option>Option 2</option>
+										<option>Option 3</option>
+										<option>Option 4</option>
+										<option>Option 5</option>
+									</select>
+								</div>
+								<div class = "form-group">
+									<label>
+										País
+									</label>
+									<div class = "input-icon input-icon-sm right">
+										<i class = "fa fa-map-marker"></i>
+										<input type = "text" class = "form-control input-sm" value = "México" readonly>
+									</div>
+								</div>
+
+								<h5 class = "form-section">
+									<b>Teléfonos</b>
+								</h5>
+								<div class = "form-group">
+									<label>
+										Teléfonos
+										<span class = "required" aria-required = "true">*</span>
+									</label>
+									<div class = "input-icon input-icon-sm right">
+										<i class = "fa fa-phone"></i>
+										<input type = "text" class = "form-control input-sm" placeholder = "Teléfonos">
+									</div>
+								</div>
+							</div>
+							<div class = "col-md-6">
+								<h5 class = "form-section">
+									<b>Acceso al sistema</b>
+								</h5>
+								<div class = "form-group">
+									<label>
+										Contraseña de acceso
+										<span class = "required" aria-required = "true">*</span>
+									</label>
+									<div class = "input-group input-group-lg">
+										<input type = "password" class = "form-control" placeholder = "Contraseña" required>
+											<span class = "input-group-btn">
+											<button class = "btn green" type = "button"><i class = "fa fa-magic"></i> Generar</button>
+										</span>
+									</div>
+								</div>
+								<div class = "form-group">
+									<label>
+										Confirma contraseña
+										<span class = "required" aria-required = "true">*</span>
+									</label>
+									<div class = "input-icon input-icon-sm right">
+										<i class = "fa fa-lock"></i>
+										<input type = "password" class = "form-control input-sm" placeholder = "Confirma contraseña" required>
+									</div>
+								</div>
+
+								<h5 class = "form-section">
+									<b>Contácto de la empresa</b>
+								</h5>
+								<div class = "form-group">
+									<label>
+										Nombre(s)
+										<span class = "required" aria-required = "true">*</span>
+									</label>
+									<div class = "input-icon input-icon-sm right">
+										<i class = "fa fa-user"></i>
+										<input type = "text" class = "form-control input-sm" placeholder = "Nombre(s)">
+									</div>
+								</div>
+								<div class = "form-group">
+									<label>
+										Apellido(s)
+										<span class = "required" aria-required = "true">*</span>
+									</label>
+									<div class = "input-icon input-icon-sm right">
+										<i class = "fa fa-user"></i>
+										<input type = "text" class = "form-control input-sm" placeholder = "Apellido(s)">
+									</div>
+								</div>
+								<div class = "form-group">
+									<label>
+										Email del contácto
+										<span class = "required" aria-required = "true">*</span>
+									</label>
+									<div class = "input-icon input-icon-sm right">
+										<i class = "fa fa-envelope"></i>
+										<input type = "email" class = "form-control input-sm" placeholder = "Email">
+									</div>
+								</div>
+								<div class = "form-group">
+									<label>
+										Teléfono
+										<span class = "required" aria-required = "true">*</span>
+									</label>
+									<div class = "input-icon input-icon-sm right">
+										<i class = "fa fa-phone"></i>
+										<input type = "text" class = "form-control input-sm" placeholder = "Teléfono">
+									</div>
+								</div>
+								<div class = "form-group">
+									<label>
+										Extensión
+									</label>
+									<div class = "input-icon input-icon-sm right">
+										<i class = "fa fa-phone"></i>
+										<input type = "text" class = "form-control input-sm" placeholder = "Extensión">
+									</div>
+								</div>
+								<div class = "form-group">
+									<label>
+										Puesto/Cargo
+									</label>
+									<div class = "input-icon input-icon-sm right">
+										<i class = "fa fa-certificate"></i>
+										<input type = "text" class = "form-control input-sm" placeholder = "Puesto/Cargo">
+									</div>
+								</div>
+							</div>
+							<div class = "clearfix"></div>
+						</div>
+						<div class = "form-actions right">
+							<button type = "submit" class = "btn blue">Guardar</button>
+							<button type = "button" class = "btn default">Cancelar</button>
+						</div>
+					</form>
+			</div>
 		</div>
+		<!-- END SAMPLE FORM PORTLET-->
 	</div>
 </div>
