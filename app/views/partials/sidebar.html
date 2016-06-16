@@ -7,13 +7,55 @@
 	<!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
 	<!-- DOC: Set data-keep-expand="true" to keep the submenues expanded -->
 	<!-- DOC: Set data-auto-speed="200" to adjust the sub menu slide up/down speed -->
-	<ul class = "page-sidebar-menu page-sidebar-menu-light page-sidebar-menu-compact page-sidebar-menu-hover-submenu"
-	    data-keep-expanded = "false" data-auto-scroll = "true" data-slide-speed = "200" ng-class = "{'page-sidebar-menu-closed': settings.layout.pageSidebarClosed}">
+	<ul class = "page-sidebar-menu page-sidebar-menu-light page-sidebar-menu-compact page-sidebar-menu-hover-submenu" data-keep-expanded = "false" data-auto-scroll = "true" data-slide-speed = "200" ng-class = "{'page-sidebar-menu-closed': settings.layout.pageSidebarClosed}">
 		<li class = "start">
 			<a href = "#/dashboard">
 				<i class = "icon-home"></i>
 				<span class = "title"><b>Inicio</b></span>
+				<span class = "arrow "></span>
 			</a>
+		</li>
+
+		<li class = "nav-item">
+			<a href = "javascript:;" class = "nav-link nav-toggle">
+				<i class = "fa fa-users"></i>
+				<span class = "title"> <b>Clientes</b></span>
+				<span class = "arrow "></span>
+			</a>
+			<ul class = "sub-menu">
+				<li>
+					<a href = "#/cliente/nuevo">
+						<i class = "fa fa-plus"></i> Añadir
+					</a>
+				</li>
+				<li>
+					<a href = "#/clientes">
+						<i class = "fa fa-cogs"></i> Gestión
+					</a>
+				</li>
+			</ul>
+		</li>
+
+		<li class = "nav-item">
+			<a href = "javascript:;" class = "nav-link nav-toggle">
+				<i class = "fa fa-file-pdf-o"></i>
+				<span class = "title"> <b>Cotizaciones</b></span>
+				<span class = "arrow "></span>
+			</a>
+			<ul class = "sub-menu">
+				<li>
+					<a href = "#/cotizacion/nuevo">
+					<i class = "fa fa-plus"></i> Nueva cotización</a>
+				</li>
+				<li>
+					<a href = "#/cotizaciones/pagos-revisar">
+					<i class = "fa fa-dollar"></i> Pagos por revisar</a>
+				</li>
+				<li>
+					<a href = "#/cotizaciones">
+					<i class = "fa fa-search"></i> Historial</a>
+				<li>
+			</ul>
 		</li>
 
 		<li class = "nav-item" permission permission-only = "['ADMIN']">
@@ -24,7 +66,7 @@
 			</a>
 			<ul class = "sub-menu">
 				<li>
-					<a href = "#/ui_bootstrap.html">
+					<a href = "#/ejecutivo/nuevo">
 						<i class = "fa fa-user-plus"></i> Nuevo</span>
 					</a>
 				</li>
@@ -34,6 +76,32 @@
 					</a>
 				</li>
 			</ul>
+		</li>
+
+		<!-- Eventos -->
+		<li class = "nav-item">
+			<a href = "javascript:;" class = "nav-link nav-toggle">
+				<i class = "fa fa-calendar"></i>
+				<span class = "title"> <b>Eventos</b></span>
+				<span class = "arrow "></span>
+			</a>
+			<ul class = "sub-menu">
+				<li>
+					<a href = "#/evento/nuevo">
+					<i class = "fa fa-plus"></i> Añadir</a>
+				</li>
+				<li>
+					<a href = "#/eventos">
+					<i class = "fa fa-cogs"></i> Gestión</a>
+				<li>
+			</ul>
+		</li>
+
+		<li class = "nav-item">
+			<a href = "#/productos" class = "nav-link nav-toggle">
+				<i class = "fa fa-shopping-cart"></i>
+				<span class = "title"> <b>Productos</b></span>
+			</a>
 		</li>
 
 		<li class = "nav-item">
@@ -51,6 +119,28 @@
 				<li>
 					<a href = "#/gestion/departamentos">
 						<i class = "fa fa-building"></i> Departamentos </span>
+					</a>
+				</li>
+				<li>
+					<a href = "#/gestion/sistemas-contpaqi">
+						<i class = "fa fa-info"></i> Sistemas <strong>CONTPAQi®</strong>
+					</a>
+				</li>
+				<li>
+					<a href = "#/gestion/sistemas-operativos">
+						<i class = "fa fa-windows"></i> Sistemas Operativos
+					</a>
+				</li>
+
+				<li>
+					<a href = "#/gestion/cuentas-bancarias">
+						<i class = "fa fa-bank"></i> Cuentas Bancarias
+					</a>
+				</li>
+
+				<li>
+					<a href = "#/gestion/observaciones-pago">
+						<i class = "fa fa-eye"></i> Observaciones de pago
 					</a>
 				</li>
 			</ul>

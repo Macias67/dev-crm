@@ -48,12 +48,107 @@
 	</div>
 </div>
 
-<!--<p permission permission-only = "['USER']">{{ejecutivo}}</p>-->
+<div class = "row">
+	<div class = "col-md-12">
+		<div class = "portlet light ">
+			<div class = "portlet-title">
+				<div class = "caption">
+					<i class = "fa fa-bolt font-green-sharp"></i>
+					<span class = "caption-subject font-green-sharp bold uppercase">Accesos Rápidos</span>
+				</div>
+				<div class = "actions">
+					<a class = "btn btn-circle btn-icon-only btn-default" href = "javascript:;">
+						<i class = "icon-cloud-upload"></i>
+					</a>
+					<a class = "btn btn-circle btn-icon-only btn-default" href = "javascript:;">
+						<i class = "icon-wrench"></i>
+					</a>
+					<a class = "btn btn-circle btn-icon-only btn-default" href = "javascript:;">
+						<i class = "icon-trash"></i>
+					</a>
+				</div>
+			</div>
+			<div class = "portlet-body">
+				<a href = "javascript:;" class = "icon-btn">
+					<i class = "fa  fa-male"></i>
+					<div>Prospecto</div>
+					<span class = "badge badge-danger"> 2 </span>
+				</a>
+				<a href = "javascript:;" class = "icon-btn">
+					<i class="fa fa-check-square-o"></i>
+					<div>Pendiente</div>
+				</a>
+				<a href = "javascript:;" class = "icon-btn">
+					<i class="fa fa-file-o"></i>
+					<div>Cotizador</div>
+				</a>
+				<a href="javascript:;" class="icon-btn">
+					<i class="fa fa-calendar"></i>
+					<div>Calendario</div>
+				</a>
+				<a href = "javascript:;" class = "icon-btn">
+					<i class="fa fa-search"></i>
+					<div>&nbsp;&nbsp;Catálogo de clientes&nbsp;&nbsp;</div>
+				</a>
+				<a href = "javascript:;" class = "icon-btn">
+					<i class="fa fa-list"></i>
+					<div>&nbsp;&nbsp;Mis pendientes&nbsp;&nbsp;</div>
+				</a>
+				<a href = "javascript:;" class = "icon-btn">
+					<i class="fa fa-list"></i>
+					<div>&nbsp;&nbsp;Mis Casos&nbsp;&nbsp;</div>
+				</a>
+				<a href = "javascript:;" class = "icon-btn">
+					<i class="fa fa-list"></i>
+					<div>&nbsp;&nbsp;Mis Tareas&nbsp;&nbsp;</div>
+				</a>
+				<a href = "javascript:;" class = "icon-btn">
+					<i class="fa fa-file-pdf-o"></i>
+					<div>&nbsp;&nbsp;Cotizaciones enviadas&nbsp;&nbsp;</div>
+				</a>
+				<a href = "javascript:;" class = "icon-btn">
+					<i class="fa fa-dollar"></i>
+					<div>&nbsp;&nbsp;Pagos por revisar&nbsp;&nbsp;</div>
+				</a>
+				<a href = "javascript:;" class = "icon-btn">
+					<i class="fa fa-folder-open"></i>
+					<div>&nbsp;&nbsp;Casos por asignar&nbsp;&nbsp;</div>
+				</a>
+				<a href = "javascript:;" class = "icon-btn">
+					<i class="fa fa-arrow-circle-o-up"></i>
+					<div>Abrir Caso</div>
+				</a>
+				<a href = "javascript:;" class = "icon-btn">
+					<i class="fa fa-list"></i>
+					<div>&nbsp;&nbsp;Tickets&nbsp;&nbsp;</div>
+				</a>
+			</div>
+		</div>
+	</div>
+</div>
 
-<span>{{dashboardCtrl.center}}</span>
-
-<div class = "col-md-8">
-	<ng-map center = " {{dashboardCtrl.center}}" style = "height: 300px">
-		 <marker position = "{{dashboardCtrl.center}}" title = "how" animation = "Animation.BOUNCE"></marker>
-	</ng-map>
+<div class = "row">
+	<div class = "col-md-6">
+		<div class = "portlet light portlet-fit portlet-datatable ">
+			<div class = "portlet-title">
+				<div class = "caption">
+					<i class = " fa fa-building-o font-green"></i>
+					<span class = "caption-subject font-green sbold uppercase">Oficinas</span>
+				</div>
+				<div class = "actions">
+					<button type = "button" class = "btn btn-xs green" ng-click = "dashboardCtrl.openModalForm()">
+						<i class = "fa fa-plus"></i>
+						 Nueva oficina
+					</button>
+					<button type = "button" class = "btn btn-xs green" ng-click = "dashboardCtrl.reloadTable()">
+						<i class = "fa fa-refresh"></i>
+					</button>
+				</div>
+			</div>
+			<div class = "portlet-body">
+				<table id = "tableOficinas" datatable = "" dt-options = "dashboardCtrl.tableOficinas.dtOptions" dt-columns = "dashboardCtrl.tableOficinas.dtColumns" dt-instance = "dashboardCtrl.tableOficinas.dtInstance" class = "table table-striped table-bordered table-hover">
+				</table>
+			</div>
+		</div>
+	</div>
 </div>

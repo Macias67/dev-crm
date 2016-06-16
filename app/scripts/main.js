@@ -246,7 +246,7 @@ MetronicApp.config([
 		});
 		
 		$stateProvider
-		// Login
+			// Login
 			.state('login', {
 				url        : '/login',
 				templateUrl: 'views/login.html',
@@ -323,6 +323,48 @@ MetronicApp.config([
 					]
 				}
 			})
+			// Clientes
+			.state('clientes', {
+				url        : '/clientes',
+				parent     : 'tmpl',
+				templateUrl: 'views/clientes/gestion_clientes.html',
+				data       : {
+					pageTitle: 'Clientes'
+				}
+			})
+			.state('cliente/nuevo', {
+				url        : '/cliente/nuevo',
+				parent     : 'tmpl',
+				templateUrl: 'views/clientes/form_cliente.html',
+				data       : {
+					pageTitle: 'Nuevo Cliente'
+				}
+			})
+			// Cotizaciones
+			.state('cotizaciones', {
+				url        : '/cotizaciones',
+				parent     : 'tmpl',
+				templateUrl: 'views/cotizaciones/cotizaciones.html',
+				data       : {
+					pageTitle: 'Cotizaciones'
+				}
+			})
+			.state('cotizacion/nuevo', {
+				url        : '/cotizacion/nuevo',
+				parent     : 'tmpl',
+				templateUrl: 'views/cotizaciones/nueva_cotizacion.html',
+				data       : {
+					pageTitle: 'Nueva Cotización'
+				}
+			})
+			.state('cotizaciones/pagos-revisar', {
+				url        : '/cotizaciones/pagos-revisar',
+				parent     : 'tmpl',
+				templateUrl: 'views/cotizaciones/pagos_revisar.html',
+				data       : {
+					pageTitle: 'Pagos por revisar'
+				}
+			})
 			//Ejecutivos
 			.state('ejecutivos', {
 				url        : '/ejecutivos',
@@ -345,6 +387,40 @@ MetronicApp.config([
 							});
 						}
 					]
+				}
+			})
+			.state('ejecutivo/nuevo', {
+				url        : '/ejecutivo/nuevo',
+				parent     : 'tmpl',
+				templateUrl: 'views/ejecutivos/nuevo_ejecutivo.html',
+				data       : {
+					pageTitle: 'Nuevo ejecutivo'
+				}
+			})
+			// Eventos
+			.state('eventos', {
+				url        : '/eventos',
+				parent     : 'tmpl',
+				templateUrl: 'views/eventos/gestion_eventos.html',
+				data       : {
+					pageTitle: 'Eventos'
+				}
+			})
+			.state('evento/nuevo', {
+				url        : '/evento/nuevo',
+				parent     : 'tmpl',
+				templateUrl: 'views/eventos/nuevo_evento.html',
+				data       : {
+					pageTitle: 'Nuevo evento'
+				}
+			})
+			// Productos
+			.state('productos', {
+				url        : '/productos',
+				parent     : 'tmpl',
+				templateUrl: 'views/productos/gestion_productos.html',
+				data       : {
+					pageTitle: 'Productos'
 				}
 			})
 			//Gestor general
@@ -381,7 +457,6 @@ MetronicApp.config([
 					]
 				}
 			})
-			//Departamentos
 			.state('departamentos', {
 				url        : '/gestion/departamentos',
 				parent     : 'tmpl',
@@ -405,6 +480,38 @@ MetronicApp.config([
 							]);
 						}
 					]
+				}
+			})
+			.state('sistemas-contpaqi', {
+				url        : '/gestion/sistemas-contpaqi',
+				parent     : 'tmpl',
+				templateUrl: 'views/gestor_general/sistemas-contpaqi.html',
+				data       : {
+					pageTitle: 'Sistemas ContPAQi'
+				}
+			})
+			.state('sistemas-operativos', {
+				url        : '/gestion/sistemas-operativos',
+				parent     : 'tmpl',
+				templateUrl: 'views/gestor_general/sistemas-operativos.html',
+				data       : {
+					pageTitle: 'Sistemas Operativos'
+				}
+			})
+			.state('cuentas-bancarias', {
+				url        : '/gestion/cuentas-bancarias',
+				parent     : 'tmpl',
+				templateUrl: 'views/gestor_general/cuentas-bancarias.html',
+				data       : {
+					pageTitle: 'Cuentas Bancarias'
+				}
+			})
+			.state('observaciones-pago', {
+				url        : '/gestion/observaciones-pago',
+				parent     : 'tmpl',
+				templateUrl: 'views/gestor_general/obervaciones-pago.html',
+				data       : {
+					pageTitle: 'Obervaciones de pago'
 				}
 			});
 
@@ -465,6 +572,6 @@ MetronicApp.run([
 			return true;
 		});
 		
-		RoleStore.defineRole('USER', ['seeDashboard']);
+		RoleStore.defineRole('ADMIN', ['seeDashboard']);
 	}
 ]);

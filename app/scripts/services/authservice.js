@@ -104,7 +104,7 @@ angular.module('authService', [])
 				return getSession();
 			},
 			getToken: function () {
-				return getToken
+				return getToken();
 			},
 			logout        : function () {
 				logout();

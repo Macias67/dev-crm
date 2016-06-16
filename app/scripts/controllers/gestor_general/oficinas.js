@@ -63,16 +63,16 @@ angular.module('MetronicApp')
 					}
 				});
 			};
-
+			
 			vm.openModalEditForm = function (id) {
-
+				
 				App.blockUI({
 					target      : '#ui-view',
 					animate     : true,
 					overlayColor: App.getBrandColor('grey'),
 					zIndex      : 99999
 				});
-
+				
 				var oficina = Oficina.get({id: id}, function () {
 					App.unblockUI('#ui-view');
 					$uibModal.open({
@@ -86,11 +86,11 @@ angular.module('MetronicApp')
 					});
 				});
 			};
-
+			
 			vm.deleteOficina = function (id) {
 				$ngBootbox.confirm('<b>¿Seguro de eliminar esta oficina?</b>')
 					.then(function () {
-
+						
 						App.blockUI({
 							target      : '#ui-view',
 							message     : '<b> Eliminado oficina </b>',
@@ -98,17 +98,22 @@ angular.module('MetronicApp')
 							overlayColor: App.getBrandColor('grey'),
 							zIndex      : 99999
 						});
-
-						console.info('Eliminando oficina con id: ' + id);
-
-						setTimeout(function () {
-							App.unblockUI('#ui-view');
-							toastr.success('La oficina se eliminó correctamete', 'Oficina eliminada');
-							vm.reloadTable();
-						}, 1000);
-
+						
+						Oficina.update({id: id}, {online: 0}, function (response) {
+							if (response.hasOwnProperty('errors')) {
+								for (var key in response.errors) {
+									if (response.errors.hasOwnProperty(key)) {
+										toastr.error(response.errors[key][0], 'Error con el formulario.');
+									}
+								}
+							}
+							else {
+								App.unblockUI('#ui-view');
+								vm.reloadTable();
+								toastr.success('La oficina se eliminó correctamete', 'Oficina eliminada');
+							}
+						});
 					}, function () {
-						console.log('cancelo');
 					});
 			};
 			
@@ -183,12 +188,12 @@ angular.module('MetronicApp')
 		'$rootScope', '$scope', '$uibModalInstance', '$filter', 'GeoCoder', 'toastr', 'NavigatorGeolocation', 'NgMap', 'Oficina', 'dtOficina',
 		function ($rootScope, $scope, $uibModalInstance, $filter, GeoCoder, toastr, NavigatorGeolocation, NgMap, Oficina, dtOficina) {
 			var vm = this;
-
+			
 			var formEdit   = false;
 			vm.oficinaForm = {};
 			vm.paraBuscar  = '';
 			vm.zoomMapa    = 13;
-
+			
 			if (dtOficina != null && dtOficina.hasOwnProperty('data')) {
 				vm.form       = dtOficina.data;
 				vm.centroMapa = [
@@ -256,8 +261,8 @@ angular.module('MetronicApp')
 						+ vm.form.estado;
 				}
 			);
-
-
+			
+			
 			if (!formEdit) {
 				// Obtengo posicion actual
 				NavigatorGeolocation.getCurrentPosition()
@@ -267,14 +272,14 @@ angular.module('MetronicApp')
 						vm.zoomMapa   = 16;
 					});
 			}
-
+			
 			/**
 			 * Obtengo propiesdades del mapa, en especial el marcador,
 			 * para poder añadirle el evento drag y dragend
 			 */
 			NgMap.getMap().then(function (map) {
 				var marker = map.markers[0];
-
+				
 				marker.addListener('drag', function (event) {
 					$scope.$apply(function () {
 						vm.centroMapa = [
@@ -303,7 +308,7 @@ angular.module('MetronicApp')
 			};
 			
 			vm.guarda = function () {
-
+				
 				App.blockUI({
 					target      : '#ui-view',
 					message     : '<b> Guardando  oficina </b>',
@@ -311,7 +316,7 @@ angular.module('MetronicApp')
 					overlayColor: App.getBrandColor('grey'),
 					zIndex      : 99999
 				});
-
+				
 				if (formEdit) {
 					vm.form.telefonos = vm.form.telefonos.toString();
 					Oficina.update({id: dtOficina.data.id}, vm.form, function (response) {
@@ -346,11 +351,11 @@ angular.module('MetronicApp')
 						}
 					});
 				}
-
+				
 				setTimeout(function () {
 					App.unblockUI('#ui-view');
 				}, 1000);
-
+				
 			};
 			
 			vm.cancel = function () {
