@@ -31,7 +31,7 @@
 			</div>
 			<div class = "portlet-body form">
 
-					<form role = "form">
+					<form role = "form" name = "nuevoClienteCtrl.formClienteNuevo">
 						<div class = "form-body">
 							<div class = "col-md-6">
 								<h5 class = "form-section">
@@ -44,7 +44,7 @@
 									</label>
 									<div class = "input-icon input-icon-lg right">
 										<i class = "fa fa-asterisk"></i>
-										<input type = "text" class = "form-control input-lg" placeholder = "Razón Social">
+										<input type = "text" class = "form-control input-lg" placeholder = "Razón Social" ng-model = "nuevoClienteCtrl.form.razonsocial" required>
 									</div>
 								</div>
 								<div class = "form-group">
@@ -54,7 +54,7 @@
 									</label>
 									<div class = "input-icon input-icon-lg right">
 										<i class = "fa fa-bell-o"></i>
-										<input type = "text" class = "form-control input-lg" placeholder = "R.F.C">
+										<input type = "text" class = "form-control input-lg" placeholder = "R.F.C" ng-model = "nuevoClienteCtrl.form.rfc" required>
 									</div>
 								</div>
 								<div class = "form-group">
@@ -64,7 +64,7 @@
 									</label>
 									<div class = "input-icon input-icon-sm right">
 										<i class = "fa fa-envelope"></i>
-										<input type = "text" class = "form-control input-sm" placeholder = "Email">
+										<input type = "text" class = "form-control input-sm" placeholder = "Email" ng-model = "nuevoClienteCtrl.form.emailempresa" required>
 									</div>
 								</div>
 								<div class = "form-group">
@@ -74,11 +74,13 @@
 									</label>
 									<div class = "mt-radio-inline">
 										<label class = "mt-radio">
-											<input type = "radio" name = "optionsRadios" id = "optionsRadios4" value = "option1" checked> <b>Normal</b>
+											<input type = "radio" value = "normal" ng-model = "nuevoClienteCtrl.form.tipocliente" required>
+											<b>Normal</b>
 											<span></span>
 										</label>
 										<label class = "mt-radio">
-											<input type = "radio" name = "optionsRadios" id = "optionsRadios5" value = "option2"> <b>Distribuidor</b>
+											<input type = "radio" value = "distribuidor" ng-model = "nuevoClienteCtrl.form.tipocliente">
+											<b>Distribuidor</b>
 											<span></span>
 										</label>
 									</div>
@@ -94,7 +96,7 @@
 									</label>
 									<div class = "input-icon input-icon-sm right">
 										<i class = "fa fa-map-marker"></i>
-										<input type = "text" class = "form-control input-sm" placeholder = "Calle">
+										<input type = "text" class = "form-control input-sm" placeholder = "Calle" ng-model = "nuevoClienteCtrl.form.calle">
 									</div>
 								</div>
 								<div class = "form-group">
@@ -104,7 +106,7 @@
 									</label>
 									<div class = "input-icon input-icon-sm right">
 										<i class = "fa fa-hashtag"></i>
-										<input type = "text" class = "form-control input-sm" placeholder = "No. Exterior">
+										<input type = "text" class = "form-control input-sm" placeholder = "No. Exterior" ng-model = "nuevoClienteCtrl.form.noexterior">
 									</div>
 								</div>
 								<div class = "form-group">
@@ -113,7 +115,7 @@
 									</label>
 									<div class = "input-icon input-icon-sm right">
 										<i class = "fa fa-hashtag"></i>
-										<input type = "text" class = "form-control input-sm" placeholder = "No. Interior">
+										<input type = "text" class = "form-control input-sm" placeholder = "No. Interior" ng-model = "nuevoClienteCtrl.form.nointerior">
 									</div>
 								</div>
 								<div class = "form-group">
@@ -123,7 +125,7 @@
 									</label>
 									<div class = "input-icon input-icon-sm right">
 										<i class = "fa fa-map-marker"></i>
-										<input type = "text" class = "form-control input-sm" placeholder = "Colonia">
+										<input type = "text" class = "form-control input-sm" placeholder = "Colonia" ng-model = "nuevoClienteCtrl.form.colonia">
 									</div>
 								</div>
 								<div class = "form-group">
@@ -133,7 +135,7 @@
 									</label>
 									<div class = "input-icon input-icon-sm right">
 										<i class = "fa fa-map-marker"></i>
-										<input type = "text" class = "form-control input-sm" placeholder = "C.P.">
+										<input type = "text" class = "form-control input-sm" placeholder = "C.P." ng-model = "nuevoClienteCtrl.form.cp">
 									</div>
 								</div>
 								<div class = "form-group">
@@ -143,7 +145,7 @@
 									</label>
 									<div class = "input-icon input-icon-sm right">
 										<i class = "fa fa-map-marker"></i>
-										<input type = "text" class = "form-control input-sm" placeholder = "Ciudad">
+										<input type = "text" class = "form-control input-sm" placeholder = "Ciudad" ng-model = "nuevoClienteCtrl.form.ciudad">
 									</div>
 								</div>
 								<div class = "form-group">
@@ -152,7 +154,7 @@
 									</label>
 									<div class = "input-icon input-icon-sm right">
 										<i class = "fa fa-map-marker"></i>
-										<input type = "text" class = "form-control input-sm" placeholder = "Municipio">
+										<input type = "text" class = "form-control input-sm" placeholder = "Municipio" ng-model = "nuevoClienteCtrl.form.municipio">
 									</div>
 								</div>
 								<div class = "form-group">
@@ -174,7 +176,7 @@
 									</label>
 									<div class = "input-icon input-icon-sm right">
 										<i class = "fa fa-map-marker"></i>
-										<input type = "text" class = "form-control input-sm" value = "México" readonly>
+										<input type = "text" class = "form-control input-sm" ng-init="nuevoClienteCtrl.form.pais = 'México'" readonly>
 									</div>
 								</div>
 
@@ -188,7 +190,7 @@
 									</label>
 									<div class = "input-icon input-icon-sm right">
 										<i class = "fa fa-phone"></i>
-										<input type = "text" class = "form-control input-sm" placeholder = "Teléfonos">
+										<input type = "text" class = "form-control input-sm" placeholder = "Teléfonos" ng-model = "nuevoClienteCtrl.form.telefonos">
 									</div>
 								</div>
 							</div>
@@ -280,6 +282,7 @@
 										<input type = "text" class = "form-control input-sm" placeholder = "Puesto/Cargo">
 									</div>
 								</div>
+								{{nuevoClienteCtrl.form | json}}
 							</div>
 							<div class = "clearfix"></div>
 						</div>

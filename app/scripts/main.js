@@ -304,7 +304,7 @@ MetronicApp.config([
 			.state('dashboard', {
 				url        : '/dashboard',
 				parent     : 'tmpl',
-				templateUrl: 'views/dashboard.html',
+				templateUrl: 'views/inicio/dashboard.html',
 				data       : {
 					pageTitle: 'Bienvenido'
 				},
