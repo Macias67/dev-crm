@@ -15,20 +15,20 @@ angular.module('MetronicApp')
 
 			vm.formClienteNuevo = {};
 			vm.form = {
-				razonsocial : '',
-				rfc         : '',
-				emailempresa: '',
-				tipocliente : '',
-				calle       : '',
-				noexterior  : '',
-				nointerior  : '',
-				colonia     : '',
-				cp          : '',
-				ciudad      : '',
-				municipio   : '',
-				estado      : '',
-				pais        : '',
-				telefonos   : ''
+// 				razonsocial : '',
+// 				rfc         : '',
+// 				emailempresa: '',
+// 				tipocliente : '',
+// 				calle       : '',
+// 				noexterior  : '',
+// 				nointerior  : '',
+// 				colonia     : '',
+// 				cp          : '',
+// 				ciudad      : '',
+// 				municipio   : '',
+// 				estado      : '',
+// 				pais        : '',
+// 				telefonos   : ''
 			};
 
 

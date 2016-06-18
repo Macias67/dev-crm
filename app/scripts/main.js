@@ -11,6 +11,7 @@ var MetronicApp = angular.module('MetronicApp', [
 	'ngSanitize',
 	'ngResource',
 	'ngAnimate',
+	'ngTagsInput',
 	'ngBootbox',
 	'LocalStorageModule',
 	'satellizer',
