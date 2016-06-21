@@ -30,6 +30,7 @@ var MetronicApp = angular.module('MetronicApp', [
 
 /* Defino constantes */
 MetronicApp.constant('CRM_APP', {
+	accept: 'application/vnd.crm.v1+json',
 	url: '//api.crm/api/'
 });
 
@@ -195,24 +196,24 @@ MetronicApp.service('interceptor', [
 				config.headers['Content-Type'] = 'application/json; charset=utf-8';
 				return config;
 			},
-
+			
 			requestError: function (config) {
 				return config;
 			},
-
+			
 			response: function (res) {
 				return res;
 			},
-
+			
 			responseError: function (response) {
 				console.error('responseERROR: ');
 				console.error(response);
 				if (response.hasOwnProperty('error') && response.error == "token_expired") {
 					var toastr = $injector.get('toastr');
 					var $state = $injector.get('$state');
-
+					
 					console.log('Entro a la validación de token_expired')
-
+					
 					toastr.error('El token de sesión ha expirado, inicia de nuevo sesión.', 'La sesión ha expirado.');
 					$state.go('login');
 				}
@@ -225,7 +226,7 @@ MetronicApp.service('interceptor', [
 /* Setup Rounting For All Pages */
 MetronicApp.config([
 	'$stateProvider', '$urlRouterProvider', '$authProvider', '$httpProvider', 'toastrConfig',
-
+	
 	function ($stateProvider, $urlRouterProvider, $authProvider, $httpProvider, toastrConfig) {
 		
 		$httpProvider.interceptors.push('interceptor');
@@ -247,7 +248,7 @@ MetronicApp.config([
 		});
 		
 		$stateProvider
-			// Login
+		// Login
 			.state('login', {
 				url        : '/login',
 				templateUrl: 'views/login.html',
@@ -331,6 +332,20 @@ MetronicApp.config([
 				templateUrl: 'views/clientes/gestion_clientes.html',
 				data       : {
 					pageTitle: 'Clientes'
+				},
+				controller : 'GestionClientesCtrl as gestionClientesCtrl',
+				resolve    : {
+					deps: [
+						'$ocLazyLoad', function ($ocLazyLoad) {
+							return $ocLazyLoad.load({
+								name        : 'MetronicApp',
+								insertBefore: '#ng_load_plugins_ng',
+								files       : [
+									'scripts/controllers/clientes/gestionclientes.js'
+								]
+							});
+						}
+					]
 				}
 			})
 			.state('cliente/nuevo', {
@@ -529,7 +544,7 @@ MetronicApp.config([
 					pageTitle: 'Obervaciones de pago'
 				}
 			});
-
+		
 		angular.extend(toastrConfig, {
 			allowHtml      : true,
 			closeButton    : true,

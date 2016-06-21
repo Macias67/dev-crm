@@ -35,7 +35,6 @@ angular.module('MetronicApp')
 				edit      : edit,
 				delete    : deleteRow,
 				dtInstance: {},
-				persons   : {},
 				
 				dtOptions: DTOptionsBuilder.fromSource(CRM_APP.url + 'oficinas')
 					.withFnServerData(serverData)

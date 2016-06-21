@@ -33,6 +33,7 @@ angular.module('MetronicApp')
 			};
 
 			vm.guarda = function () {
+				App.scrollTop();
 				App.blockUI({
 					target      : '#ui-view',
 					message     : '<b> Guardando cliente </b>',
@@ -40,7 +41,6 @@ angular.module('MetronicApp')
 					overlayColor: App.getBrandColor('grey'),
 					zIndex      : 99999
 				});
-
 
 				var cliente = new Cliente(vm.form);
 				cliente.$save(function (response) {
