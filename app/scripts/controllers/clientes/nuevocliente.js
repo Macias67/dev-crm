@@ -9,27 +9,55 @@
  */
 angular.module('MetronicApp')
 	.controller('NuevoClienteCtrl', [
-		'$rootScope', '$scope', '$filter',
-		function ($rootScope, $scope, $filter) {
+		'$rootScope', '$scope', '$filter', 'Cliente', 'toastr',
+		function ($rootScope, $scope, $filter, Cliente, toastr) {
 			var vm = this;
 			
 			vm.formClienteNuevo = {};
 			vm.form             = {
-				razonsocial : '',
-				rfc         : '',
-				emailempresa: '',
-				tipocliente : '',
-				calle       : '',
-				noexterior  : '',
-				nointerior  : '',
-				colonia     : '',
-				cp          : '',
-				ciudad      : '',
-				municipio   : '',
-				estado      : '',
-				pais        : '',
-				telefono    : '',
-				telefono2   : ''
+				razonsocial: '',
+				rfc        : '',
+				email      : '',
+				tipo       : '',
+				calle      : '',
+				noexterior : '',
+				nointerior : '',
+				colonia    : '',
+				cp         : '',
+				ciudad     : '',
+				municipio  : '',
+				estado     : '',
+				pais       : '',
+				telefono   : '',
+				telefono2  : ''
+			};
+
+			vm.guarda = function () {
+				App.blockUI({
+					target      : '#ui-view',
+					message     : '<b> Guardando cliente </b>',
+					boxed       : true,
+					overlayColor: App.getBrandColor('grey'),
+					zIndex      : 99999
+				});
+
+
+				var cliente = new Cliente(vm.form);
+				cliente.$save(function (response) {
+					if (response.hasOwnProperty('errors')) {
+						for (var key in response.errors) {
+							if (response.errors.hasOwnProperty(key)) {
+								toastr.error(response.errors[key][0], 'Error con el formulario.');
+							}
+						}
+					}
+					else {
+						toastr.success('Se registró nuevo cliente', 'Nuevo Cliente');
+						setTimeout(function () {
+							App.unblockUI('#ui-view');
+						}, 1000);
+					}
+				});
 			};
 
 			$scope.$watch('nuevoClienteCtrl.form.razonsocial', function () {
@@ -44,6 +72,12 @@ angular.module('MetronicApp')
 			$scope.$watch('nuevoClienteCtrl.form.calle', function () {
 				vm.form.calle = $filter('ucfirst')(vm.form.calle);
 			});
+			$scope.$watch('nuevoClienteCtrl.form.noexterior', function () {
+				vm.form.noexterior = $filter('uppercase')(vm.form.noexterior);
+			});
+			$scope.$watch('nuevoClienteCtrl.form.nointerior', function () {
+				vm.form.nointerior = $filter('uppercase')(vm.form.nointerior);
+			});
 			$scope.$watch('nuevoClienteCtrl.form.colonia', function () {
 				vm.form.colonia = $filter('ucfirst')(vm.form.colonia);
 			});
@@ -53,7 +87,6 @@ angular.module('MetronicApp')
 			$scope.$watch('nuevoClienteCtrl.form.municipio', function () {
 				vm.form.municipio = $filter('ucfirst')(vm.form.municipio);
 			});
-			
 			
 			//Nombres
 			$rootScope.vista = {

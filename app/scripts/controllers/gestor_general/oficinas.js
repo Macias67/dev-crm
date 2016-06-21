@@ -317,7 +317,7 @@ angular.module('MetronicApp')
 				
 				App.blockUI({
 					target      : '#ui-view',
-					message     : '<b> Guardando  oficina </b>',
+					message     : '<b> Guardando oficina </b>',
 					boxed       : true,
 					overlayColor: App.getBrandColor('grey'),
 					zIndex      : 99999
