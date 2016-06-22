@@ -175,7 +175,6 @@ angular.module('MetronicApp')
 			}
 			
 			function actionsHtml(data, type, full, meta) {
-				vm.tableOficinas.persons[data.id] = data;
 				return '<button type="button" class="btn blue btn-xs" ng-click = "oficinaCtrl.openModalEditForm(' + data.id + ')">' +
 					'   <i class="fa fa-edit"></i>' +
 					'</button>&nbsp;' +

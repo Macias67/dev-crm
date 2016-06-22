@@ -9,27 +9,28 @@
  */
 angular.module('MetronicApp')
 	.controller('NuevoClienteCtrl', [
-		'$rootScope', '$scope', '$filter', 'Cliente', 'toastr',
-		function ($rootScope, $scope, $filter, Cliente, toastr) {
+		'$rootScope', '$scope', '$filter', 'Cliente', 'toastr', '$state',
+		function ($rootScope, $scope, $filter, Cliente, toastr, $state) {
 			var vm = this;
 			
 			vm.formClienteNuevo = {};
 			vm.form             = {
-				razonsocial: '',
-				rfc        : '',
-				email      : '',
-				tipo       : '',
-				calle      : '',
-				noexterior : '',
-				nointerior : '',
-				colonia    : '',
-				cp         : '',
-				ciudad     : '',
-				municipio  : '',
-				estado     : '',
-				pais       : '',
-				telefono   : '',
-				telefono2  : ''
+				razonsocial  : '',
+				rfc          : '',
+				prospecto    : false,
+				distribuidor: false,
+				email        : '',
+				calle        : '',
+				noexterior   : '',
+				nointerior   : '',
+				colonia      : '',
+				cp           : '',
+				ciudad       : '',
+				municipio    : '',
+				estado       : '',
+				pais         : '',
+				telefono     : '',
+				telefono2    : ''
 			};
 
 			vm.guarda = function () {
@@ -50,12 +51,14 @@ angular.module('MetronicApp')
 								toastr.error(response.errors[key][0], 'Error con el formulario.');
 							}
 						}
+						App.unblockUI('#ui-view');
 					}
 					else {
-						toastr.success('Se registró nuevo cliente', 'Nuevo Cliente');
 						setTimeout(function () {
 							App.unblockUI('#ui-view');
 						}, 1000);
+						toastr.success('Se registró nuevo cliente', 'Nuevo Cliente');
+						$state.go('clientes');
 					}
 				});
 			};

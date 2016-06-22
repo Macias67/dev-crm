@@ -42,7 +42,10 @@
 										<span class = "required" aria-required = "true">*</span>
 									</label>
 									<div class = "input-group input-group-lg">
-										<input type = "text" class = "form-control" placeholder = "Razón Social" ng-model = "nuevoClienteCtrl.form.razonsocial" required>
+										<input type = "text" class = "form-control"
+										       placeholder = "Razón Social"
+										       ng-model = "nuevoClienteCtrl.form.razonsocial"
+										       required>
 										<span class = "input-group-btn">
 											<button class = "btn green" type = "button">
 												<i class = "fa fa-check"></i>
@@ -56,7 +59,12 @@
 										<span class = "required" aria-required = "true">*</span>
 									</label>
 									<div class = "input-group input-group-lg">
-										<input type = "text" class = "form-control" placeholder = "R.F.C." ng-model = "nuevoClienteCtrl.form.rfc" required>
+										<input type = "text" class = "form-control"
+										       placeholder = "R.F.C."
+										       ng-model = "nuevoClienteCtrl.form.rfc"
+										       ui-mask = "*************"
+										       ui-mask-placeholder
+										       required>
 										<span class = "input-group-btn">
 											<button class = "btn green" type = "button">
 												<i class = "fa fa-check"></i>
@@ -103,21 +111,22 @@
 									</div>
 								</div>
 								<div class = "form-group">
-									<label>
-										Tipo de cliente
-										<span class = "required" aria-required = "true">*</span>
-									</label>
-									<div class = "mt-radio-inline">
-										<label class = "mt-radio">
-											<input type = "radio" value = "normal" ng-model = "nuevoClienteCtrl.form.tipo" required>
-											<b>Normal</b>
-											<span></span>
-										</label>
-										<label class = "mt-radio">
-											<input type = "radio" value = "distribuidor" ng-model = "nuevoClienteCtrl.form.tipo">
-											<b>Distribuidor</b>
-											<span></span>
-										</label>
+									<label>Tipo de cliente</label>
+									<div class = "mt-checkbox-inline">
+										<div class = "mt-checkbox-inline">
+											<label class = "mt-checkbox">
+												<input type = "checkbox"
+												       ng-model = "nuevoClienteCtrl.form.prospecto"
+												       checked> Prospecto
+												<span></span>
+											</label>
+											<label class = "mt-checkbox">
+												<input type = "checkbox"
+												       ng-model = "nuevoClienteCtrl.form.tipo"
+												       checked> Distribuidor
+												<span></span>
+											</label>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -251,7 +260,7 @@
 							<div class = "clearfix"></div>
 						</div>
 						<div class = "form-actions right">
-							<button class = "btn blue" ng-click="nuevoClienteCtrl.guarda()">Guardar</button>
+							<button class = "btn blue" ng-click = "nuevoClienteCtrl.guarda()">Guardar</button>
 							<button type = "button" class = "btn default">Cancelar</button>
 						</div>
 					</form>
