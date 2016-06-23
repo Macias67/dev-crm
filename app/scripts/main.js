@@ -385,6 +385,20 @@ MetronicApp.config([
 				templateUrl: 'views/cotizaciones/nueva_cotizacion.html',
 				data       : {
 					pageTitle: 'Nueva Cotización'
+				},
+				controller : 'NuevaCotizacionCtrl as nuevaCotizacionCtrl',
+				resolve    : {
+					deps: [
+						'$ocLazyLoad', function ($ocLazyLoad) {
+							return $ocLazyLoad.load({
+								name        : 'MetronicApp',
+								insertBefore: '#ng_load_plugins_ng',
+								files       : [
+									'scripts/controllers/cotizacion/nuevacotizacion.js'
+								]
+							});
+						}
+					]
 				}
 			})
 			.state('cotizaciones/pagos-revisar', {
