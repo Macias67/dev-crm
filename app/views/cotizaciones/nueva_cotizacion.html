@@ -48,7 +48,7 @@
 		</div>
 		<!-- END Total PORTLET-->
 
-		<!-- BEGIN Total PORTLET-->
+		<!-- BEGIN Cliente PORTLET-->
 		<div class = "portlet light">
 			<div class = "portlet-title">
 				<div class = "caption">
@@ -61,10 +61,20 @@
 				</div>
 			</div>
 			<div class = "portlet-body portlet-collapsed">
-
+				<pre>Model: {{asyncSelected | json}}</pre>
+				<input type = "text" ng-model = "asyncSelected"
+				       placeholder = "Locations loaded via $http"
+				       uib-typeahead = "address for address in getLocation($viewValue)"
+				       typeahead-loading = "loadingLocations"
+				       typeahead-no-results = "noResults"
+				       class = "form-control">
+				<i ng-show = "loadingLocations" class = "glyphicon glyphicon-refresh"></i>
+				<div ng-show = "noResults">
+					<i class = "glyphicon glyphicon-remove"></i> No Results Found
+				</div>
 			</div>
 		</div>
-		<!-- END Total PORTLET-->
+		<!-- END Cliente PORTLET-->
 
 		<!-- BEGIN Cotizacion PORTLET-->
 		<div class = "portlet light">

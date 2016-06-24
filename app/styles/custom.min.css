@@ -1,1 +1,1 @@
-.login{background-color:#fff}div[ui-view].ng-enter{-webkit-animation:fadeInUp .8s;animation:fadeInUp .8s}.ng-hide-remove{-webkit-animation:bounceIn 2.5s;animation:bounceIn 2.5s}.ng-hide-add{-webkit-animation:flipOutX 2.5s;animation:flipOutX 2.5s;display:block!important}
+.login{background-color:#fff}div[ui-view].ng-enter{-webkit-animation:fadeInUp .8s;animation:fadeInUp .8s}.ng-hide-remove{-webkit-animation:fadeIn .5s;animation:fadeIn .5s}.ng-hide-add{-webkit-animation:flipOutX 2.5s;animation:flipOutX 2.5s;display:block!important}
