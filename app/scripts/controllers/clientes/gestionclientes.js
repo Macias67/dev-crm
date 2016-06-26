@@ -117,7 +117,7 @@ angular.module('MetronicApp')
 					'<button type="button" class="btn red btn-xs">' +
 					'   <i class="fa fa-trash-o"></i>' +
 					'</button>';
-			}
+			};
 			
 			function tipoCliente(data, type, full, meta) {
 				var prospecto, distribuidor;
@@ -135,7 +135,7 @@ angular.module('MetronicApp')
 					distribuidor = '<span class="badge badge-primary badge-roundless">Normal</span>';
 				}
 				return prospecto + distribuidor;
-			}
+			};
 			
 			$scope.$on('$viewContentLoaded', function () {
 				// initialize core components

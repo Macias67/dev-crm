@@ -30,8 +30,9 @@ var MetronicApp = angular.module('MetronicApp', [
 
 /* Defino constantes */
 MetronicApp.constant('CRM_APP', {
-	accept: 'application/vnd.crm.v1+json',
-	url: '//api.crm/api/'
+	accept     : 'application/vnd.crm.v1+json',
+	contentType: 'application/json; charset=utf-8',
+	url        : '//api.crm/api/'
 });
 
 /* Configure ocLazyLoader(refer: https://github.com/ocombe/ocLazyLoad) */
@@ -225,10 +226,10 @@ MetronicApp.service('interceptor', [
 
 /* Setup Rounting For All Pages */
 MetronicApp.config([
-	'$stateProvider', '$urlRouterProvider', '$authProvider', '$httpProvider', 'toastrConfig',
+	'$stateProvider', '$urlRouterProvider', '$authProvider', '$httpProvider', 'toastrConfig', 'CRM_APP',
 	
-	function ($stateProvider, $urlRouterProvider, $authProvider, $httpProvider, toastrConfig) {
-		
+	function ($stateProvider, $urlRouterProvider, $authProvider, $httpProvider, toastrConfig, CRM_APP) {
+
 		$httpProvider.interceptors.push('interceptor');
 		$httpProvider.defaults.useXDomain = true;
 		
