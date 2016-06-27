@@ -19,7 +19,7 @@
 </div>
 
 <div class = "row">
-	<div class = "col-md-4">
+	<div class = "col-md-3">
 		<!-- BEGIN Total PORTLET-->
 		<div class = "portlet light">
 			<div class = "portlet-title">
@@ -74,9 +74,8 @@
 				<!--</div>-->
 
 				<div class = "form-group">
-					<label>Small Input Default Group</label>
 					<div class = "input-group input-group-sm">
-						<input type = "text" class = "form-control" placeholder = "Cliente">
+						<input type = "text" class = "form-control" placeholder = "Cliente" ng-model="nuevaCotizacionCtrl.cliente.razonsocial" readonly>
 						<span class = "input-group-btn">
 							<button class = "btn yellow-casablanca" ng-click = "nuevaCotizacionCtrl.openModalClientes()"><i class = "fa fa-user"></i></button>
 						</span>
@@ -163,7 +162,7 @@
 		</div>
 		<!-- END CxC PORTLET-->
 	</div>
-	<div class = "col-md-8">
+	<div class = "col-md-9">
 
 	</div>
 </div>
@@ -183,6 +182,6 @@
 		</table>
 	</div>
 	<div class = "modal-footer">
-		<button class = "btn grey-mint btn-outline" ng-click = "clientesCotizacion.boton()">Cancelar</button>
+		<button class = "btn grey-mint btn-outline" ng-click = "clientesCotizacion.cancel()">Cancelar</button>
 	</div>
 </script>

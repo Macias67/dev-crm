@@ -16,14 +16,22 @@ angular.module('MetronicApp')
 				App.initAjax();
 			});
 			
-			var vm               = this;
+			var vm     = this;
+			vm.cliente = {};
+
 			vm.openModalClientes = function () {
-				$uibModal.open({
+
+				var modalInstance = $uibModal.open({
 					backdrop   : 'static',
 					templateUrl: 'modalClientes.html',
 					controller : 'ClientesCotizacion as clientesCotizacion',
 					size       : 'lg'
 				});
+
+				modalInstance.result.then(function (selectedCliente) {
+					vm.cliente = selectedCliente;
+					console.log(vm.cliente);
+				}, function () {});
 			};
 			
 			// Any function returning a promise object can be used to load values asynchronously
@@ -55,18 +63,18 @@ angular.module('MetronicApp')
 		}
 	])
 	.controller('ClientesCotizacion', [
-		'$rootScope', '$scope', '$uibModalInstance', 'DTOptionsBuilder', 'DTColumnBuilder', 'CRM_APP', 'authUser',
-		function ($rootScope, $scope, $uibModalInstance, DTOptionsBuilder, DTColumnBuilder, CRM_APP, authUser) {
-			var vm             = this;
-			vm.selectedCliente = {};
+		'$rootScope', '$scope', '$uibModalInstance', 'DTOptionsBuilder', 'DTColumnBuilder', 'CRM_APP', '$compile', 'authUser',
+		function ($rootScope, $scope, $uibModalInstance, DTOptionsBuilder, DTColumnBuilder, CRM_APP, $compile, authUser) {
+			var vm       = this;
+			vm._clientes = {};
 			
 			vm.tableClientes = {
 				dtInstance: {},
-				
-				dtOptions: DTOptionsBuilder.fromSource(CRM_APP.url + 'clientes')
+				dtOptions : DTOptionsBuilder.fromSource(CRM_APP.url + 'clientes')
 					.withFnServerData(serverData)
 					.withLanguageSource('//cdn.datatables.net/plug-ins/1.10.11/i18n/Spanish.json')
 					.withDataProp('data')
+					.withOption('createdRow', createdRow)
 					.withPaginationType('bootstrap_full_number')
 					.withBootstrap(),
 				
@@ -75,7 +83,7 @@ angular.module('MetronicApp')
 					DTColumnBuilder.newColumn('razonsocial').withTitle('Razón Social'),
 					DTColumnBuilder.newColumn('rfc').withTitle('R.F.C.'),
 					DTColumnBuilder.newColumn(null).withTitle('Tipo').notSortable().renderWith(tipoCliente).withOption('sWidth', '20%'),
-					DTColumnBuilder.newColumn(null).notSortable().renderWith(actions).withOption('sWidth', '10%'),
+					DTColumnBuilder.newColumn(null).notSortable().renderWith(actionsHtml).withOption('sWidth', '10%'),
 				]
 			};
 
@@ -84,7 +92,6 @@ angular.module('MetronicApp')
 					'dataType'  : 'json',
 					'type'      : 'GET',
 					'url'       : CRM_APP.url + 'clientes',
-					'data'      : aoData,
 					'success'   : fnCallback,
 					'beforeSend': function (xhr) {
 						xhr.setRequestHeader('Accept', CRM_APP.accept);
@@ -94,8 +101,10 @@ angular.module('MetronicApp')
 				});
 			}
 
-			function actions(data, type, full, meta) {
-				return '<button type="button" class="btn btn-xs yellow-casablanca" ng-click="clientesCotizacion.boton(' + data.id + ')">' +
+			function actionsHtml(data, type, full, meta) {
+				vm._clientes[data.id] = data;
+
+				return '<button type="button" class="btn btn-xs yellow-casablanca" ng-click="clientesCotizacion.selectCliente(' + data.id + ')">' +
 					'<i class="fa fa-file-o"></i>&nbsp;Cotizar' +
 					'</button>';
 			}
@@ -118,9 +127,13 @@ angular.module('MetronicApp')
 				return prospecto + distribuidor;
 			};
 
-			vm.boton = function (cliente) {
-				console.log('que pedo');
-				console.log(cliente);
+			function createdRow(row, data, dataIndex) {
+				// Recompiling so we can bind Angular directive to the DT
+				$compile(angular.element(row).contents())($scope);
+			};
+
+			vm.selectCliente = function (id) {
+				$uibModalInstance.close(vm._clientes[id]);
 			};
 			
 			vm.reloadTable = function () {
