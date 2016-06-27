@@ -18,7 +18,7 @@
 	</ul>
 </div>
 
-<div class="row">
+<div class = "row">
 	<div class = "col-md-9">
 		<div class = "portlet light portlet-fit portlet-datatable ">
 			<div class = "portlet-title">
@@ -27,7 +27,7 @@
 					<span class = "caption-subject font-green sbold uppercase">Clientes </span>
 				</div>
 				<div class = "actions">
-					<a href="#/cliente/nuevo" class = "btn btn-xs green">
+					<a href = "#/cliente/nuevo" class = "btn btn-xs green">
 						<i class = "fa fa-plus"></i>
 						 Nuevo cliente
 					</a>
@@ -54,6 +54,8 @@
 		<div class = "clearfix"></div>
 	</div>
 	<div class = "modal-footer">
+		<a class = "btn grey-mint"
+		   href = "#/cliente/{{infoClienteCtrl.cliente.rfc}}">Ver Perfil</a>
 		<button class = "btn grey-mint btn-outline" ng-click = "infoClienteCtrl.cancel()">Cancelar</button>
 	</div>
 </script>

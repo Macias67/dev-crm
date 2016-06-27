@@ -51,7 +51,7 @@ angular.module('MetronicApp')
 					App.unblockUI('#tableClientes');
 				}, 1500);
 			};
-						
+			
 			vm.openModalInfoCliente = function (id) {
 				$uibModal.open({
 					backdrop   : 'static',
@@ -159,7 +159,10 @@ angular.module('MetronicApp')
 		function ($rootScope, $scope, $uibModalInstance, dtCliente) {
 			var vm = this;
 			
-			vm.id = dtCliente;
+			vm.id      = dtCliente;
+			vm.cliente = {
+				rfc: dtCliente
+			}
 			
 			vm.cancel = function () {
 				$uibModalInstance.dismiss('cancel');

@@ -249,7 +249,7 @@ MetronicApp.config([
 		});
 		
 		$stateProvider
-		// Login
+			// Login
 			.state('login', {
 				url        : '/login',
 				templateUrl: 'views/login.html',
@@ -365,6 +365,28 @@ MetronicApp.config([
 								insertBefore: '#ng_load_plugins_ng',
 								files       : [
 									'scripts/controllers/clientes/nuevocliente.js'
+								]
+							});
+						}
+					]
+				}
+			})
+			.state('cliente-perfil', {
+				url        : '/cliente/:rfc',
+				parent     : 'tmpl',
+				templateUrl: 'views/clientes/perfil_cliente.html',
+				data       : {
+					pageTitle: 'Clientes'
+				},
+				controller : 'PerfilClienteCtrl as perfilClienteCtrl',
+				resolve    : {
+					deps: [
+						'$ocLazyLoad', function ($ocLazyLoad) {
+							return $ocLazyLoad.load({
+								name        : 'MetronicApp',
+								insertBefore: '#ng_load_plugins_ng',
+								files       : [
+									'scripts/controllers/clientes/perfilcliente.js'
 								]
 							});
 						}
