@@ -1,0 +1,11 @@
+[0627/202443:ERROR:process_info.cc(103)] ReadProcessMemory bool __cdecl crashpad::`anonymous-namespace'::ReadStruct<struct crashpad::process_types::PEB<struct crashpad::process_types::internal::Traits32>>(void *,unsigned __int64,struct crashpad::process_types::PEB<struct crashpad::process_types::internal::Traits32> *): Solo se completó una parte de una solicitud ReadProcessMemory o WriteProcessMemory. (0x12B)
+[0627/202443:ERROR:process_info.cc(542)] ReadProcessData failed
+[0627/202443:ERROR:process_info.cc(608)] range at 0x0, size 0x230 fully unreadable
+[0627/202443:ERROR:process_reader_win.cc(232)] ReadMemory at 0x0 of 560 bytes failed: Solo se completó una parte de una solicitud ReadProcessMemory o WriteProcessMemory. (0x12B)
+[0627/202443:ERROR:process_snapshot_win.cc(349)] ReadMemory PEB
+[0627/202443:ERROR:process_reader_win.cc(232)] ReadMemory at 0x77a7ab80 of 5888 bytes failed: Solo se completó una parte de una solicitud ReadProcessMemory o WriteProcessMemory. (0x12B)
+[0627/202443:ERROR:process_reader_win.cc(98)] process 1720 not found
+[0627/202443:ERROR:process_reader_win.cc(232)] ReadMemory at 0xe8c374 of 12 bytes failed: Solo se completó una parte de una solicitud ReadProcessMemory o WriteProcessMemory. (0x12B)
+[0627/202443:WARNING:process_snapshot_win.cc(102)] ReadMemory ExceptionInformation failed
+[0627/202443:WARNING:crash_report_exception_handler.cc(60)] ProcessSnapshotWin::InitializeException failed
+[0627/202443:ERROR:scoped_process_suspend.cc(38)] NtResumeProcess, ntstatus=-1073741558

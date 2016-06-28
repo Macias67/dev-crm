@@ -155,14 +155,19 @@ angular.module('MetronicApp')
 		}
 	])
 	.controller('InfoClienteCtrl', [
-		'$rootScope', '$scope', '$uibModalInstance', 'dtCliente',
-		function ($rootScope, $scope, $uibModalInstance, dtCliente) {
+		'$rootScope', '$scope', '$uibModalInstance', 'dtCliente', '$state',
+		function ($rootScope, $scope, $uibModalInstance, dtCliente, $state) {
 			var vm = this;
 			
 			vm.id      = dtCliente;
 			vm.cliente = {
 				rfc: dtCliente
 			}
+			
+			vm.vistaPerfil = function (rfc) {
+				$uibModalInstance.dismiss('cancel');
+				$state.go('cliente-perfil', {rfc: rfc});
+			};
 			
 			vm.cancel = function () {
 				$uibModalInstance.dismiss('cancel');
