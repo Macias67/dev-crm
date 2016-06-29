@@ -372,7 +372,7 @@ MetronicApp.config([
 				}
 			})
 			.state('cliente-perfil', {
-				url        : '/cliente/:rfc',
+				url        : '/cliente/:idcliente',
 				parent     : 'tmpl',
 				templateUrl: 'views/clientes/perfil_cliente.html',
 				data       : {
@@ -382,13 +382,31 @@ MetronicApp.config([
 				resolve    : {
 					deps: [
 						'$ocLazyLoad', function ($ocLazyLoad) {
-							return $ocLazyLoad.load({
-								name        : 'MetronicApp',
-								insertBefore: '#ng_load_plugins_ng',
-								files       : [
-									'scripts/controllers/clientes/perfilcliente.js'
-								]
+							return $ocLazyLoad.load([
+								{
+									name        : 'PerfilClienteCss',
+									insertBefore: '#ng_load_plugins_css',
+									files       : [
+										'../assets/pages/css/profile.min.css'
+									],
+									serie       : true
+								},
+								{
+									name        : 'MetronicApp',
+									insertBefore: '#ng_load_plugins_ng',
+									files       : [
+										'scripts/controllers/clientes/perfilcliente.js'
+									]
+								}
+							]);
+						}
+					],
+					dataCliente: [
+						'$stateParams', 'Cliente', function ($stateParams, Cliente) {
+							var cliente = Cliente.get({id: $stateParams.idcliente}, function () {
+								console.info(cliente.data);
 							});
+							return cliente.data;
 						}
 					]
 				}

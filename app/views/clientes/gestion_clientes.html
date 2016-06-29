@@ -51,13 +51,13 @@
 		<h4 class = "modal-title font-green-sharp"><i class = "fa fa-user"></i> Resumen de cliente </h4>
 	</div>
 	<div class = "modal-body">
-		<h4 class = "page-title"> TIENDAPAQ
-			<small>SADA989AD89A</small>
+		<h4 class = "page-title"> {{infoClienteCtrl.cliente.razonsocial}}
+			<small>{{infoClienteCtrl.cliente.rfc}}</small>
 		</h4>
 
 		<div class = "row">
 			<div class = "col-lg-3 col-md-3 col-sm-6 col-xs-12">
-				<a class = "dashboard-stat dashboard-stat-v2 blue" href = "#">
+				<a class = "dashboard-stat blue" href = "#">
 					<div class = "visual">
 						<i class = "fa fa-comments"></i>
 					</div>
@@ -65,12 +65,12 @@
 						<div class = "number">
 							<span data-counter = "counterup" data-value = "1349">0</span>
 						</div>
-						<div class = "desc"> Pendientes </div>
+						<div class = "desc"> Casos Abiertos </div>
 					</div>
 				</a>
 			</div>
 			<div class = "col-lg-3 col-md-3 col-sm-6 col-xs-12">
-				<a class = "dashboard-stat dashboard-stat-v2 green" href = "#">
+				<a class = "dashboard-stat green" href = "#">
 					<div class = "visual">
 						<i class = "fa fa-shopping-cart"></i>
 					</div>
@@ -78,19 +78,31 @@
 						<div class = "number">
 							<span data-counter = "counterup" data-value = "549">0</span>
 						</div>
-						<div class = "desc"> Casos Abiertos</div>
+						<div class = "desc"> Cotización Pendiente</div>
 					</div>
 				</a>
 			</div>
 			<div class = "col-lg-3 col-md-3 col-sm-6 col-xs-12">
-				<a class = "dashboard-stat dashboard-stat-v2 red" href = "#">
+				<a class = "dashboard-stat red" href = "#">
 					<div class = "visual">
 						<i class = "fa fa-bar-chart-o"></i>
 					</div>
 					<div class = "details">
 						<div class = "number">
-							<span data-counter = "counterup" data-value = "12,5">0</span>M$ </div>
-						<div class = "desc"> Cotizaciones Pendientes </div>
+							<span data-counter = "counterup" data-value = "12,5">0</span></div>
+						<div class = "desc"> CxC Pendientes </div>
+					</div>
+				</a>
+			</div>
+			<div class = "col-lg-3 col-md-3 col-sm-6 col-xs-12">
+				<a class = "dashboard-stat yellow-mint" href = "#">
+					<div class = "visual">
+						<i class = "fa fa-bar-chart-o"></i>
+					</div>
+					<div class = "details">
+						<div class = "number">
+							<span data-counter = "counterup" data-value = "12,5">10:23</span> hrs </div>
+						<div class = "desc"> Poliza </div>
 					</div>
 				</a>
 			</div>
@@ -98,100 +110,204 @@
 
 		<div class = "row">
 			<div class = "col-md-4">
-				<h4 class = "form-section">Domicilio</h4>
-				<div class = "row static-info">
-					<div class = "col-md-5 name"> Calle: </div>
-					<div class = "col-md-7 value"> Sócrates </div>
-                                </div>
-				<div class = "row static-info">
-					<div class = "col-md-5 name"> No. Exterior: </div>
-					<div class = "col-md-7 value"> 244 </div>
-                                </div>
-				<div class = "row static-info">
-					<div class = "col-md-5 name"> No. Interior: </div>
-					<div class = "col-md-7 value">   </div>
-                                </div>
-				<div class = "row static-info">
-					<div class = "col-md-5 name"> Colonia: </div>
-					<div class = "col-md-7 value"> Paso Blanco</div>
-                                </div>
-				<div class = "row static-info">
-					<div class = "col-md-5 name"> C.P.: </div>
-					<div class = "col-md-7 value"> 47810</div>
-                                </div>
-				<div class = "row static-info">
-					<div class = "col-md-5 name"> Ciudad: </div>
-					<div class = "col-md-7 value"> Ocotlán </div>
-                                </div>
-				<div class = "row static-info">
-					<div class = "col-md-5 name"> Municipio: </div>
-					<div class = "col-md-7 value"></div>
-                                </div>
-				<div class = "row static-info">
-					<div class = "col-md-5 name"> Estado: </div>
-					<div class = "col-md-7 value">Jalisco</div>
-                                </div>
-				<div class = "row static-info">
-					<div class = "col-md-5 name"> País: </div>
-					<div class = "col-md-7 value">México</div>
-                                </div>
-			</div>
-			<div class = "col-md-4">
-				<h4 class = "form-section">Información Básica</h4>
-				<div class = "row static-info">
-					<div class = "col-md-3 name"> R.F.C.: </div>
-					<div class = "col-md-9 value"> SADA989AD89A </div>
-                                </div>
-				<div class = "row static-info">
-					<div class = "col-md-3 name"> Email: </div>
-					<div class = "col-md-9 value"> email@example.com </div>
-                                </div>
-				<div class = "row static-info">
-					<div class = "col-md-3 name"> Teléfonos: </div>
-					<div class = "col-md-9 value">  392 9224119,  392 9224119 </div>
-                                </div>
-				<div class = "row static-info">
-					<div class = "col-md-3 name"> Tipo: </div>
-					<div class = "col-md-9 value">
-						<span class = "badge badge-primary badge-roundless">Normal</span>
-						<span class = "badge bg-yellow-casablanca bg-font-yellow-casablanca badge-roundless"><b>Distribuidor</b></span>
+				<div class = "col-md-12">
+					<h4 class = "form-section">Información Básica</h4>
+					<div class = "row static-info">
+						<div class = "col-md-4 name"> R.F.C.: </div>
+						<div class = "col-md-8 value"> {{infoClienteCtrl.cliente.rfc}} </div>
+	                                </div>
+					<div class = "row static-info">
+						<div class = "col-md-4 name"> Email: </div>
+						<div class = "col-md-8 value">{{infoClienteCtrl.cliente.email}} </div>
+	                                </div>
+					<div class = "row static-info">
+						<div class = "col-md-4 name"> Teléfonos: </div>
+						<div class = "col-md-8 value">  {{infoClienteCtrl.cliente.telefono}} </div>
+	                                </div>
+					<div class = "row static-info">
+						<div class = "col-md-4 name"> Tipo: </div>
+						<div class = "col-md-8 value">
+							<span class = "badge badge-primary badge-roundless" ng-if = "!infoClienteCtrl.cliente.prospecto">Normal</span>
+							<span class = "badge bg-red-mint bg-font-red-mint badge-roundless" ng-if = "infoClienteCtrl.cliente.prospecto"><b>Prospecto</b> </span>
+
+							<span class = "badge badge-primary badge-roundless" ng-if = "!infoClienteCtrl.cliente.distribuidor">Normal</span>
+							<span class = "badge bg-yellow-casablanca bg-font-yellow-casablanca badge-roundless" ng-if="infoClienteCtrl.cliente.distribuidor"><b>Distribuidor</b></span>
+						</div>
+	                                </div>
+					<div class = "row static-info">
+						<div class = "col-md-4 name"> Estatus: </div>
+						<div class = "col-md-8 value">
+							<span class = "badge bg-green-jungle bg-font-green-jungle badge-roundless" ng-if = "infoClienteCtrl.cliente.online">
+								<b>Activo</b>
+							</span>
+							<span class = "badge bg-red-mint bg-font-red-mint badge-roundless" ng-if = "!infoClienteCtrl.cliente.online">
+								<b>Inactivo</b>
+							</span>
+						</div>
+	                                </div>
+
+					<hr>
+
+					<h4 class = "form-section"> Domicilio </h4>
+					<div class = "row static-info">
+						<div class = "col-md-5 name"> Calle: </div>
+						<div class = "col-md-7 value"> {{infoClienteCtrl.cliente.calle}} </div>
 					</div>
-                                </div>
-
-				<hr>
-
-				<h4 class = "form-section">Contáctos</h4>
-				<div class = "row static-info">
-					<div class = "col-md-3 name"> Nombre: </div>
-					<div class = "col-md-9 value"> Luis Águila </div>
-                                </div>
-				<div class = "row static-info">
-					<div class = "col-md-3 name"> Email: </div>
-					<div class = "col-md-9 value"> luisaguila@empresa.com.mx </div>
-                                </div>
-				<div class = "row static-info">
-					<div class = "col-md-3 name"> Teléfono: </div>
-					<div class = "col-md-9 value"> 331 5214020 </div>
-                                </div>
-				<div class = "row static-info">
-					<div class = "col-md-3 name"> Estatus: </div>
-					<div class = "col-md-9 value">
-						<span class = "badge bg-red-thunderbird bg-font-red-thunderbird badge-roundless">
-							<b>Inactivo</b>
-						</span>
+					<div class = "row static-info">
+						<div class = "col-md-5 name"> No. Exterior: </div>
+						<div class = "col-md-7 value"> {{infoClienteCtrl.cliente.noexterior}} </div>
 					</div>
-                                </div>
+					<div class = "row static-info">
+						<div class = "col-md-5 name"> No. Interior: </div>
+						<div class = "col-md-7 value">{{infoClienteCtrl.cliente.nointerior}}</div>
+					</div>
+					<div class = "row static-info">
+						<div class = "col-md-5 name"> Colonia: </div>
+						<div class = "col-md-7 value">{{infoClienteCtrl.cliente.colonia}}</div>
+					</div>
+					<div class = "row static-info">
+						<div class = "col-md-5 name"> C.P.: </div>
+						<div class = "col-md-7 value"> {{infoClienteCtrl.cliente.cp}}</div>
+					</div>
+					<div class = "row static-info">
+						<div class = "col-md-5 name"> Ciudad: </div>
+						<div class = "col-md-7 value"> {{infoClienteCtrl.cliente.ciudad}} </div>
+					</div>
+					<div class = "row static-info">
+						<div class = "col-md-5 name"> Municipio: </div>
+						<div class = "col-md-7 value"> {{infoClienteCtrl.cliente.municipio}} </div>
+					</div>
+					<div class = "row static-info">
+						<div class = "col-md-5 name"> Estado: </div>
+						<div class = "col-md-7 value">{{infoClienteCtrl.cliente.estado}}</div>
+					</div>
+					<div class = "row static-info">
+						<div class = "col-md-5 name"> País: </div>
+						<div class = "col-md-7 value">{{infoClienteCtrl.cliente.pais}}</div>
+					</div>
+				</div>
 			</div>
-			<div class = "col-md-4">
+			<div class = "col-md-8">
+				<div class = "col-md-12">
+					<h4 class = "form-section">Detalles</h4>
+					<div class = "row static-info">
+						<div class = "col-md-4 name"> Registrado por: </div>
+						<div class = "col-md-8 value"> Eleazar Frías </div>
+					</div>
+					<div class = "row static-info">
+						<div class = "col-md-4 name"> Fecha registro: </div>
+						<div class = "col-md-8 value"> 14 de Agosto del 2016 a las 4:45 P.M.  </div>
+					</div>
+					<div class = "row static-info">
+						<div class = "col-md-4 name"> Última cotización: </div>
+						<div class = "col-md-8 value"> 26 de Diciembre del 2016</div>
+					</div>
+					<div class = "row static-info">
+						<div class = "col-md-4 name"> Última calificación: </div>
+						<div class = "col-md-8 value"> 78 pts </div>
+					</div>
+				</div>
+				<div class = "col-md-12">
+					<h4 class = "form-section">Contáctos</h4>
+					<table class = "table">
+						<thead>
+							<tr>
+								<th> Nombre </th>
+								<th> Email </th>
+								<th> Teléfono </th>
+								<th> Estatus </th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td> José Salgado </td>
+								<td> emailmuylargo@example.comm </td>
+								<td> 3928716514 </td>
+								<td>
+									<span class = "badge bg-green-jungle bg-font-green-jungle badge-roundless">
+										<b>Activo</b>
+									</span>
+								</td>
+							</tr>
+							<tr>
+								<td> José Salgado </td>
+								<td> emailmuylargo@example.comm </td>
+								<td> 3928716514 </td>
+								<td>
+									<span class = "badge bg-red-thunderbird bg-font-red-thunderbird badge-roundless">
+										<b>Inactivo</b>
+									</span>
+								</td>
+							</tr>
+							<tr>
+								<td> José Salgado </td>
+								<td> emailmuylargo@example.comm </td>
+								<td> 3928716514 </td>
+								<td>
+									<span class = "badge bg-green-jungle bg-font-green-jungle badge-roundless">
+										<b>Activo</b>
+									</span>
+								</td>
+							</tr>
+						</tbody>
+					</table>
 
+					<h4 class = "form-section">Últimas cotizaciones</h4>
+					<table class = "table">
+						<thead>
+							<tr>
+								<th> Folio </th>
+								<th> Ejecutivo </th>
+								<th> Fecha </th>
+								<th> Total </th>
+								<th> Estatus </th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td> 3242 </td>
+								<td> Luis Macias </td>
+								<td> 06/06/2016 </td>
+								<td> $3,400 </td>
+								<td>
+									<span class = "badge bg-green-jungle bg-font-green-jungle badge-roundless">
+										<b>Pagada</b>
+									</span>
+								</td>
+							</tr>
+							<tr>
+								<td> 3242 </td>
+								<td> Luis Macias </td>
+								<td> 06/06/2016 </td>
+								<td> $3,400 </td>
+								<td>
+									<span class = "badge bg-green-jungle bg-font-green-jungle badge-roundless">
+										<b>Pagada</b>
+									</span>
+								</td>
+							</tr>
+							<tr>
+								<td> 3242 </td>
+								<td> Luis Macias </td>
+								<td> 06/06/2016 </td>
+								<td> $3,400 </td>
+								<td>
+									<span class = "badge bg-green-jungle bg-font-green-jungle badge-roundless">
+										<b>Pagada</b>
+									</span>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 			</div>
 			<div class = "clearfix"></div>
 		</div>
 	</div>
 	<div class = "modal-footer">
-		<!--<a class = "btn grey-mint"-->
-		<!--href = "#/cliente/{{infoClienteCtrl.cliente.rfc}}">Ver Perfil</a>-->
-		<button class = "btn grey-mint" ng-click = "infoClienteCtrl.vistaPerfil(infoClienteCtrl.cliente.rfc)">Ver Perfil</button>
+		<button class = "btn green-sharp">Envíar cotización</button>
+		<button class = "btn red-mint">Abrir Caso</button>
+		<button class = "btn blue" ng-click = "infoClienteCtrl.vistaPerfil(infoClienteCtrl.cliente.id)">Ver Perfil</button>
 		<button class = "btn grey-mint btn-outline" ng-click = "infoClienteCtrl.cancel()">Cancelar</button>
 	</div>
 </script>

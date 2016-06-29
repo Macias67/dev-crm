@@ -53,15 +53,30 @@ angular.module('MetronicApp')
 			};
 			
 			vm.openModalInfoCliente = function (id) {
-				$uibModal.open({
-					backdrop   : 'static',
-					templateUrl: 'InfoCliente.html',
-					controller : 'InfoClienteCtrl as infoClienteCtrl',
-					size       : 'lg',
-					resolve    : {
-						dtCliente: id
-					}
+
+				App.scrollTop();
+				App.blockUI({
+					target      : '#ui-view',
+					message     : '<b> Mostrando datos del cliente </b>',
+					boxed       : true,
+					overlayColor: App.getBrandColor('grey'),
+					zIndex      : 99999
 				});
+
+				var cliente = Cliente.get({id: id}, function () {
+					App.unblockUI('#ui-view');
+					$uibModal.open({
+						backdrop   : 'static',
+						templateUrl: 'InfoCliente.html',
+						controller : 'InfoClienteCtrl as infoClienteCtrl',
+						size       : 'lg',
+						resolve    : {
+							dtCliente: cliente.data
+						}
+					});
+				});
+
+
 			};
 			
 			vm.openModalEditaCliente = function (id) {
@@ -158,15 +173,11 @@ angular.module('MetronicApp')
 		'$rootScope', '$scope', '$uibModalInstance', 'dtCliente', '$state',
 		function ($rootScope, $scope, $uibModalInstance, dtCliente, $state) {
 			var vm = this;
+			vm.cliente = dtCliente;
 			
-			vm.id      = dtCliente;
-			vm.cliente = {
-				rfc: dtCliente
-			}
-			
-			vm.vistaPerfil = function (rfc) {
+			vm.vistaPerfil = function (id) {
 				$uibModalInstance.dismiss('cancel');
-				$state.go('cliente-perfil', {rfc: rfc});
+				$state.go('cliente-perfil', {idcliente: id});
 			};
 			
 			vm.cancel = function () {
