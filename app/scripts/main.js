@@ -229,7 +229,7 @@ MetronicApp.config([
 	'$stateProvider', '$urlRouterProvider', '$authProvider', '$httpProvider', 'toastrConfig', 'CRM_APP',
 	
 	function ($stateProvider, $urlRouterProvider, $authProvider, $httpProvider, toastrConfig, CRM_APP) {
-
+		
 		$httpProvider.interceptors.push('interceptor');
 		$httpProvider.defaults.useXDomain = true;
 		
@@ -249,7 +249,7 @@ MetronicApp.config([
 		});
 		
 		$stateProvider
-			// Login
+		// Login
 			.state('login', {
 				url        : '/login',
 				templateUrl: 'views/login.html',
@@ -380,7 +380,7 @@ MetronicApp.config([
 				},
 				controller : 'PerfilClienteCtrl as perfilClienteCtrl',
 				resolve    : {
-					deps: [
+					deps       : [
 						'$ocLazyLoad', function ($ocLazyLoad) {
 							return $ocLazyLoad.load([
 								{
@@ -403,10 +403,12 @@ MetronicApp.config([
 					],
 					dataCliente: [
 						'$stateParams', 'Cliente', function ($stateParams, Cliente) {
-							var cliente = Cliente.get({id: $stateParams.idcliente}, function () {
-								console.info(cliente.data);
-							});
-							return cliente.data;
+// 							var cliente = Cliente.get({id: $stateParams.idcliente}, function () {
+// 								console.info(cliente.data);
+// 							});
+// 							return cliente.data;
+							
+							return Cliente.get({id: $stateParams.idcliente});
 						}
 					]
 				}
