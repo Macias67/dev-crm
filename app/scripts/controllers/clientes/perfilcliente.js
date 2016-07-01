@@ -9,20 +9,18 @@
  */
 angular.module('MetronicApp')
 	.controller('PerfilClienteCtrl', [
-		'$rootScope', '$scope', 'dataCliente', '$window',
-		function ($rootScope, $scope, dataCliente, $window) {
+		'$rootScope', '$scope', 'dataCliente', '$window', '$uibModal',
+		function ($rootScope, $scope, dataCliente, $window, $uibModal) {
 			var vm     = this;
 			vm.cliente = {};
-			dataCliente.$promise.then(function (d) {
-				vm.cliente = d.data;
-				setTimeout(function () {
-					App.unblockUI('#ui-view');
-				}, 2000);
-			});
 			
 			vm.contactos = {
 				modalNuevoContacto: function () {
-					$window.alert('Ola k aze?');
+					$uibModal.open({
+						backdrop   : 'static',
+						templateUrl: 'FormNuevoContacto.html',
+						controller : 'NuevoContactoCtrl as nuevoContactoCtrl',
+					});
 				}
 			};
 			
@@ -42,11 +40,26 @@ angular.module('MetronicApp')
 					zIndex    : 99999,
 					overlayCSS: {
 						backgroundColor: App.getBrandColor('grey'),
-						opacity        : 0.4,
+						opacity        : 0,
 						cursor         : 'wait'
 					}
 				});
-				console.log(dataCliente);
+				
+				dataCliente.$promise.then(function (d) {
+					vm.cliente = d.data;
+					setTimeout(function () {
+						App.unblockUI('#ui-view');
+					}, 2000);
+				});
 			});
+		}
+	])
+	.controller('NuevoContactoCtrl', [
+		'$rootScope', '$scope', '$uibModalInstance',
+		function ($rootScope, $scope, $uibModalInstance) {
+			var vm = this;
+			vm.cancel = function () {
+				$uibModalInstance.dismiss('cancel');
+			};
 		}
 	]);
