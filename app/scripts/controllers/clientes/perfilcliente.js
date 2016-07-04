@@ -15,11 +15,14 @@ angular.module('MetronicApp')
 			vm.cliente = {};
 			
 			vm.contactos = {
-				modalNuevoContacto: function () {
+				modalNuevoContacto: function (idCliente) {
 					$uibModal.open({
 						backdrop   : 'static',
 						templateUrl: 'FormNuevoContacto.html',
 						controller : 'NuevoContactoCtrl as nuevoContactoCtrl',
+						resolve    : {
+							idCliente: idCliente
+						}
 					});
 				}
 			};
@@ -34,15 +37,11 @@ angular.module('MetronicApp')
 				App.initAjax();
 				App.scrollTop();
 				App.blockUI({
-					target    : '#ui-view',
-					message   : '<b> Cargando datos del cliente </b>',
-					boxed     : true,
-					zIndex    : 99999,
-					overlayCSS: {
-						backgroundColor: App.getBrandColor('grey'),
-						opacity        : 0,
-						cursor         : 'wait'
-					}
+					target      : '#ui-view',
+					message     : '<b> Cargando datos del cliente </b>',
+					boxed       : true,
+					zIndex      : 99999,
+					overlayColor: App.getBrandColor('grey')
 				});
 				
 				dataCliente.$promise.then(function (d) {
@@ -55,11 +54,32 @@ angular.module('MetronicApp')
 		}
 	])
 	.controller('NuevoContactoCtrl', [
-		'$rootScope', '$scope', '$uibModalInstance',
-		function ($rootScope, $scope, $uibModalInstance) {
-			var vm = this;
+		'$rootScope', '$scope', '$uibModalInstance', 'idCliente', '$filter',
+		function ($rootScope, $scope, $uibModalInstance, idCliente, $filter) {
+			var vm      = this;
+			vm.formContactoNuevo = {};
+			vm.contacto = {
+				nombre  : '',
+				apellido: '',
+				email   : '',
+				telefono: ''
+			};
+
+			vm.guardar = function () {
+				
+			};
 			vm.cancel = function () {
 				$uibModalInstance.dismiss('cancel');
 			};
+
+			$scope.$watch('nuevoContactoCtrl.contacto.nombre', function () {
+				vm.contacto.nombre = $filter('ucfirst')(vm.contacto.nombre);
+			});
+			$scope.$watch('nuevoContactoCtrl.contacto.apellido', function () {
+				vm.contacto.apellido = $filter('ucfirst')(vm.contacto.apellido);
+			});
+			$scope.$watch('nuevoContactoCtrl.contacto.email', function () {
+				vm.contacto.email = $filter('lowercase')(vm.contacto.email);
+			});
 		}
 	]);
