@@ -59,6 +59,7 @@ angular.module('MetronicApp')
 			var vm      = this;
 			vm.formContactoNuevo = {};
 			vm.contacto = {
+				id_cliente : idCliente,
 				nombre  : '',
 				apellido: '',
 				email   : '',
