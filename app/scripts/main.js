@@ -207,18 +207,24 @@ MetronicApp.service('interceptor', [
 			},
 			
 			responseError: function (response) {
-				console.error('responseERROR: ');
-				console.error(response);
-				if (response.hasOwnProperty('error') && response.error == "token_expired") {
-					var toastr = $injector.get('toastr');
-					var $state = $injector.get('$state');
-					
-					console.log('Entro a la validación de token_expired')
-					
-					toastr.error('El token de sesión ha expirado, inicia de nuevo sesión.', 'La sesión ha expirado.');
-					$state.go('login');
-				}
-				return response;
+				console.info('responseERROR: ');
+				console.log(response);
+
+// 				var toastr = $injector.get('toastr');
+// 				var $state = $injector.get('$state');
+// 				toastr.error(response.data.message, 'Error ' + response.data.status_code);
+// 				$state.go('dashboard');
+
+// 				if (response.hasOwnProperty('error') && response.error == "token_expired") {
+// 					var toastr = $injector.get('toastr');
+// 					var $state = $injector.get('$state');
+//
+// 					console.log('Entro a la validación de token_expired');
+//
+// 					toastr.error('El token de sesión ha expirado, inicia de nuevo sesión.', 'La sesión ha expirado.');
+// 					$state.go('login');
+// 				}
+// 				return response;
 			}
 		}
 	}
@@ -408,7 +414,7 @@ MetronicApp.config([
 // 							});
 // 							return cliente.data;
 							
-							return Cliente.get({id: $stateParams.idcliente});
+							return Cliente.get({id: $stateParams.idcliente}).$promise;
 						}
 					]
 				}

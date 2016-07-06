@@ -37,7 +37,12 @@
 				</div>
 			</div>
 			<div class = "portlet-body">
-				<table id = "tableClientes" datatable = "" dt-options = "gestionClientesCtrl.tableClientes.dtOptions" dt-columns = "gestionClientesCtrl.tableClientes.dtColumns" dt-instance = "gestionClientesCtrl.tableClientes.dtInstance" class = "table table-striped table-bordered table-hover">
+				<table id = "tableClientes"
+				       datatable = ""
+				       dt-options = "gestionClientesCtrl.tableClientes.dtOptions"
+				       dt-columns = "gestionClientesCtrl.tableClientes.dtColumns"
+				       dt-instance = "gestionClientesCtrl.tableClientes.dtInstance"
+				       class = "table table-striped table-bordered table-hover">
 				</table>
 			</div>
 		</div>
@@ -131,7 +136,7 @@
 							<span class = "badge bg-red-mint bg-font-red-mint badge-roundless" ng-if = "infoClienteCtrl.cliente.prospecto"><b>Prospecto</b> </span>
 
 							<span class = "badge badge-primary badge-roundless" ng-if = "!infoClienteCtrl.cliente.distribuidor">Normal</span>
-							<span class = "badge bg-yellow-casablanca bg-font-yellow-casablanca badge-roundless" ng-if="infoClienteCtrl.cliente.distribuidor"><b>Distribuidor</b></span>
+							<span class = "badge bg-yellow-casablanca bg-font-yellow-casablanca badge-roundless" ng-if = "infoClienteCtrl.cliente.distribuidor"><b>Distribuidor</b></span>
 						</div>
 	                                </div>
 					<div class = "row static-info">
@@ -219,33 +224,16 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td> José Salgado </td>
-								<td> emailmuylargo@example.comm </td>
-								<td> 3928716514 </td>
+							<tr ng-repeat = "contacto in infoClienteCtrl.cliente.contactos">
+								<td> {{contacto.nombre +' '+contacto.apellido}} </td>
+								<td> {{contacto.email}} </td>
+								<td> {{contacto.telefono}} </td>
 								<td>
-									<span class = "badge bg-green-jungle bg-font-green-jungle badge-roundless">
+									<span class = "badge bg-green-jungle bg-font-green-jungle badge-roundless" ng-if = "contacto.online">
 										<b>Activo</b>
 									</span>
-								</td>
-							</tr>
-							<tr>
-								<td> José Salgado </td>
-								<td> emailmuylargo@example.comm </td>
-								<td> 3928716514 </td>
-								<td>
-									<span class = "badge bg-red-thunderbird bg-font-red-thunderbird badge-roundless">
+									<span class = "badge bg-red-mint bg-font-red-mint badge-roundless" ng-if = "!contacto.online">
 										<b>Inactivo</b>
-									</span>
-								</td>
-							</tr>
-							<tr>
-								<td> José Salgado </td>
-								<td> emailmuylargo@example.comm </td>
-								<td> 3928716514 </td>
-								<td>
-									<span class = "badge bg-green-jungle bg-font-green-jungle badge-roundless">
-										<b>Activo</b>
 									</span>
 								</td>
 							</tr>
