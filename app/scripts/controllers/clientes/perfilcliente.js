@@ -54,12 +54,11 @@ angular.module('MetronicApp')
 		}
 	])
 	.controller('NuevoContactoCtrl', [
-		'$rootScope', '$scope', '$uibModalInstance', 'idCliente', '$filter',
-		function ($rootScope, $scope, $uibModalInstance, idCliente, $filter) {
-			var vm      = this;
+		'$rootScope', '$scope', '$uibModalInstance', 'idCliente', '$filter', 'Contacto', 'toastr',
+		function ($rootScope, $scope, $uibModalInstance, idCliente, $filter, Contacto, toastr) {
+			var vm               = this;
 			vm.formContactoNuevo = {};
-			vm.contacto = {
-				id_cliente : idCliente,
+			vm.contacto          = {
 				nombre  : '',
 				apellido: '',
 				email   : '',
@@ -67,9 +66,37 @@ angular.module('MetronicApp')
 			};
 
 			vm.guardar = function () {
+				App.scrollTop();
+				App.blockUI({
+					target      : '#ui-view',
+					message     : '<b> Guardando cliente </b>',
+					boxed       : true,
+					overlayColor: App.getBrandColor('grey'),
+					zIndex      : 99999
+				});
 				
+				var contacto = new Contacto(vm.contacto);
+				contacto.$save({idcliente: idCliente}, function (response) {
+					if (response.hasOwnProperty('errors')) {
+						for (var key in response.errors) {
+							if (response.errors.hasOwnProperty(key)) {
+								toastr.error(response.errors[key][0], 'Error con el formulario.');
+							}
+						}
+						App.unblockUI('#ui-view');
+					}
+					else {
+						$uibModalInstance.close();
+						setTimeout(function () {
+							App.unblockUI('#ui-view');
+							toastr.success('Se registró a ' + response.data.nombre + ' como nuevo contacto.', 'Nuevo contacto en ' + response.data.cliente.razonsocial);
+						}, 1000);
+					}
+				});
+				
+				console.log(vm.contacto);
 			};
-			vm.cancel = function () {
+			vm.cancel  = function () {
 				$uibModalInstance.dismiss('cancel');
 			};
 

@@ -266,7 +266,7 @@
 								<span class = "caption-subject font-blue-madison bold uppercase">Contactos</span>
 							</div>
 							<div class = "actions">
-								<button type = "button" class = "btn btn-circle red-sunglo " ng-click = "perfilClienteCtrl.contactos.modalNuevoContacto()">
+								<button type = "button" class = "btn btn-circle red-sunglo " ng-click = "perfilClienteCtrl.contactos.modalNuevoContacto(perfilClienteCtrl.cliente.id)">
 									<i class = "fa fa-plus"></i> Nuevo contacto
 								</button>
 								<button type = "button" class = "btn btn-circle btn-icon-only btn-default" href = "javascript:;">
@@ -1318,7 +1318,7 @@
 								<!-- TIMELINE ITEM WITH GOOGLE MAP -->
 								<div class = "timeline-item">
 									<div class = "timeline-badge">
-										<img class = "timeline-badge-userpic" src = "../assets/pages/media/users/avatar80_7.jpg"> </div>
+										<img class = "timeline-badge-userpic" src = "../../assets/pages/media/users/avatar80_7.jpg"> </div>
 									<div class = "timeline-body">
 										<div class = "timeline-body-arrow"> </div>
 										<div class = "timeline-body-head">
@@ -1467,7 +1467,6 @@
 	<div class = "modal-body form">
 		<form role = "form" name = "nuevoContactoCtrl.formContactoNuevo">
 			<div class = "form-body">
-				<input type = "hidden" ng-model = "nuevoContactoCtrl.contacto.idcliente" required>
 				<div class = "form-group">
                                         <label>
 	                                        Nombre
