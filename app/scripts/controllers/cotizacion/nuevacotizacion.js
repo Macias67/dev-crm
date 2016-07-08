@@ -19,6 +19,7 @@ angular.module('MetronicApp')
 			var vm            = this;
 			vm.cliente        = null;
 			vm.contactoSelect = null;
+			vm.vencimiento = null;
 			
 			vm.porletCliente = {
 				contactos            : [],
@@ -63,21 +64,23 @@ angular.module('MetronicApp')
 				}
 			};
 			
-			// Any function returning a promise object can be used to load values asynchronously
-			$scope.getLocation = function (val) {
-				return $http.get(CRM_APP.url + 'clientes', {
-					headers: {
-						'Authorization': 'Bearer ' + authUser.getToken()
-					},
-					params : {
-						q: val
-					}
-				}).then(function (response) {
-					return response.data.data.map(function (item) {
-						return item.rfc + ' | ' + item.razonsocial;
-					});
-				});
+			vm.porletVencimiento = {
+				popup          : {
+					opened: false
+				},
+				popupOpen      : function () {
+					vm.porletVencimiento.popup.opened = true
+				},
+				format         : 'dd-MMMM-yyyy',
+				altInputFormats: ['M!/d!/yyyy'],
+				dateOptions    : {
+					formatYear : 'yy',
+					maxDate    : new Date(2020, 5, 22),
+					minDate    : new Date(),
+					startingDay: 1
+				}
 			};
+			
 			
 			//Nombres
 			$rootScope.vista = {

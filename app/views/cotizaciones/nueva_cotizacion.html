@@ -59,7 +59,7 @@
 					<a href = "" class = "expand"> </a>
 					<a class = "reload"
 					   ng-click = "nuevaCotizacionCtrl.porletCliente.reloadData()"
-					   ng-if = "nuevaCotizacionCtrl.porletCliente.contactos.length > 0"></a>
+					   ng-if = "nuevaCotizacionCtrl.cliente != null"></a>
 				</div>
 			</div>
 			<div class = "portlet-body portlet-collapsed">
@@ -94,7 +94,7 @@
 							       ng-model = "nuevaCotizacionCtrl.contactoSelect.email"
 							       required>
 						</div>
-						<div class = "form-group" ng-if = "nuevaCotizacionCtrl.porletCliente.contactos.length > 0">
+						<div class = "form-group" ng-if = "nuevaCotizacionCtrl.cliente != null">
 							<button type = "button"
 							        class = "btn green-turquoise btn-sm btn-block"
 							        ng-click = "nuevaCotizacionCtrl.porletCliente.openModalNuevoCliente(nuevaCotizacionCtrl.cliente.id)">
@@ -112,8 +112,8 @@
 			<div class = "portlet-title">
 				<div class = "caption">
 					<i class = "icon-paper-plane font-yellow-casablanca"></i>
-					<span class = "caption-subject bold font-yellow-casablanca uppercase"> Cotización </span>
-					<span class = "caption-helper">Datos de la cotización</span>
+					<span class = "caption-subject bold font-yellow-casablanca uppercase"> Vencimiento </span>
+					<span class = "caption-helper">Fecha de vencimiento</span>
 				</div>
 				<div class = "tools">
 					<a href = "" class = "expand"> </a>
@@ -121,10 +121,33 @@
 				</div>
 			</div>
 			<div class = "portlet-body portlet-collapsed">
-				<div class = "row static-info">
-					<div class = "col-md-4 name"> Fecha: </div>
-					<div class = "col-md-8 value"> 22 de Septiembre del 2016 </div>
+				<!--<div class = "row static-info">-->
+				<!--<div class = "col-md-4 name"> Fecha: </div>-->
+				<!--<div class = "col-md-8 value"> 22 de Septiembre del 2016 </div>-->
+				<!--</div>-->
+
+				<div class = "form-group">
+					<div class = "input-group input-group-lg">
+						<input type = "text"
+						       class = "form-control"
+						       placeholder = "Vencimiento"
+						       uib-datepicker-popup = "{{nuevaCotizacionCtrl.porletVencimiento.format}}"
+						       ng-model = "nuevaCotizacionCtrl.vencimiento"
+						       is-open = "nuevaCotizacionCtrl.porletVencimiento.popup.opened"
+						       datepicker-options = "nuevaCotizacionCtrl.porletVencimiento.dateOptions"
+						       ng-required = "true"
+						       close-text = "Cerrar"
+						       alt-input-formats = "nuevaCotizacionCtrl.porletVencimiento.altInputFormats"
+						       readonly>
+						<span class = "input-group-btn">
+							<button class = "btn yellow-casablanca" ng-click = "nuevaCotizacionCtrl.porletVencimiento.popupOpen()"><i class = "fa fa-calendar"></i></button>
+						</span>
+					</div>
+					{{nuevaCotizacionCtrl.vencimiento}}
 				</div>
+
+				<div class = "clearfix"></div>
+
 			</div>
 		</div>
 		<!-- END Cotizacion PORTLET-->
