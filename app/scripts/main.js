@@ -397,13 +397,6 @@ MetronicApp.config([
 									],
 									serie       : true
 								},
-								{
-									name        : 'MetronicApp',
-									insertBefore: '#ng_load_plugins_ng',
-									files       : [
-										'scripts/controllers/clientes/perfilcliente.js'
-									]
-								}
 							]);
 						}
 					],

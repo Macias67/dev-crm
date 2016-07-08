@@ -9,29 +9,58 @@
  */
 angular.module('MetronicApp')
 	.controller('NuevaCotizacionCtrl', [
-		'$rootScope', '$scope', '$http', 'CRM_APP', 'authUser', '$uibModal', 'Cliente',
-		function ($rootScope, $scope, $http, CRM_APP, authUser, $uibModal, Cliente) {
+		'$rootScope', '$scope', '$http', 'CRM_APP', 'authUser', '$uibModal', 'Cliente', 'Contacto',
+		function ($rootScope, $scope, $http, CRM_APP, authUser, $uibModal, Cliente, Contacto) {
 			$scope.$on('$viewContentLoaded', function () {
 				// initialize core components
 				App.initAjax();
 			});
 			
-			var vm     = this;
-			vm.cliente = {};
-
-			vm.openModalClientes = function () {
-
-				var modalInstance = $uibModal.open({
-					backdrop   : 'static',
-					templateUrl: 'modalClientes.html',
-					controller : 'ClientesCotizacion as clientesCotizacion',
-					size       : 'lg'
-				});
-
-				modalInstance.result.then(function (selectedCliente) {
-					vm.cliente = selectedCliente;
-					console.log(vm.cliente);
-				}, function () {});
+			var vm            = this;
+			vm.cliente        = null;
+			vm.contactoSelect = null;
+			
+			vm.porletCliente = {
+				contactos            : [],
+				reloadData           : function () {
+					Contacto.get({idcliente: vm.cliente.id}, function (contactos) {
+						vm.porletCliente.contactos = [];
+						contactos.data.forEach(function (item, index) {
+							if (item.online) {
+								vm.porletCliente.contactos.push(item);
+							}
+						});
+					});
+				},
+				openModalClientes    : function () {
+					var modalInstance = $uibModal.open({
+						backdrop   : 'static',
+						templateUrl: 'modalClientes.html',
+						controller : 'ClientesCotizacion as clientesCotizacion',
+						size       : 'lg'
+					});
+					modalInstance.result.then(function (selectedCliente) {
+						vm.cliente                 = selectedCliente;
+						vm.contactoSelect          = null;
+						vm.porletCliente.contactos = [];
+						vm.cliente.contactos.forEach(function (item, index) {
+							if (item.online) {
+								vm.porletCliente.contactos.push(item);
+							}
+						});
+					}, function () {
+					});
+				},
+				openModalNuevoCliente: function (idCliente) {
+					$uibModal.open({
+						backdrop   : 'static',
+						templateUrl: 'views/clientes/modal/form_nuevo_contacto.html',
+						controller : 'NuevoContactoCtrl as nuevoContactoCtrl',
+						resolve    : {
+							idCliente: idCliente
+						}
+					});
+				}
 			};
 			
 			// Any function returning a promise object can be used to load values asynchronously
@@ -86,7 +115,7 @@ angular.module('MetronicApp')
 					DTColumnBuilder.newColumn(null).notSortable().renderWith(actionsHtml).withOption('sWidth', '10%'),
 				]
 			};
-
+			
 			function serverData(sSource, aoData, fnCallback, oSettings) {
 				oSettings.jqXHR = $.ajax({
 					'dataType'  : 'json',
@@ -100,10 +129,10 @@ angular.module('MetronicApp')
 					}
 				});
 			}
-
+			
 			function actionsHtml(data, type, full, meta) {
 				vm._clientes[data.id] = data;
-
+				
 				return '<button type="button" class="btn btn-xs yellow-casablanca" ng-click="clientesCotizacion.selectCliente(' + data.id + ')">' +
 					'<i class="fa fa-file-o"></i>&nbsp;Cotizar' +
 					'</button>';
@@ -126,12 +155,16 @@ angular.module('MetronicApp')
 				}
 				return prospecto + distribuidor;
 			};
-
+			
 			function createdRow(row, data, dataIndex) {
 				// Recompiling so we can bind Angular directive to the DT
 				$compile(angular.element(row).contents())($scope);
 			};
-
+			
+			/**
+			 * @TODO ver la posibilidad de hacer peticion para obtener cliente y no cargar todos en vm._clientes
+			 * @param id
+			 */
 			vm.selectCliente = function (id) {
 				$uibModalInstance.close(vm._clientes[id]);
 			};

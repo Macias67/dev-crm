@@ -66,8 +66,6 @@ angular.module('MetronicApp')
 							return estatus;
 						}).withOption('sWidth', '8%'),
 						DTColumnBuilder.newColumn(null).notSortable().renderWith(function (data, type, full, meta) {
-							console.log(data);
-
 							var boton = (data.online) ?
 							            '<button type="button" class="btn red btn-xs">' +
 							            '   <i class="fa fa-toggle-off"></i>' +
@@ -100,7 +98,7 @@ angular.module('MetronicApp')
 				modalNuevoContacto: function (idCliente) {
 					$uibModal.open({
 						backdrop   : 'static',
-						templateUrl: 'FormNuevoContacto.html',
+						templateUrl: 'views/clientes/modal/form_nuevo_contacto.html',
 						controller : 'NuevoContactoCtrl as nuevoContactoCtrl',
 						resolve    : {
 							idCliente: idCliente

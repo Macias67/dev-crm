@@ -11,6 +11,15 @@ div[ui-view].ng-enter {
 div[ui-view].ng-leave {
 }
 
+.form-group.ng-enter {
+    -webkit-animation: fadeIn .8s;
+    animation: fadeIn .8s;
+}
+.form-group.ng-leave {
+    -webkit-animation: fadeOut .8s;
+    animation: fadeOut .8s;
+}
+
 .ng-hide-remove {
     -webkit-animation: bounceIn 2.5s;
     animation: bounceIn 2.5s;

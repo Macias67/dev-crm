@@ -1,0 +1,78 @@
+<div class = "modal-header">
+		<button type = "button" class = "close" aria-hidden = "true" ng-click = "nuevoContactoCtrl.cancel()"></button>
+		<h4 class = "modal-title font-green-sharp">
+			<i class = "fa fa-user"></i> Nuevo contacto
+		</h4>
+	</div>
+	<div class = "modal-body form">
+		<form role = "form" name = "nuevoContactoCtrl.formContactoNuevo">
+			<div class = "form-body">
+				<div class = "form-group">
+                                        <label>
+	                                        Nombre
+	                                        <span class = "required" aria-required = "true">*</span>
+                                        </label>
+                                        <div class = "input-icon input-icon-sm">
+                                            <i class = "fa fa-user"></i>
+                                            <input type = "text"
+                                                   class = "form-control input-sm"
+                                                   placeholder = "Nombre"
+                                                   ng-model = "nuevoContactoCtrl.contacto.nombre"
+                                                   required>
+                                        </div>
+				</div>
+				<div class = "form-group">
+                                        <label>
+	                                        Apellido
+	                                        <span class = "required" aria-required = "true">*</span>
+                                        </label>
+                                        <div class = "input-icon input-icon-sm">
+                                            <i class = "fa fa-user"></i>
+                                            <input type = "text"
+                                                   class = "form-control input-sm"
+                                                   placeholder = "Apellido"
+                                                   ng-model = "nuevoContactoCtrl.contacto.apellido"
+                                                   required>
+                                        </div>
+				</div>
+				<div class = "form-group">
+                                        <label>
+	                                        Email
+	                                        <span class = "required" aria-required = "true">*</span>
+                                        </label>
+                                        <div class = "input-icon input-icon-sm">
+                                            <i class = "fa fa-envelope"></i>
+                                            <input type = "email"
+                                                   class = "form-control input-sm"
+                                                   placeholder = "Email"
+                                                   ng-model = "nuevoContactoCtrl.contacto.email"
+                                                   required>
+                                        </div>
+				</div>
+				<div class = "form-group">
+                                        <label>
+	                                        Teléfono
+                                        </label>
+                                        <div class = "input-icon input-icon-sm">
+                                            <i class = "fa fa-phone"></i>
+                                            <input type = "text" class = "form-control input-sm"
+                                                   placeholder = "Teléfono"
+                                                   ng-model = "nuevoContactoCtrl.contacto.telefono"
+                                                   ui-mask = "(999) 999-9999"
+                                                   ui-mask-placeholder>
+                                        </div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class = "modal-footer">
+		<button
+			class = "btn green-sharp"
+			ng-disabled = "!nuevoContactoCtrl.formContactoNuevo.$valid"
+			ng-click = "nuevoContactoCtrl.guardar()">
+			Guardar
+		</button>
+		<button class = "btn grey-mint btn-outline"
+		        ng-click = "nuevoContactoCtrl.cancel()">Cancelar
+		</button>
+	</div>
