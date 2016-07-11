@@ -24,6 +24,59 @@
 		<div class = "portlet light">
 			<div class = "portlet-title">
 				<div class = "caption">
+					<i class = "fa fa-truck font-yellow-casablanca"></i>
+					<span class = "caption-subject bold font-yellow-casablanca uppercase"> Producto </span>
+				</div>
+			</div>
+			<div class = "portlet-body">
+				<form role = "form">
+					<div class = "form-body">
+						<div class = "form-group">
+							<div class = "input-group input-group-sm">
+								<input type = "text"
+								       class = "form-control"
+								       placeholder = "Cliente"
+								       ng-model = "nuevaCotizacionCtrl.cliente.razonsocial"
+								       readonly>
+								<span class = "input-group-btn">
+									<button class = "btn yellow-casablanca" ng-click = "nuevaCotizacionCtrl.porletCliente.openModalClientes()"><i class = "fa fa-user"></i></button>
+								</span>
+							</div>
+						</div>
+						<div class = "form-group" ng-if = "nuevaCotizacionCtrl.porletCliente.contactos.length > 0">
+							<label>Contacto: </label>
+							<select
+								class = "form-control input-sm"
+								ng-options = "contacto.nombre +' '+contacto.apellido for contacto in nuevaCotizacionCtrl.porletCliente.contactos"
+								ng-model = "nuevaCotizacionCtrl.contactoSelect"
+								required>
+							</select>
+						</div>
+						<div class = "form-group" ng-if = "nuevaCotizacionCtrl.contactoSelect != null">
+							<label>Email destino: </label>
+							<input type = "email"
+							       class = "form-control input-sm"
+							       placeholder = "input-sm"
+							       ng-model = "nuevaCotizacionCtrl.contactoSelect.email"
+							       required>
+						</div>
+						<div class = "form-group" ng-if = "nuevaCotizacionCtrl.cliente != null">
+							<button type = "button"
+							        class = "btn green-turquoise btn-sm btn-block"
+							        ng-click = "nuevaCotizacionCtrl.porletCliente.openModalNuevoCliente(nuevaCotizacionCtrl.cliente.id)">
+								<i class = "fa fa-plus"></i>&nbsp;&nbsp;Nuevo contacto a <b>{{nuevaCotizacionCtrl.cliente.razonsocial}}</b>
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<!-- END Total PORTLET-->
+
+		<!-- BEGIN Total PORTLET-->
+		<div class = "portlet light">
+			<div class = "portlet-title">
+				<div class = "caption">
 					<i class = "fa fa-dollar font-yellow-casablanca"></i>
 					<span class = "caption-subject bold font-yellow-casablanca uppercase"> Total </span>
 				</div>
@@ -107,27 +160,21 @@
 		</div>
 		<!-- END Cliente PORTLET-->
 
-		<!-- BEGIN Cotizacion PORTLET-->
+		<!-- BEGIN Vencimiento PORTLET-->
 		<div class = "portlet light">
 			<div class = "portlet-title">
 				<div class = "caption">
-					<i class = "icon-paper-plane font-yellow-casablanca"></i>
+					<i class = "fa fa-calendar font-yellow-casablanca"></i>
 					<span class = "caption-subject bold font-yellow-casablanca uppercase"> Vencimiento </span>
 					<span class = "caption-helper">Fecha de vencimiento</span>
 				</div>
 				<div class = "tools">
 					<a href = "" class = "expand"> </a>
-					<a href = "" class = "reload"> </a>
 				</div>
 			</div>
 			<div class = "portlet-body portlet-collapsed">
-				<!--<div class = "row static-info">-->
-				<!--<div class = "col-md-4 name"> Fecha: </div>-->
-				<!--<div class = "col-md-8 value"> 22 de Septiembre del 2016 </div>-->
-				<!--</div>-->
-
 				<div class = "form-group">
-					<div class = "input-group input-group-lg">
+					<div class = "input-group input-group-sm">
 						<input type = "text"
 						       class = "form-control"
 						       placeholder = "Vencimiento"
@@ -143,14 +190,17 @@
 							<button class = "btn yellow-casablanca" ng-click = "nuevaCotizacionCtrl.porletVencimiento.popupOpen()"><i class = "fa fa-calendar"></i></button>
 						</span>
 					</div>
-					{{nuevaCotizacionCtrl.vencimiento}}
 				</div>
 
+				<h4 ng-if = "nuevaCotizacionCtrl.vencimiento != null">
+					<span class = "label label-danger">
+						<b>La cotización vencerá <span am-time-ago = "nuevaCotizacionCtrl.vencimiento"></span> si no es pagada.</b>
+					</span>
+				</h4>
 				<div class = "clearfix"></div>
-
 			</div>
 		</div>
-		<!-- END Cotizacion PORTLET-->
+		<!-- END Vencimiento PORTLET-->
 
 		<!-- BEGIN Bancos PORTLET-->
 		<div class = "portlet light">
@@ -166,14 +216,11 @@
 				</div>
 			</div>
 			<div class = "portlet-body portlet-collapsed">
-				<div class = "form-group">
+				<div class = "form-group" ng-if = "nuevaCotizacionCtrl.porletBancos.bancos.length > 0">
 					<div class = "mt-checkbox-list">
-						<label class = "mt-checkbox"> Santander (<b>Cta: KJSDHA90213</b>)
-							<input type = "checkbox" value = "1" name = "test"/>
-							<span></span>
-						</label>
-						<label class = "mt-checkbox"> Banemex (<b>Cta: 0001237123812</b>)
-							<input type = "checkbox" value = "1" name = "test"/>
+						<label class = "mt-checkbox" ng-repeat = "banco in nuevaCotizacionCtrl.porletBancos.bancos">
+							{{banco.banco}} | {{banco.titular}} | CTA: <b>{{banco.cta}}</b>
+							<input type = "checkbox" data-checklist-model = "nuevaCotizacionCtrl.bancos" data-checklist-value = "banco"/>
 							<span></span>
 						</label>
 					</div>
@@ -212,13 +259,31 @@
 	</div>
 </div>
 
+<script type = "text/ng-template" id = "modalProductos.html">
+	<div class = "modal-header">
+		<button type = "button" class = "close" aria-hidden = "true" ng-click = "productosCotizacion.cancel()"></button>
+		<h4 class = "modal-title font-green-sharp"><i class = "fa fa-user"></i> Cliente </h4>
+	</div>
+	<div class = "modal-body">
+		<table id = "tableProductos"
+		       datatable = ""
+		       dt-options = "productosCotizacion.tableProductos.dtOptions"
+		       dt-columns = "productosCotizacion.tableProductos.dtColumns"
+		       dt-instance = "productosCotizacion.tableProductos.dtInstance"
+		       class = "table table-striped table-bordered table-hover">
+		</table>
+	</div>
+	<div class = "modal-footer">
+		<button class = "btn grey-mint btn-outline" ng-click = "productosCotizacion.cancel()">Cancelar</button>
+	</div>
+</script>
+
 <script type = "text/ng-template" id = "modalClientes.html">
 	<div class = "modal-header">
 		<button type = "button" class = "close" aria-hidden = "true" ng-click = "clientesCotizacion.cancel()"></button>
 		<h4 class = "modal-title font-green-sharp"><i class = "fa fa-user"></i> Cliente </h4>
 	</div>
 	<div class = "modal-body">
-		<!--{{clientesCotizacion.clientes | json}}-->
 		<table id = "tableClientes"
 		       datatable = ""
 		       dt-options = "clientesCotizacion.tableClientes.dtOptions"

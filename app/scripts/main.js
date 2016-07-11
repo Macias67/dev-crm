@@ -24,6 +24,8 @@ var MetronicApp = angular.module('MetronicApp', [
 	'toastr',
 	'jcs-autoValidate',
 	'angular.filter',
+	'angularMoment',
+	'checklist-model',
 	//Servicios
 	'authService'
 ]);
@@ -626,8 +628,8 @@ MetronicApp.config([
 
 /* Init global settings and run the app */
 MetronicApp.run([
-	'$rootScope', 'settings', '$state', '$auth', '$location', 'authUser', 'PermissionStore', 'RoleStore', 'validator', 'defaultErrorMessageResolver',
-	function ($rootScope, settings, $state, $auth, $location, authUser, PermissionStore, RoleStore, validator, defaultErrorMessageResolver) {
+	'$rootScope', 'settings', '$state', '$auth', '$location', 'authUser', 'PermissionStore', 'RoleStore', 'validator', 'defaultErrorMessageResolver', 'amMoment',
+	function ($rootScope, settings, $state, $auth, $location, authUser, PermissionStore, RoleStore, validator, defaultErrorMessageResolver, amMoment) {
 		
 		$rootScope.$state    = $state; // state to be accessed from view
 		$rootScope.$settings = settings; // state to be accessed from view
@@ -635,6 +637,8 @@ MetronicApp.run([
 		//validator.setValidElementStyling(false);
 		defaultErrorMessageResolver.setI18nFileRootPath('bower_components/angular-auto-validate/dist/lang/');
 		defaultErrorMessageResolver.setCulture('es-CO');
+
+		amMoment.changeLocale('es');
 		
 		$rootScope.$on('$stateChangeStart', function (event, toState) {
 			var requiredLogin = false;

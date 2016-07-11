@@ -9,19 +9,31 @@
  */
 angular.module('MetronicApp')
 	.controller('NuevaCotizacionCtrl', [
-		'$rootScope', '$scope', '$http', 'CRM_APP', 'authUser', '$uibModal', 'Cliente', 'Contacto',
-		function ($rootScope, $scope, $http, CRM_APP, authUser, $uibModal, Cliente, Contacto) {
-			$scope.$on('$viewContentLoaded', function () {
-				// initialize core components
-				App.initAjax();
-			});
-			
+		'$rootScope', '$scope', '$http', 'CRM_APP', 'authUser', '$uibModal', 'Cliente', 'Contacto', 'Banco',
+		function ($rootScope, $scope, $http, CRM_APP, authUser, $uibModal, Cliente, Contacto, Banco) {
 			var vm            = this;
 			vm.cliente        = null;
 			vm.contactoSelect = null;
-			vm.vencimiento = null;
+			vm.vencimiento    = null;
+			vm.bancos         = [];
+			vm.productos      = [];
 			
-			vm.porletCliente = {
+			vm.porletProducto    = {
+				producto          : {},
+				openModalProductos: function () {
+					var modalInstance = $uibModal.open({
+						backdrop   : 'static',
+						templateUrl: 'modalProductos.html',
+						controller : 'ProductosCotizacion as productosCotizacion',
+						size       : 'lg'
+					});
+					modalInstance.result.then(function (selectedProducto) {
+						console.log(selectedProducto);
+					}, function () {
+					});
+				},
+			};
+			vm.porletCliente     = {
 				contactos            : [],
 				reloadData           : function () {
 					Contacto.get({idcliente: vm.cliente.id}, function (contactos) {
@@ -63,7 +75,6 @@ angular.module('MetronicApp')
 					});
 				}
 			};
-			
 			vm.porletVencimiento = {
 				popup          : {
 					opened: false
@@ -71,7 +82,7 @@ angular.module('MetronicApp')
 				popupOpen      : function () {
 					vm.porletVencimiento.popup.opened = true
 				},
-				format         : 'dd-MMMM-yyyy',
+				format         : 'dd/MMMM/yyyy',
 				altInputFormats: ['M!/d!/yyyy'],
 				dateOptions    : {
 					formatYear : 'yy',
@@ -80,7 +91,22 @@ angular.module('MetronicApp')
 					startingDay: 1
 				}
 			};
-			
+
+			vm.porletBancos = {
+				bancos: []
+			};
+
+			$scope.$on('$viewContentLoaded', function () {
+				// initialize core components
+				App.initAjax();
+
+				Banco.get(function (bancos) {
+					vm.porletBancos.bancos = bancos.data;
+					console.log(vm.porletBancos.bancos);
+				});
+
+
+			});
 			
 			//Nombres
 			$rootScope.vista = {
@@ -94,11 +120,36 @@ angular.module('MetronicApp')
 			$rootScope.settings.layout.pageSidebarClosed = true;
 		}
 	])
+	.controller('ProductosCotizacion', [
+		'$rootScope', '$scope', '$uibModalInstance', 'DTOptionsBuilder', 'DTColumnBuilder', 'CRM_APP', '$compile', 'authUser',
+		function ($rootScope, $scope, $uibModalInstance, DTOptionsBuilder, DTColumnBuilder, CRM_APP, $compile, authUser) {
+			var vm        = this;
+			vm._productos = [];
+
+			vm.reloadTable = function () {
+
+				App.blockUI({
+					target      : '#tableClientes',
+					animate     : true,
+					overlayColor: App.getBrandColor('grey')
+				});
+
+				vm.tableClientes.dtInstance.reloadData();
+
+				setTimeout(function () {
+					App.unblockUI('#tableClientes');
+				}, 1500);
+			};
+			vm.cancel      = function () {
+				$uibModalInstance.dismiss('cancel');
+			};
+		}
+	])
 	.controller('ClientesCotizacion', [
 		'$rootScope', '$scope', '$uibModalInstance', 'DTOptionsBuilder', 'DTColumnBuilder', 'CRM_APP', '$compile', 'authUser',
 		function ($rootScope, $scope, $uibModalInstance, DTOptionsBuilder, DTColumnBuilder, CRM_APP, $compile, authUser) {
 			var vm       = this;
-			vm._clientes = {};
+			vm._clientes = [];
 			
 			vm.tableClientes = {
 				dtInstance: {},
