@@ -509,6 +509,22 @@ MetronicApp.config([
 				templateUrl: 'views/productos/gestion_productos.html',
 				data       : {
 					pageTitle: 'Productos'
+				},
+				controller : 'GestionProductosCtrl as gestionProductosCtrl',
+				resolve    : {
+					deps: [
+						'$ocLazyLoad', function ($ocLazyLoad) {
+							return $ocLazyLoad.load([
+								{
+									name        : 'ProductosNG',
+									insertBefore: '#ng_load_plugins_ng',
+									files       : [
+										'scripts/controllers/productos/gestionproductos.js'
+									]
+								}
+							]);
+						}
+					]
 				}
 			})
 			//Gestor general
@@ -524,15 +540,6 @@ MetronicApp.config([
 					deps: [
 						'$ocLazyLoad', function ($ocLazyLoad) {
 							return $ocLazyLoad.load([
-								{
-									name        : 'OficinasCss',
-									insertBefore: '#ng_load_plugins_css',
-									files       : [
-										'assets/global/plugins/datatables/datatables.min.css',
-										'assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css'
-									],
-									serie       : true
-								},
 								{
 									name        : 'OficinasNG',
 									insertBefore: '#ng_load_plugins_ng',
