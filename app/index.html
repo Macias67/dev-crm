@@ -16,7 +16,7 @@
 		<meta content = "width=device-width, initial-scale=1" name = "viewport"/>
 		<meta content = "" name = "description"/>
 		<meta content = "" name = "author"/>
-
+		
 		<!-- BEGIN GLOBAL MANDATORY STYLES -->
 		<link href = "http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel = "stylesheet" type = "text/css"/>
 		<link href = "bower_components/fontawesome/css/font-awesome.min.css" rel = "stylesheet" type = "text/css"/>
@@ -25,7 +25,7 @@
 		<link href = "bower_components/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css" rel = "stylesheet" type = "text/css"/>
 		<link href = "bower_components/animate.css/animate.css" rel = "stylesheet" type = "text/css"/>
 		<!-- END GLOBAL MANDATORY STYLES -->
-
+		
 		<!-- BEGIN DYMANICLY LOADED CSS FILES(all plugin and page related styles must be loaded between GLOBAL and THEME css files ) -->
 		<link href = "assets/global/plugins/datatables/datatables.min.css" rel = "stylesheet">
 		<link href = "assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css" rel = "stylesheet">
@@ -34,11 +34,11 @@
 		<link href = "bower_components/angular-toastr/dist/angular-toastr.min.css" rel = "stylesheet">
 		<link id = "ng_load_plugins_css"/>
 		<!-- END DYMANICLY LOADED CSS FILES -->
-
+		
 		<!-- BEGIN THEME GLOBAL STYLES -->
 		<link href = "assets/global/css/components-rounded.min.css" rel = "stylesheet" id = "style_components" type = "text/css"/>
 		<link href = "assets/global/css/plugins.min.css" rel = "stylesheet" type = "text/css"/>
-
+		
 		<!--CSS DEL DASHBOARD-->
 		<link href = "assets/layouts/layout2/css/layout.min.css" rel = "stylesheet" type = "text/css"/>
 		<link href = "assets/layouts/layout2/css/themes/default.min.css" rel = "stylesheet" type = "text/css" id = "style_color"/>
@@ -61,15 +61,15 @@
 		<!-- END PAGE SPINNER -->
 
 		<div ui-view id = "ui-view"></div>
-
+		
 		<!-- BEGIN JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->
-
+		
 		<!-- BEGIN CORE JQUERY PLUGINS -->
 		<!--[if lt IE 9]>
 		<script src = "assets/global/plugins/respond.min.js"></script>
 		<script src = "assets/global/plugins/excanvas.min.js"></script>
 		<![endif]-->
-
+		
 		<script src = "http://maps.google.com/maps/api/js"></script>
 
 		<script src = "bower_components/jquery/dist/jquery.min.js" type = "text/javascript"></script>
@@ -82,7 +82,7 @@
 		<script src = "bower_components/moment/moment.js" type = "text/javascript"></script>
 		<script src = "bower_components/moment/locale/es.js" type = "text/javascript"></script>
 		<!-- END CORE JQUERY PLUGINS -->
-
+		
 		<!-- BEGIN CORE ANGULARJS PLUGINS -->
 		<script src = "bower_components/angular/angular.min.js" type = "text/javascript"></script>
 		<script src = "https://code.angularjs.org/1.4.0/i18n/angular-locale_es-mx.js" type = "text/javascript"></script>
@@ -113,14 +113,14 @@
 		<script src = "https://www.gstatic.com/firebasejs/3.0.0/firebase.js"></script>
 		<script src = "https://cdn.firebase.com/libs/angularfire/1.2.0/angularfire.min.js"></script>
 		<!-- END CORE ANGULARJS PLUGINS -->
-
+		
 		<!-- BEGIN PAGE LEVEL PLUGINS -->
 		<script src = "assets/global/plugins/datatables/datatables.min.js" type = "text/javascript"></script>
 		<script src = "assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js" type = "text/javascript"></script>
 
 		<link id = "ng_load_plugins_js"/>
 		<!-- END PAGE LEVEL PLUGINS -->
-
+		
 		<!-- BEGIN APP LEVEL ANGULARJS SCRIPTS -->
 		<script src = "scripts/main.js" type = "text/javascript"></script>
 		<script src = "scripts/directives.js" type = "text/javascript"></script>
@@ -129,21 +129,23 @@
 		<script src = "scripts/services/cliente.js" type = "text/javascript"></script>
 		<script src = "scripts/services/contacto.js" type = "text/javascript"></script>
 		<script src = "scripts/services/banco.js" type = "text/javascript"></script>
+		<script src="scripts/services/producto.js" type="text/javascript"></script>
+		<script src = "scripts/services/unidades.js" type = "text/javascript"></script>
 
 		<script src = "scripts/controllers/clientes/perfilcliente.js" type = "text/javascript"></script>
 		<link id = "ng_load_plugins_ng"/>
 		<!-- END APP LEVEL ANGULARJS SCRIPTS -->
-
+		
 		<!-- BEGIN THEME GLOBAL SCRIPTS -->
 		<script src = "assets/global/scripts/app.min.js" type = "text/javascript"></script>
 		<!-- END THEME GLOBAL SCRIPTS -->
-
+		
 		<!-- BEGIN APP LEVEL JQUERY SCRIPTS -->
 		<script src = "assets/layouts/layout2/scripts/layout.min.js" type = "text/javascript"></script>
 		<script src = "assets/layouts/global/scripts/quick-sidebar.min.js" type = "text/javascript"></script>
 		<script src = "assets/layouts/layout2/scripts/demo.min.js" type = "text/javascript"></script>
 		<!-- END APP LEVEL JQUERY SCRIPTS -->
-
+		
 		<!-- END JAVASCRIPTS -->
 	</body>
 </html>

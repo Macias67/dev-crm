@@ -404,11 +404,6 @@ MetronicApp.config([
 					],
 					dataCliente: [
 						'$stateParams', 'Cliente', function ($stateParams, Cliente) {
-// 							var cliente = Cliente.get({id: $stateParams.idcliente}, function () {
-// 								console.info(cliente.data);
-// 							});
-// 							return cliente.data;
-							
 							return Cliente.get({id: $stateParams.idcliente}).$promise;
 						}
 					]
