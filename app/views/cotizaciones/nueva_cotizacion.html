@@ -20,7 +20,7 @@
 
 <div class = "row">
 	<div class = "col-md-4">
-		<!-- BEGIN Total PORTLET-->
+		<!-- BEGIN Producto PORTLET-->
 		<div class = "portlet light">
 			<div class = "portlet-title">
 				<div class = "caption">
@@ -35,43 +35,19 @@
 							<div class = "input-group input-group-sm">
 								<input type = "text"
 								       class = "form-control"
-								       placeholder = "Cliente"
-								       ng-model = "nuevaCotizacionCtrl.cliente.razonsocial"
+								       placeholder = "Producto"
+								       ng-model = "nuevaCotizacionCtrl.producto.producto"
 								       readonly>
 								<span class = "input-group-btn">
-									<button class = "btn yellow-casablanca" ng-click = "nuevaCotizacionCtrl.porletCliente.openModalClientes()"><i class = "fa fa-user"></i></button>
+									<button class = "btn yellow-casablanca" ng-click = "nuevaCotizacionCtrl.porletProducto.openModalProductos()"><i class = "fa fa-truck"></i></button>
 								</span>
 							</div>
-						</div>
-						<div class = "form-group" ng-if = "nuevaCotizacionCtrl.porletCliente.contactos.length > 0">
-							<label>Contacto: </label>
-							<select
-								class = "form-control input-sm"
-								ng-options = "contacto.nombre +' '+contacto.apellido for contacto in nuevaCotizacionCtrl.porletCliente.contactos"
-								ng-model = "nuevaCotizacionCtrl.contactoSelect"
-								required>
-							</select>
-						</div>
-						<div class = "form-group" ng-if = "nuevaCotizacionCtrl.contactoSelect != null">
-							<label>Email destino: </label>
-							<input type = "email"
-							       class = "form-control input-sm"
-							       placeholder = "input-sm"
-							       ng-model = "nuevaCotizacionCtrl.contactoSelect.email"
-							       required>
-						</div>
-						<div class = "form-group" ng-if = "nuevaCotizacionCtrl.cliente != null">
-							<button type = "button"
-							        class = "btn green-turquoise btn-sm btn-block"
-							        ng-click = "nuevaCotizacionCtrl.porletCliente.openModalNuevoCliente(nuevaCotizacionCtrl.cliente.id)">
-								<i class = "fa fa-plus"></i>&nbsp;&nbsp;Nuevo contacto a <b>{{nuevaCotizacionCtrl.cliente.razonsocial}}</b>
-							</button>
 						</div>
 					</div>
 				</form>
 			</div>
 		</div>
-		<!-- END Total PORTLET-->
+		<!-- END Producto PORTLET-->
 
 		<!-- BEGIN Total PORTLET-->
 		<div class = "portlet light">

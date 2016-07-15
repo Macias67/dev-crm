@@ -12,6 +12,7 @@ angular.module('MetronicApp')
 		'$rootScope', '$scope', '$http', 'CRM_APP', 'authUser', '$uibModal', 'Cliente', 'Contacto', 'Banco',
 		function ($rootScope, $scope, $http, CRM_APP, authUser, $uibModal, Cliente, Contacto, Banco) {
 			var vm            = this;
+			vm.producto       = null;
 			vm.cliente        = null;
 			vm.contactoSelect = null;
 			vm.vencimiento    = null;
@@ -29,6 +30,7 @@ angular.module('MetronicApp')
 					});
 					modalInstance.result.then(function (selectedProducto) {
 						console.log(selectedProducto);
+						vm.producto = selectedProducto;
 					}, function () {
 					});
 				},
@@ -91,21 +93,21 @@ angular.module('MetronicApp')
 					startingDay: 1
 				}
 			};
-
+			
 			vm.porletBancos = {
 				bancos: []
 			};
-
+			
 			$scope.$on('$viewContentLoaded', function () {
 				// initialize core components
 				App.initAjax();
-
+				
 				Banco.get(function (bancos) {
 					vm.porletBancos.bancos = bancos.data;
 					console.log(vm.porletBancos.bancos);
 				});
-
-
+				
+				
 			});
 			
 			//Nombres
@@ -125,22 +127,81 @@ angular.module('MetronicApp')
 		function ($rootScope, $scope, $uibModalInstance, DTOptionsBuilder, DTColumnBuilder, CRM_APP, $compile, authUser) {
 			var vm        = this;
 			vm._productos = [];
-
+			
+			vm.tableProductos = {
+				dtInstance: {},
+				dtOptions : DTOptionsBuilder.fromSource(CRM_APP.url + 'productos')
+					.withFnServerData(serverData)
+					.withLanguageSource('//cdn.datatables.net/plug-ins/1.10.11/i18n/Spanish.json')
+					.withDataProp('data')
+					.withOption('createdRow', createdRow)
+					.withPaginationType('bootstrap_full_number')
+					.withBootstrap(),
+				
+				dtColumns: [
+					DTColumnBuilder.newColumn('codigo').withTitle('Código').withOption('sWidth', '10%'),
+					DTColumnBuilder.newColumn('producto').withTitle('Producto'),
+					DTColumnBuilder.newColumn('precio').withTitle('Precio').renderWith(function (data, type, full) {
+						return '$ ' + full.precio;
+					}),
+					DTColumnBuilder.newColumn('unidad.unidad').withTitle('Unidad'),
+					DTColumnBuilder.newColumn(null).notSortable().renderWith(actionsHtml).withOption('sWidth', '10%'),
+				]
+			};
+			
+			function serverData(sSource, aoData, fnCallback, oSettings) {
+				oSettings.jqXHR = $.ajax({
+					'dataType'  : 'json',
+					'type'      : 'GET',
+					'url'       : CRM_APP.url + 'productos',
+					'success'   : fnCallback,
+					'beforeSend': function (xhr) {
+						xhr.setRequestHeader('Accept', CRM_APP.accept);
+						xhr.setRequestHeader('Authorization', 'Bearer ' + authUser.getToken());
+						xhr.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
+					}
+				});
+			}
+			
+			function actionsHtml(data, type, full, meta) {
+				vm._productos[data.id] = data;
+				
+				return '<button type="button" class="btn btn-xs yellow-casablanca" ng-click="productosCotizacion.selectProducto(' + data.id + ')">' +
+					'<i class="fa fa-file-o"></i>&nbsp;Cotizar' +
+					'</button>';
+			}
+			
+			function createdRow(row, data, dataIndex) {
+				if (data.online) {
+					// Recompiling so we can bind Angular directive to the DT
+					$compile(angular.element(row).contents())($scope);
+				}
+			};
+			
+			/**
+			 * @TODO ver la posibilidad de hacer peticion para obtener cliente y no cargar todos en vm._clientes
+			 * @param id
+			 */
+			vm.selectProducto = function (id) {
+				$uibModalInstance.close(vm._productos[id]);
+			};
+			
 			vm.reloadTable = function () {
-
+				
 				App.blockUI({
 					target      : '#tableClientes',
 					animate     : true,
 					overlayColor: App.getBrandColor('grey')
 				});
-
+				
 				vm.tableClientes.dtInstance.reloadData();
-
+				
 				setTimeout(function () {
 					App.unblockUI('#tableClientes');
 				}, 1500);
 			};
-			vm.cancel      = function () {
+			
+			vm.cancel = function () {
 				$uibModalInstance.dismiss('cancel');
 			};
 		}

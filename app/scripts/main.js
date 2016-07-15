@@ -209,8 +209,13 @@ MetronicApp.service('interceptor', [
 			},
 			
 			responseError: function (response) {
-				console.info('responseERROR: ');
-				console.log(response);
+				var toastr = $injector.get('toastr');
+				var $state = $injector.get('$state');
+				
+				if(response.status == 500) {
+					toastr.error('Hubo error con el servidor', response.statusText);
+					console.error(response.data.mesasge);
+				}
 
 // 				var toastr = $injector.get('toastr');
 // 				var $state = $injector.get('$state');
@@ -218,8 +223,7 @@ MetronicApp.service('interceptor', [
 // 				$state.go('dashboard');
 
 // 				if (response.hasOwnProperty('error') && response.error == "token_expired") {
-// 					var toastr = $injector.get('toastr');
-// 					var $state = $injector.get('$state');
+//
 //
 // 					console.log('Entro a la validación de token_expired');
 //
@@ -257,7 +261,7 @@ MetronicApp.config([
 		});
 		
 		$stateProvider
-		// Login
+			// Login
 			.state('login', {
 				url        : '/login',
 				templateUrl: 'views/login.html',
