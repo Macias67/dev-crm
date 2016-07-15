@@ -84,15 +84,15 @@ angular.module('MetronicApp')
 						target      : '#ui-view',
 						animate     : true,
 						overlayColor: App.getBrandColor('blue'),
-						zIndex: 9999
+						zIndex      : 9999
 					});
 					
 					$uibModal.open({
 						backdrop   : 'static',
 						templateUrl: 'ProductoNuevoForm.html',
 						controller : 'ModalProductoNuevoCtrl as modalProductoNuevoCtrl',
-						resolve : {
-							dataUnidades : [
+						resolve    : {
+							dataUnidades: [
 								'Unidades', function (Unidades) {
 									return Unidades.get().$promise;
 								}
@@ -103,8 +103,8 @@ angular.module('MetronicApp')
 			};
 			
 			vm.tableUnidades = {
-				dtInstance : {},
-				dtOptions  : DTOptionsBuilder.fromSource(CRM_APP.url + 'unidades')
+				dtInstance      : {},
+				dtOptions       : DTOptionsBuilder.fromSource(CRM_APP.url + 'unidades')
 					.withFnServerData(function (sSource, aoData, fnCallback, oSettings) {
 						oSettings.jqXHR = $.ajax({
 							'dataType'  : 'json',
@@ -131,7 +131,7 @@ angular.module('MetronicApp')
 					.withPaginationType('bootstrap_full_number')
 					.withBootstrap()
 					.withDOM('frtp'),
-				dtColumns  : [
+				dtColumns       : [
 					DTColumnBuilder.newColumn('unidad').withTitle('Unidad').withOption('sWidth', '25%'),
 					DTColumnBuilder.newColumn('plural').withTitle('Plural').withOption('sWidth', '25%'),
 					DTColumnBuilder.newColumn(null).notSortable().renderWith(function (data, type, full, meta) {
@@ -152,7 +152,7 @@ angular.module('MetronicApp')
 							boton;
 					}).withOption('sWidth', '20%'),
 				],
-				reloadTable: function () {
+				reloadTable     : function () {
 					App.blockUI({
 						target      : '#tableUnidades',
 						animate     : true,
@@ -171,7 +171,7 @@ angular.module('MetronicApp')
 						target      : '#ui-view',
 						animate     : true,
 						overlayColor: App.getBrandColor('grey'),
-						zIndex: 9999
+						zIndex      : 9999
 					});
 					
 					$uibModal.open({
@@ -198,6 +198,10 @@ angular.module('MetronicApp')
 			$rootScope.settings.layout.pageContentWhite  = false;
 			$rootScope.settings.layout.pageBodySolid     = false;
 			$rootScope.settings.layout.pageSidebarClosed = true;
+			
+			$scope.$on('reloadTableProductos', function () {
+				vm.tableProductos.reloadTable();
+			});
 		}
 	])
 	.controller('ModalProductoNuevoCtrl', [
@@ -205,12 +209,18 @@ angular.module('MetronicApp')
 		function ($rootScope, $scope, $uibModalInstance, $filter, toastr, dataUnidades, Producto) {
 			App.unblockUI('#ui-view');
 			
-			var vm = this;
+			var vm      = this;
 			vm.unidades = dataUnidades.data;
-			vm.form = {};
+			vm.form     = {};
 			vm.formEdit = false;
 			
-			
+			$scope.$watch('modalProductoNuevoCtrl.form.codigo', function () {
+				vm.form.codigo = $filter('uppercase')(vm.form.codigo);
+			});
+			$scope.$watch('modalProductoNuevoCtrl.form.producto', function () {
+				vm.form.producto = $filter('uppercase')(vm.form.producto);
+			});
+						
 			vm.guarda = function () {
 				App.blockUI({
 					target      : '#ui-view',
@@ -237,22 +247,21 @@ angular.module('MetronicApp')
 					});
 				}
 				else {
-					console.log(vm.form);
-// 					var producto = new Producto(vm.form);
-// 					producto.$save(function (response) {
-// 						if (response.hasOwnProperty('errors')) {
-// 							for (var key in response.errors) {
-// 								if (response.errors.hasOwnProperty(key)) {
-// 									toastr.error(response.errors[key][0], 'Error con el formulario.');
-// 								}
-// 							}
-// 						}
-// 						else {
-// 							$uibModalInstance.close();
-// 							$rootScope.$broadcast('reloadTable');
-// 							toastr.success('Se creó una nueva oficina', 'Nueva oficina');
-// 						}
-// 					});
+					var producto = new Producto(vm.form);
+					producto.$save(function (response) {
+						if (response.hasOwnProperty('errors')) {
+							for (var key in response.errors) {
+								if (response.errors.hasOwnProperty(key)) {
+									toastr.error(response.errors[key][0], 'Error con el formulario.');
+								}
+							}
+						}
+						else {
+							$uibModalInstance.close();
+							$rootScope.$broadcast('reloadTableProductos');
+							toastr.success('Se registró un nuevo Producto', 'Nuevo Producto');
+						}
+					});
 				}
 				
 				setTimeout(function () {

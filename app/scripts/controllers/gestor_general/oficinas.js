@@ -184,7 +184,6 @@ angular.module('MetronicApp')
 			}
 			
 			$scope.$on('reloadTable', function () {
-				console.log('Recargo tabla desde oficinas.js');
 				vm.reloadTable();
 			});
 		}
