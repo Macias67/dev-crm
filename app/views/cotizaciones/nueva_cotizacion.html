@@ -121,7 +121,8 @@
 						</div>
 						<div class = "form-group" ng-if = "nuevaCotizacionCtrl.producto != null">
 	                                                <button type = "button"
-	                                                        class = "btn green-turquoise btn-sm btn-block">
+	                                                        class = "btn green-turquoise btn-sm btn-block"
+	                                                        ng-click = "nuevaCotizacionCtrl.cotizacion.agregaProducto()">
 								<i class = "fa fa-plus"></i>&nbsp;&nbsp; Añadir a cotización
 							</button>
 						</div>
@@ -139,21 +140,21 @@
 					<span class = "caption-subject bold font-yellow-casablanca uppercase"> Total </span>
 				</div>
 				<div class = "actions">
-					 <span class = "label bg-yellow-casablanca"><b> $1,300.00</b> </span>
+					 <span class = "label bg-yellow-casablanca"><b> $  {{nuevaCotizacionCtrl.cotizacion.total | number: 2}}</b> </span>
 				</div>
 			</div>
 			<div class = "portlet-body">
 				<div class = "row static-info">
-					<div class = "col-md-9 name"> SubTotal: </div>
-					<div class = "col-md-3 value"> $0.0 </div>
+					<div class = "col-md-9 name"> Subtotal: </div>
+					<div class = "col-md-3 value"> $  {{nuevaCotizacionCtrl.cotizacion.subtotal | number: 2}} </div>
 				</div>
 				<div class = "row static-info">
 					<div class = "col-md-9 name"> I.V.A.: </div>
-					<div class = "col-md-3 value"> $0.0 </div>
+					<div class = "col-md-3 value"> {{nuevaCotizacionCtrl.cotizacion.iva | number: 2}} % </div>
 				</div>
 				<div class = "row static-info">
 					<div class = "col-md-9 name"> Total: </div>
-					<div class = "col-md-3 value"> $0.0 </div>
+					<div class = "col-md-3 value"> $  {{nuevaCotizacionCtrl.cotizacion.total | number: 2}} </div>
 				</div>
 			</div>
 		</div>
@@ -313,7 +314,35 @@
 		<!-- END CxC PORTLET-->
 	</div>
 	<div class = "col-md-8">
-
+		<!-- BEGIN Lista Productos PORTLET-->
+		<div class = "portlet light">
+			<div class = "portlet-title">
+				<div class = "caption">
+					<i class = "fa fa-bars font-yellow-casablanca"></i>
+					<span class = "caption-subject bold font-yellow-casablanca uppercase"> Lista de Productos </span>
+				</div>
+				<div class = "actions">
+					<a class = "btn btn-circle btn-icon-only btn-default" href = "javascript:;" data-original-title = "Vista Previa" title = "Vista Previa">
+						<i class = "fa fa-file-pdf-o"></i>
+					</a>
+					<a class = "btn btn-circle btn-icon-only btn-default fullscreen" href = "javascript:;" data-original-title = "" title = ""></a>
+				</div>
+			</div>
+			<div class = "portlet-body">
+				<h3 ng-show = "nuevaCotizacionCtrl.cotizacion.productos.length == 0">No hay productos en la cotización.</h3>
+				<div class = "note bg-grey-cararra bg-font-grey-cararra" ng-repeat = "producto in nuevaCotizacionCtrl.cotizacion.productos">
+					<button type = "button" class = "close" data-dismiss = "alert" aria-hidden = "true" ng-click = "nuevaCotizacionCtrl.cotizacion.eliminaProducto($index)"></button>
+                                        <h3 class = "block"><b> {{producto.producto}} </b>| <span class = "label label-success"> $ {{producto.total | number:2}} </span></h3>
+                                        <h4> {{producto.descripcion}} </h4>
+					<span>Precio: <b> $ {{producto.precio | number:2}}</b>
+						| Unidad: <b> {{producto.unidad.unidad}} </b>
+						| Cantidad: <b>{{producto.cantidad}} </b>
+						| Descuento: <b> $ {{producto.descuento | number:2}}</b>
+					</span>
+				</div>
+			</div>
+		</div>
+		<!-- END Lista Productos PORTLET-->
 	</div>
 </div>
 

@@ -9,3 +9,4 @@
 [0627/202443:WARNING:process_snapshot_win.cc(102)] ReadMemory ExceptionInformation failed
 [0627/202443:WARNING:crash_report_exception_handler.cc(60)] ProcessSnapshotWin::InitializeException failed
 [0627/202443:ERROR:scoped_process_suspend.cc(38)] NtResumeProcess, ntstatus=-1073741558
+[0720/103609:ERROR:crash_report_database_win.cc(412)] unexpected header

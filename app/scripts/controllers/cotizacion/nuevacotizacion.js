@@ -17,7 +17,37 @@ angular.module('MetronicApp')
 			vm.contactoSelect = null;
 			vm.vencimiento    = null;
 			vm.bancos         = [];
-			vm.productos      = [];
+			
+			
+			vm.cotizacion = {
+				productos      : [],
+				subtotal       : 0,
+				iva            : 16,
+				total          : 0,
+				agregaProducto : function () {
+					vm.producto.cantidad  = vm.porletProducto.cantidad;
+					vm.producto.descuento = vm.porletProducto.descuento;
+					vm.producto.total     = vm.porletProducto.total;
+					vm.cotizacion.productos.push(vm.producto);
+					
+					vm.cotizacion.subtotal += vm.producto.total;
+					vm.cotizacion.total = vm.cotizacion.subtotal + ((vm.cotizacion.subtotal * vm.cotizacion.iva) / 100);
+					
+					vm.producto                  = null;
+					vm.porletProducto.cantidad   = 0;
+					vm.porletProducto.subtotal   = 0;
+					vm.porletProducto.cDescuento = 0;
+					vm.porletProducto.descuento  = 0;
+					vm.porletProducto.total      = 0;
+					vm.porletProducto.porcentaje = true;
+				},
+				eliminaProducto: function (index) {
+					var producto = vm.cotizacion.productos[index];
+					vm.cotizacion.subtotal -= producto.total;
+					vm.cotizacion.total = vm.cotizacion.subtotal + ((vm.cotizacion.subtotal * vm.cotizacion.iva) / 100);
+					vm.cotizacion.productos.splice(index, 1);
+				}
+			};
 			
 			vm.porletProducto    = {
 				cantidad          : 0,
@@ -126,8 +156,7 @@ angular.module('MetronicApp')
 					startingDay: 1
 				}
 			};
-			
-			vm.porletBancos = {
+			vm.porletBancos      = {
 				bancos: []
 			};
 			
