@@ -32,23 +32,105 @@
 				<form role = "form">
 					<div class = "form-body">
 						<div class = "form-group">
-							<div class = "input-group input-group-sm">
+							<div class = "input-group input-group-lg">
 								<input type = "text"
 								       class = "form-control"
 								       placeholder = "Producto"
 								       ng-model = "nuevaCotizacionCtrl.producto.producto"
 								       readonly>
 								<span class = "input-group-btn">
-									<button class = "btn yellow-casablanca" ng-click = "nuevaCotizacionCtrl.porletProducto.openModalProductos()"><i class = "fa fa-truck"></i></button>
+									<button class = "btn yellow-casablanca" ng-click = "nuevaCotizacionCtrl.porletProducto.openModalProductos()">
+										<i class = "fa fa-search"></i>
+									</button>
 								</span>
 							</div>
+						</div>
+						<div class = "form-group" ng-if = "nuevaCotizacionCtrl.producto != null">
+							<div class = "col-md-6">
+								 <label>Precio</label>
+                                                                <input type = "number"
+                                                                       class = "form-control input-lg"
+                                                                       placeholder = "Precio"
+                                                                       ng-model = "nuevaCotizacionCtrl.producto.precio"
+                                                                       min = "0"
+                                                                       step = "10"
+                                                                       pattern = "\d+(\.\d{2})?"
+                                                                       required>
+							</div>
+							<div class = "col-md-6">
+								 <label>Cantidad</label>
+								<input type = "number"
+								       class = "form-control input-lg"
+								       placeholder = "Cantidad"
+								       ng-model = "nuevaCotizacionCtrl.porletProducto.cantidad"
+								       min = "1"
+								       step = "1"
+								       pattern = "\d+"
+								       required>
+							</div>
+							<div class = "clearfix"></div>
+						</div>
+						<div class = "form-group" ng-if = "nuevaCotizacionCtrl.producto != null">
+							 <label>Descuento</label>
+                                                        <div class = "input-group input-group-lg">
+								<input type = "number"
+								       class = "form-control"
+								       placeholder = "Descuento"
+								       pattern = "\d+(\.\d{2})?"
+								       ng-model = "nuevaCotizacionCtrl.porletProducto.cDescuento">
+								<span class = "input-group-btn">
+									<button class = "btn green" type = "button" ng-click = "nuevaCotizacionCtrl.porletProducto.modoDescuento()">
+										<i class = "fa"
+										   ng-class = "{'fa-percent': nuevaCotizacionCtrl.porletProducto.porcentaje, 'fa-dollar' : !nuevaCotizacionCtrl.porletProducto.porcentaje}"></i>
+									</button>
+								</span>
+							</div>
+						</div>
+						<div class = "form-group" ng-if = "nuevaCotizacionCtrl.producto != null">
+	                                                <label>Observaciones</label>
+	                                                <textarea class = "form-control"
+	                                                          rows = "2"
+	                                                          style = "resize: none"
+	                                                          ng-model = "nuevaCotizacionCtrl.producto.descripcion">
+	                                                </textarea>
+						</div>
+						<div class = "form-group" ng-if = "nuevaCotizacionCtrl.producto != null">
+							 <div class = "row static-info">
+								<div class = "col-md-9 name"> Unidad: </div>
+								<div class = "col-md-3 value" ng-if = "nuevaCotizacionCtrl.porletProducto.cantidad == 1"> {{nuevaCotizacionCtrl.producto.unidad.unidad}} </div>
+								 <div class = "col-md-3 value" ng-if = "nuevaCotizacionCtrl.porletProducto.cantidad != 1"> {{nuevaCotizacionCtrl.producto.unidad.plural}} </div>
+							</div>
+	                                                <div class = "row static-info">
+								<div class = "col-md-9 name"> Subtotal: </div>
+								<div class = "col-md-3 value"> $ {{nuevaCotizacionCtrl.porletProducto.subtotal  | number : 2}} </div>
+							</div>
+							<div class = "row static-info">
+								<div class = "col-md-9 name"> Descuento: </div>
+								<div class = "col-md-3 value"
+								     ng-class = "{'font-red-thunderbird' : (nuevaCotizacionCtrl.porletProducto.descuento >= nuevaCotizacionCtrl.porletProducto.subtotal)}">
+									$ {{nuevaCotizacionCtrl.porletProducto.descuento | number : 2}}
+								</div>
+							</div>
+							<div class = "row static-info">
+								<div class = "col-md-9 name"> Total: </div>
+								<div class = "col-md-3 value"
+								     ng-class = "{'font-red-thunderbird' : (nuevaCotizacionCtrl.porletProducto.total == 0)}">
+									$ {{nuevaCotizacionCtrl.porletProducto.total  | number : 2}}
+								</div>
+							</div>
+						</div>
+						<div class = "form-group" ng-if = "nuevaCotizacionCtrl.producto != null">
+	                                                <button type = "button"
+	                                                        class = "btn green-turquoise btn-sm btn-block">
+								<i class = "fa fa-plus"></i>&nbsp;&nbsp; Añadir a cotización
+							</button>
 						</div>
 					</div>
 				</form>
 			</div>
 		</div>
 		<!-- END Producto PORTLET-->
-
+		
 		<!-- BEGIN Total PORTLET-->
 		<div class = "portlet light">
 			<div class = "portlet-title">
@@ -76,7 +158,7 @@
 			</div>
 		</div>
 		<!-- END Total PORTLET-->
-
+		
 		<!-- BEGIN Cliente PORTLET-->
 		<div class = "portlet light">
 			<div class = "portlet-title">
@@ -102,7 +184,7 @@
 								       ng-model = "nuevaCotizacionCtrl.cliente.razonsocial"
 								       readonly>
 								<span class = "input-group-btn">
-									<button class = "btn yellow-casablanca" ng-click = "nuevaCotizacionCtrl.porletCliente.openModalClientes()"><i class = "fa fa-user"></i></button>
+									<button class = "btn yellow-casablanca" ng-click = "nuevaCotizacionCtrl.porletCliente.openModalClientes()"><i class = "fa fa-search"></i></button>
 								</span>
 							</div>
 						</div>
@@ -135,7 +217,7 @@
 			</div>
 		</div>
 		<!-- END Cliente PORTLET-->
-
+		
 		<!-- BEGIN Vencimiento PORTLET-->
 		<div class = "portlet light">
 			<div class = "portlet-title">
@@ -177,7 +259,7 @@
 			</div>
 		</div>
 		<!-- END Vencimiento PORTLET-->
-
+		
 		<!-- BEGIN Bancos PORTLET-->
 		<div class = "portlet light">
 			<div class = "portlet-title">
@@ -204,7 +286,7 @@
 			</div>
 		</div>
 		<!-- END Bancos PORTLET-->
-
+		
 		<!-- BEGIN CxC PORTLET-->
 		<div class = "portlet light">
 			<div class = "portlet-title">

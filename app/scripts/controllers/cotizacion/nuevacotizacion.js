@@ -9,8 +9,8 @@
  */
 angular.module('MetronicApp')
 	.controller('NuevaCotizacionCtrl', [
-		'$rootScope', '$scope', '$http', 'CRM_APP', 'authUser', '$uibModal', 'Cliente', 'Contacto', 'Banco',
-		function ($rootScope, $scope, $http, CRM_APP, authUser, $uibModal, Cliente, Contacto, Banco) {
+		'$rootScope', '$scope', '$http', 'CRM_APP', 'authUser', '$uibModal', '$filter', '$ngBootbox', 'Cliente', 'Contacto', 'Banco',
+		function ($rootScope, $scope, $http, CRM_APP, authUser, $uibModal, $filter, $ngBootbox, Cliente, Contacto, Banco) {
 			var vm            = this;
 			vm.producto       = null;
 			vm.cliente        = null;
@@ -20,7 +20,12 @@ angular.module('MetronicApp')
 			vm.productos      = [];
 			
 			vm.porletProducto    = {
-				producto          : {},
+				cantidad          : 0,
+				subtotal          : 0,
+				cDescuento        : 0,
+				descuento         : 0,
+				total             : 0,
+				porcentaje        : true,
 				openModalProductos: function () {
 					var modalInstance = $uibModal.open({
 						backdrop   : 'static',
@@ -29,11 +34,39 @@ angular.module('MetronicApp')
 						size       : 'lg'
 					});
 					modalInstance.result.then(function (selectedProducto) {
-						console.log(selectedProducto);
-						vm.producto = selectedProducto;
+						vm.producto                  = selectedProducto;
+						vm.porletProducto.cantidad   = 1;
+						vm.porletProducto.cDescuento = 0;
 					}, function () {
 					});
 				},
+				modoDescuento     : function () {
+					vm.porletProducto.porcentaje = (!vm.porletProducto.porcentaje);
+				},
+				_calculaDescuento : function () {
+					if (vm.porletProducto.porcentaje) {
+						if (vm.porletProducto.cDescuento > 100) {
+							$ngBootbox.alert('<b>Estás calculando porcentaje, el valor máximo debe ser 100%</b>').then(function () {
+								vm.porletProducto.cDescuento = 0;
+							});
+						}
+						else {
+							vm.porletProducto.descuento = (vm.porletProducto.subtotal * vm.porletProducto.cDescuento) / 100;
+							vm.porletProducto.total     = vm.porletProducto.subtotal - vm.porletProducto.descuento;
+						}
+					}
+					else {
+						if (vm.porletProducto.cDescuento > vm.porletProducto.subtotal) {
+							$ngBootbox.alert('<b>No puedes descontar mayor al subtotal estimado, lo máximo es $' + $filter('number')(vm.porletProducto.subtotal, 2) + '</b>').then(function () {
+								vm.porletProducto.cDescuento = 0;
+							});
+						}
+						else {
+							vm.porletProducto.descuento = vm.porletProducto.cDescuento;
+							vm.porletProducto.total     = vm.porletProducto.subtotal - vm.porletProducto.descuento;
+						}
+					}
+				}
 			};
 			vm.porletCliente     = {
 				contactos            : [],
@@ -98,16 +131,30 @@ angular.module('MetronicApp')
 				bancos: []
 			};
 			
+			// Watchers Productos
+			$scope.$watch('nuevaCotizacionCtrl.producto.precio', function () {
+				var precio                 = (vm.producto == null) ? 0 : vm.producto.precio;
+				vm.porletProducto.subtotal = precio * vm.porletProducto.cantidad;
+				vm.porletProducto._calculaDescuento();
+			});
+			$scope.$watch('nuevaCotizacionCtrl.porletProducto.cDescuento', function () {
+				vm.porletProducto._calculaDescuento();
+			});
+			$scope.$watch('nuevaCotizacionCtrl.porletProducto.cantidad', function () {
+				var precio                 = (vm.producto == null) ? 0 : vm.producto.precio;
+				vm.porletProducto.subtotal = precio * vm.porletProducto.cantidad;
+				vm.porletProducto._calculaDescuento()
+			});
+			$scope.$watch('nuevaCotizacionCtrl.porletProducto.porcentaje', function () {
+				vm.porletProducto._calculaDescuento()
+			});
+			
 			$scope.$on('$viewContentLoaded', function () {
 				// initialize core components
 				App.initAjax();
-				
 				Banco.get(function (bancos) {
 					vm.porletBancos.bancos = bancos.data;
-					console.log(vm.porletBancos.bancos);
 				});
-				
-				
 			});
 			
 			//Nombres

@@ -95,7 +95,6 @@ angular.module('MetronicApp')
 			vm.deleteOficina = function (id) {
 				$ngBootbox.confirm('<b>¿Seguro de eliminar esta oficina?</b>')
 					.then(function () {
-						
 						App.blockUI({
 							target      : '#ui-view',
 							message     : '<b> Eliminado oficina </b>',
@@ -103,7 +102,6 @@ angular.module('MetronicApp')
 							overlayColor: App.getBrandColor('grey'),
 							zIndex      : 99999
 						});
-						
 						Oficina.update({id: id}, {online: 0}, function (response) {
 							if (response.hasOwnProperty('errors')) {
 								for (var key in response.errors) {
