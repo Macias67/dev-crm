@@ -36,7 +36,7 @@
 								<input type = "text"
 								       class = "form-control"
 								       placeholder = "Producto"
-								       ng-model = "nuevaCotizacionCtrl.producto.producto"
+								       ng-model = "nuevaCotizacionCtrl.porletProducto.producto.producto"
 								       readonly>
 								<span class = "input-group-btn">
 									<button class = "btn yellow-casablanca" ng-click = "nuevaCotizacionCtrl.porletProducto.openModalProductos()">
@@ -45,13 +45,13 @@
 								</span>
 							</div>
 						</div>
-						<div class = "form-group" ng-if = "nuevaCotizacionCtrl.producto != null">
+						<div class = "form-group" ng-if = "nuevaCotizacionCtrl.porletProducto.producto != null">
 							<div class = "col-md-6">
 								 <label>Precio</label>
                                                                 <input type = "number"
                                                                        class = "form-control input-lg"
                                                                        placeholder = "Precio"
-                                                                       ng-model = "nuevaCotizacionCtrl.producto.precio"
+                                                                       ng-model = "nuevaCotizacionCtrl.porletProducto.producto.precio"
                                                                        min = "0"
                                                                        step = "10"
                                                                        pattern = "\d+(\.\d{2})?"
@@ -70,7 +70,7 @@
 							</div>
 							<div class = "clearfix"></div>
 						</div>
-						<div class = "form-group" ng-if = "nuevaCotizacionCtrl.producto != null">
+						<div class = "form-group" ng-if = "nuevaCotizacionCtrl.porletProducto.producto != null">
 							 <label>Descuento</label>
                                                         <div class = "input-group input-group-lg">
 								<input type = "number"
@@ -86,43 +86,43 @@
 								</span>
 							</div>
 						</div>
-						<div class = "form-group" ng-if = "nuevaCotizacionCtrl.producto != null">
+						<div class = "form-group" ng-if = "nuevaCotizacionCtrl.porletProducto.producto != null">
 	                                                <label>Observaciones</label>
 	                                                <textarea class = "form-control"
 	                                                          rows = "2"
 	                                                          style = "resize: none"
-	                                                          ng-model = "nuevaCotizacionCtrl.producto.descripcion">
+	                                                          ng-model = "nuevaCotizacionCtrl.porletProducto.producto.descripcion">
 	                                                </textarea>
 						</div>
-						<div class = "form-group" ng-if = "nuevaCotizacionCtrl.producto != null">
+						<div class = "form-group" ng-if = "nuevaCotizacionCtrl.porletProducto.producto != null">
 							 <div class = "row static-info">
-								<div class = "col-md-9 name"> Unidad: </div>
-								<div class = "col-md-3 value" ng-if = "nuevaCotizacionCtrl.porletProducto.cantidad == 1"> {{nuevaCotizacionCtrl.producto.unidad.unidad}} </div>
-								 <div class = "col-md-3 value" ng-if = "nuevaCotizacionCtrl.porletProducto.cantidad != 1"> {{nuevaCotizacionCtrl.producto.unidad.plural}} </div>
+								<div class = "col-md-8 name"> Unidad: </div>
+								<div class = "col-md-4 value" ng-if = "nuevaCotizacionCtrl.porletProducto.cantidad == 1"> {{nuevaCotizacionCtrl.porletProducto.producto.unidad.unidad}} </div>
+								 <div class = "col-md-4 value" ng-if = "nuevaCotizacionCtrl.porletProducto.cantidad != 1"> {{nuevaCotizacionCtrl.porletProducto.producto.unidad.plural}} </div>
 							</div>
 	                                                <div class = "row static-info">
-								<div class = "col-md-9 name"> Subtotal: </div>
-								<div class = "col-md-3 value"> $ {{nuevaCotizacionCtrl.porletProducto.subtotal  | number : 2}} </div>
+								<div class = "col-md-8 name"> Subtotal: </div>
+								<div class = "col-md-4 value"> $ {{nuevaCotizacionCtrl.porletProducto.subtotal  | number : 2}} </div>
 							</div>
 							<div class = "row static-info">
-								<div class = "col-md-9 name"> Descuento: </div>
-								<div class = "col-md-3 value"
+								<div class = "col-md-8 name"> Descuento: </div>
+								<div class = "col-md-4 value"
 								     ng-class = "{'font-red-thunderbird' : (nuevaCotizacionCtrl.porletProducto.descuento >= nuevaCotizacionCtrl.porletProducto.subtotal)}">
 									$ {{nuevaCotizacionCtrl.porletProducto.descuento | number : 2}}
 								</div>
 							</div>
 							<div class = "row static-info">
-								<div class = "col-md-9 name"> Total: </div>
-								<div class = "col-md-3 value"
+								<div class = "col-md-8 name"> Total: </div>
+								<div class = "col-md-4 value"
 								     ng-class = "{'font-red-thunderbird' : (nuevaCotizacionCtrl.porletProducto.total == 0)}">
 									$ {{nuevaCotizacionCtrl.porletProducto.total  | number : 2}}
 								</div>
 							</div>
 						</div>
-						<div class = "form-group" ng-if = "nuevaCotizacionCtrl.producto != null">
+						<div class = "form-group" ng-if = "nuevaCotizacionCtrl.porletProducto.producto != null">
 	                                                <button type = "button"
 	                                                        class = "btn green-turquoise btn-sm btn-block"
-	                                                        ng-click = "nuevaCotizacionCtrl.cotizacion.agregaProducto()">
+	                                                        ng-click = "nuevaCotizacionCtrl.porletProducto.agregaProducto()">
 								<i class = "fa fa-plus"></i>&nbsp;&nbsp; Añadir a cotización
 							</button>
 						</div>
@@ -145,16 +145,16 @@
 			</div>
 			<div class = "portlet-body">
 				<div class = "row static-info">
-					<div class = "col-md-9 name"> Subtotal: </div>
-					<div class = "col-md-3 value"> $  {{nuevaCotizacionCtrl.cotizacion.subtotal | number: 2}} </div>
+					<div class = "col-md-8 name"> Subtotal: </div>
+					<div class = "col-md-4 value"> $  {{nuevaCotizacionCtrl.cotizacion.subtotal | number: 2}} </div>
 				</div>
 				<div class = "row static-info">
-					<div class = "col-md-9 name"> I.V.A.: </div>
-					<div class = "col-md-3 value"> {{nuevaCotizacionCtrl.cotizacion.iva | number: 2}} % </div>
+					<div class = "col-md-8 name"> I.V.A.: </div>
+					<div class = "col-md-4 value"> {{nuevaCotizacionCtrl.cotizacion.iva | number: 2}} % </div>
 				</div>
 				<div class = "row static-info">
-					<div class = "col-md-9 name"> Total: </div>
-					<div class = "col-md-3 value"> $  {{nuevaCotizacionCtrl.cotizacion.total | number: 2}} </div>
+					<div class = "col-md-8 name"> Total: </div>
+					<div class = "col-md-4 value"> $  {{nuevaCotizacionCtrl.cotizacion.total | number: 2}} </div>
 				</div>
 			</div>
 		</div>
@@ -182,7 +182,7 @@
 								<input type = "text"
 								       class = "form-control"
 								       placeholder = "Cliente"
-								       ng-model = "nuevaCotizacionCtrl.cliente.razonsocial"
+								       ng-model = "nuevaCotizacionCtrl.cotizacion.cliente.razonsocial"
 								       readonly>
 								<span class = "input-group-btn">
 									<button class = "btn yellow-casablanca" ng-click = "nuevaCotizacionCtrl.porletCliente.openModalClientes()"><i class = "fa fa-search"></i></button>
@@ -194,23 +194,23 @@
 							<select
 								class = "form-control input-sm"
 								ng-options = "contacto.nombre +' '+contacto.apellido for contacto in nuevaCotizacionCtrl.porletCliente.contactos"
-								ng-model = "nuevaCotizacionCtrl.contactoSelect"
+								ng-model = "nuevaCotizacionCtrl.cotizacion.contacto"
 								required>
 							</select>
 						</div>
-						<div class = "form-group" ng-if = "nuevaCotizacionCtrl.contactoSelect != null">
+						<div class = "form-group" ng-if = "nuevaCotizacionCtrl.cotizacion.contacto != null">
 							<label>Email destino: </label>
 							<input type = "email"
 							       class = "form-control input-sm"
 							       placeholder = "input-sm"
-							       ng-model = "nuevaCotizacionCtrl.contactoSelect.email"
+							       ng-model = "nuevaCotizacionCtrl.cotizacion.contacto.email"
 							       required>
 						</div>
-						<div class = "form-group" ng-if = "nuevaCotizacionCtrl.cliente != null">
+						<div class = "form-group" ng-if = "nuevaCotizacionCtrl.cotizacion.cliente != null">
 							<button type = "button"
 							        class = "btn green-turquoise btn-sm btn-block"
-							        ng-click = "nuevaCotizacionCtrl.porletCliente.openModalNuevoCliente(nuevaCotizacionCtrl.cliente.id)">
-								<i class = "fa fa-plus"></i>&nbsp;&nbsp;Nuevo contacto a <b>{{nuevaCotizacionCtrl.cliente.razonsocial}}</b>
+							        ng-click = "nuevaCotizacionCtrl.porletCliente.openModalNuevoCliente(nuevaCotizacionCtrl.cotizacion.cliente.id)">
+								<i class = "fa fa-plus"></i>&nbsp;&nbsp;Nuevo contacto a <b>{{nuevaCotizacionCtrl.cotizacion.cliente.razonsocial}}</b>
 							</button>
 						</div>
 					</div>
@@ -238,7 +238,7 @@
 						       class = "form-control"
 						       placeholder = "Vencimiento"
 						       uib-datepicker-popup = "{{nuevaCotizacionCtrl.porletVencimiento.format}}"
-						       ng-model = "nuevaCotizacionCtrl.vencimiento"
+						       ng-model = "nuevaCotizacionCtrl.cotizacion.vencimiento"
 						       is-open = "nuevaCotizacionCtrl.porletVencimiento.popup.opened"
 						       datepicker-options = "nuevaCotizacionCtrl.porletVencimiento.dateOptions"
 						       ng-required = "true"
@@ -251,9 +251,9 @@
 					</div>
 				</div>
 
-				<h4 ng-if = "nuevaCotizacionCtrl.vencimiento != null">
+				<h4 ng-if = "nuevaCotizacionCtrl.cotizacion.vencimiento != null">
 					<span class = "label label-danger">
-						<b>La cotización vencerá <span am-time-ago = "nuevaCotizacionCtrl.vencimiento"></span> si no es pagada.</b>
+						<b>La cotización vencerá <span am-time-ago = "nuevaCotizacionCtrl.cotizacion.vencimiento"></span> si no es pagada.</b>
 					</span>
 				</h4>
 				<div class = "clearfix"></div>
@@ -279,7 +279,7 @@
 					<div class = "mt-checkbox-list">
 						<label class = "mt-checkbox" ng-repeat = "banco in nuevaCotizacionCtrl.porletBancos.bancos">
 							{{banco.banco}} | {{banco.titular}} | CTA: <b>{{banco.cta}}</b>
-							<input type = "checkbox" data-checklist-model = "nuevaCotizacionCtrl.bancos" data-checklist-value = "banco"/>
+							<input type = "checkbox" data-checklist-model = "nuevaCotizacionCtrl.cotizacion.bancos" data-checklist-value = "banco"/>
 							<span></span>
 						</label>
 					</div>
@@ -289,7 +289,7 @@
 		<!-- END Bancos PORTLET-->
 		
 		<!-- BEGIN CxC PORTLET-->
-		<div class = "portlet light">
+		<div class = "portlet light" ng-show = "!nuevaCotizacionCtrl.cotizacion.cxc">
 			<div class = "portlet-title">
 				<div class = "caption">
 					<i class = "fa fa-dollar font-yellow-casablanca"></i>
@@ -303,9 +303,11 @@
 			<div class = "portlet-body portlet-collapsed">
 				<div class = "form-group">
 					<div class = "input-group input-group-lg">
-						<input type = "password" class = "form-control" placeholder = "Contraseña">
+						<input type = "password" class = "form-control" placeholder = "Contraseña" ng-model = "nuevaCotizacionCtrl.porletCxc.password">
 						<span class = "input-group-btn">
-							<button class = "btn yellow-casablanca" type = "button"><i class = "fa fa-check"></i></button>
+							<button class = "btn yellow-casablanca" type = "button" ng-click = "nuevaCotizacionCtrl.porletCxc.verifica()">
+								<i class = "fa fa-check"></i>
+							</button>
 						</span>
 					</div>
 				</div>
@@ -314,6 +316,11 @@
 		<!-- END CxC PORTLET-->
 	</div>
 	<div class = "col-md-8">
+		<div class = "alert alert-danger" ng-show = "nuevaCotizacionCtrl.cotizacion.cxc">
+			<strong>Nota: </strong> Haz indicado que está cotización es <b>Cuenta por Cobrar</b>, así que se abrirá un nuevo caso al envíar la cotización. Para cancelar haz clic
+			<a ng-click = "nuevaCotizacionCtrl.porletCxc.cancelar()" class = "alert-link"> aquí. </a>
+		</div>
+		
 		<!-- BEGIN Lista Productos PORTLET-->
 		<div class = "portlet light">
 			<div class = "portlet-title">
@@ -331,7 +338,7 @@
 			<div class = "portlet-body">
 				<h3 ng-show = "nuevaCotizacionCtrl.cotizacion.productos.length == 0">No hay productos en la cotización.</h3>
 				<div class = "note bg-grey-cararra bg-font-grey-cararra" ng-repeat = "producto in nuevaCotizacionCtrl.cotizacion.productos">
-					<button type = "button" class = "close" data-dismiss = "alert" aria-hidden = "true" ng-click = "nuevaCotizacionCtrl.cotizacion.eliminaProducto($index)"></button>
+					<button type = "button" class = "close" data-dismiss = "alert" aria-hidden = "true" ng-click = "nuevaCotizacionCtrl.porletProducto.eliminaProducto($index)"></button>
                                         <h3 class = "block"><b> {{producto.producto}} </b>| <span class = "label label-success"> $ {{producto.total | number:2}} </span></h3>
                                         <h4> {{producto.descripcion}} </h4>
 					<span>Precio: <b> $ {{producto.precio | number:2}}</b>
@@ -343,6 +350,75 @@
 			</div>
 		</div>
 		<!-- END Lista Productos PORTLET-->
+		
+		<!-- BEGIN Lista Revision y envio PORTLET-->
+		<div class = "portlet light" ng-if = "nuevaCotizacionCtrl.cotizacion.enviar">
+			<div class = "portlet-title">
+				<div class = "caption">
+					<i class = "fa fa-check font-yellow-casablanca"></i>
+					<span class = "caption-subject bold font-yellow-casablanca uppercase"> Revisión y envío </span>
+				</div>
+			</div>
+			<div class = "portlet-body">
+				<div class = "col-md-6">
+					<h4>Cliente</h4>
+					<div class = "row static-info">
+						<div class = "col-md-4 name"> Razón Social: </div>
+						<div class = "col-md-8 value">  {{nuevaCotizacionCtrl.cotizacion.cliente.razonsocial}} </div>
+					</div>
+					<div class = "row static-info">
+						<div class = "col-md-4 name"> R.F.C: </div>
+						<div class = "col-md-8 value">  {{nuevaCotizacionCtrl.cotizacion.cliente.rfc}} </div>
+					</div>
+					<div class = "row static-info">
+						<div class = "col-md-4 name"> Tipo: </div>
+						<div class = "col-md-8 value">
+							<span class = "badge badge-primary badge-roundless" ng-show = "!nuevaCotizacionCtrl.cotizacion.cliente.prospecto">Normal</span>
+							<span class = "badge bg-red-mint bg-font-red-mint badge-roundless" ng-show = "nuevaCotizacionCtrl.cotizacion.cliente.prospecto"><b>Prospecto</b></span>
+							
+							<span class = "badge badge-primary badge-roundless" ng-show = "!nuevaCotizacionCtrl.cotizacion.cliente.distribuidor">Normal</span>
+							<span class = "badge bg-yellow-casablanca bg-font-yellow-casablanca badge-roundless" ng-show = "nuevaCotizacionCtrl.cotizacion.cliente.distribuidor"><b>Distribuidor</b></span>
+						</div>
+					</div>
+					<h4>Contacto</h4>
+					<div class = "row static-info">
+						<div class = "col-md-4 name"> Nombre: </div>
+						<div class = "col-md-8 value">  {{nuevaCotizacionCtrl.cotizacion.contacto.nombre +' '+nuevaCotizacionCtrl.cotizacion.contacto.apellido}} </div>
+					</div>
+					<div class = "row static-info">
+						<div class = "col-md-4 name"> Email: </div>
+						<div class = "col-md-8 value">  {{nuevaCotizacionCtrl.cotizacion.contacto.email}} </div>
+					</div>
+					<div class = "row static-info">
+						<div class = "col-md-4 name"> Teléfono: </div>
+						<div class = "col-md-8 value">  {{nuevaCotizacionCtrl.cotizacion.contacto.telefono | telefono}} </div>
+					</div>
+				</div>
+				<div class = "col-md-6">
+					<h4>Fecha de vencimiento</h4>
+					<div class = "row static-info">
+						<div class = "col-md-4 name"> Fecha: </div>
+						<div class = "col-md-8 value">  {{nuevaCotizacionCtrl.cotizacion.vencimiento | amDateFormat: 'DD / MMMM / YYYY' }} </div>
+					</div>
+					<h4>Bancos</h4>
+					<div class = "row static-info">
+						<div class = "col-md-12 value" ng-repeat = "banco in nuevaCotizacionCtrl.cotizacion.bancos">
+							{{banco.banco }} | Sucursal: {{banco.sucursal}} | Cta: {{banco.cta}}
+						</div>
+					</div>
+					<div class = "row static-info" ng-if = "nuevaCotizacionCtrl.cotizacion.cxc">
+						<h4><b><span class = "label label-danger"> Cuenta por Cobrar </span></b></h4>
+					</div>
+				</div>
+				
+				<div class = "col-md-12">
+					<hr>
+					<button class = "btn btn-lg yellow-casablanca btn-block uppercase bold">Enviar Cotización</button>
+				</div>
+				<div class = "clearfix"></div>
+			</div>
+		</div>
+		<!-- END Lista Revision y envio PORTLET-->
 	</div>
 </div>
 

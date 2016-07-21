@@ -11,45 +11,23 @@ angular.module('MetronicApp')
 	.controller('NuevaCotizacionCtrl', [
 		'$rootScope', '$scope', '$http', 'CRM_APP', 'authUser', '$uibModal', '$filter', '$ngBootbox', 'Cliente', 'Contacto', 'Banco',
 		function ($rootScope, $scope, $http, CRM_APP, authUser, $uibModal, $filter, $ngBootbox, Cliente, Contacto, Banco) {
-			var vm            = this;
-			vm.producto       = null;
-			vm.cliente        = null;
-			vm.contactoSelect = null;
-			vm.vencimiento    = null;
-			vm.bancos         = [];
-			
+			var vm = this;
 			
 			vm.cotizacion = {
-				productos      : [],
-				subtotal       : 0,
-				iva            : 16,
-				total          : 0,
-				agregaProducto : function () {
-					vm.producto.cantidad  = vm.porletProducto.cantidad;
-					vm.producto.descuento = vm.porletProducto.descuento;
-					vm.producto.total     = vm.porletProducto.total;
-					vm.cotizacion.productos.push(vm.producto);
-					
-					vm.cotizacion.subtotal += vm.producto.total;
-					vm.cotizacion.total = vm.cotizacion.subtotal + ((vm.cotizacion.subtotal * vm.cotizacion.iva) / 100);
-					
-					vm.producto                  = null;
-					vm.porletProducto.cantidad   = 0;
-					vm.porletProducto.subtotal   = 0;
-					vm.porletProducto.cDescuento = 0;
-					vm.porletProducto.descuento  = 0;
-					vm.porletProducto.total      = 0;
-					vm.porletProducto.porcentaje = true;
-				},
-				eliminaProducto: function (index) {
-					var producto = vm.cotizacion.productos[index];
-					vm.cotizacion.subtotal -= producto.total;
-					vm.cotizacion.total = vm.cotizacion.subtotal + ((vm.cotizacion.subtotal * vm.cotizacion.iva) / 100);
-					vm.cotizacion.productos.splice(index, 1);
-				}
+				cliente    : null,
+				contacto   : null,
+				productos  : [],
+				subtotal   : 0,
+				iva        : 16,
+				total      : 0,
+				bancos     : [],
+				vencimiento: null,
+				cxc        : false,
+				enviar     : false
 			};
 			
 			vm.porletProducto    = {
+				producto          : null,
 				cantidad          : 0,
 				subtotal          : 0,
 				cDescuento        : 0,
@@ -64,7 +42,7 @@ angular.module('MetronicApp')
 						size       : 'lg'
 					});
 					modalInstance.result.then(function (selectedProducto) {
-						vm.producto                  = selectedProducto;
+						vm.porletProducto.producto   = selectedProducto;
 						vm.porletProducto.cantidad   = 1;
 						vm.porletProducto.cDescuento = 0;
 					}, function () {
@@ -72,6 +50,29 @@ angular.module('MetronicApp')
 				},
 				modoDescuento     : function () {
 					vm.porletProducto.porcentaje = (!vm.porletProducto.porcentaje);
+				},
+				agregaProducto    : function () {
+					vm.porletProducto.producto.cantidad  = vm.porletProducto.cantidad;
+					vm.porletProducto.producto.descuento = vm.porletProducto.descuento;
+					vm.porletProducto.producto.total     = vm.porletProducto.total;
+					vm.cotizacion.productos.push(vm.porletProducto.producto);
+					
+					vm.cotizacion.subtotal += vm.porletProducto.producto.total;
+					vm.cotizacion.total = vm.cotizacion.subtotal + ((vm.cotizacion.subtotal * vm.cotizacion.iva) / 100);
+					
+					vm.porletProducto.producto   = null;
+					vm.porletProducto.cantidad   = 0;
+					vm.porletProducto.subtotal   = 0;
+					vm.porletProducto.cDescuento = 0;
+					vm.porletProducto.descuento  = 0;
+					vm.porletProducto.total      = 0;
+					vm.porletProducto.porcentaje = true;
+				},
+				eliminaProducto   : function (index) {
+					var producto        = vm.cotizacion.productos[index];
+					vm.cotizacion.subtotal -= producto.total;
+					vm.cotizacion.total = vm.cotizacion.subtotal + ((vm.cotizacion.subtotal * vm.cotizacion.iva) / 100);
+					vm.cotizacion.productos.splice(index, 1);
 				},
 				_calculaDescuento : function () {
 					if (vm.porletProducto.porcentaje) {
@@ -118,10 +119,9 @@ angular.module('MetronicApp')
 						size       : 'lg'
 					});
 					modalInstance.result.then(function (selectedCliente) {
-						vm.cliente                 = selectedCliente;
-						vm.contactoSelect          = null;
+						vm.cotizacion.cliente      = selectedCliente;
 						vm.porletCliente.contactos = [];
-						vm.cliente.contactos.forEach(function (item, index) {
+						vm.cotizacion.cliente.contactos.forEach(function (item, index) {
 							if (item.online) {
 								vm.porletCliente.contactos.push(item);
 							}
@@ -159,10 +159,35 @@ angular.module('MetronicApp')
 			vm.porletBancos      = {
 				bancos: []
 			};
+			/**
+			 * @TODO Hacer peticion mediante $resource
+			 */
+			vm.porletCxc = {
+				password: '',
+				verifica: function () {
+					if (vm.porletCxc.password == '123456') {
+						App.scrollTop();
+						$ngBootbox.alert('Haz habilitado esta cotización como <b>Cuenta por Cobrar</b>.').then(function () {
+							vm.porletCxc.password = '';
+							vm.cotizacion.cxc     = true;
+						});
+					}
+					else {
+						$ngBootbox.alert('La contraseña es incorrecta.');
+					}
+				},
+				cancelar: function () {
+					$ngBootbox.confirm('¿Seguro de cancelar la cotización como <b>Cuenta por Cobrar</b>? Necesitarás escribir nuevamente la contraseña para rehabilitar.')
+						.then(function () {
+							vm.cotizacion.cxc = false;
+						}, function () {
+						});
+				}
+			};
 			
 			// Watchers Productos
-			$scope.$watch('nuevaCotizacionCtrl.producto.precio', function () {
-				var precio                 = (vm.producto == null) ? 0 : vm.producto.precio;
+			$scope.$watch('nuevaCotizacionCtrl.porletProducto.producto.precio', function () {
+				var precio                 = (vm.porletProducto.producto == null) ? 0 : vm.porletProducto.producto.precio;
 				vm.porletProducto.subtotal = precio * vm.porletProducto.cantidad;
 				vm.porletProducto._calculaDescuento();
 			});
@@ -170,14 +195,14 @@ angular.module('MetronicApp')
 				vm.porletProducto._calculaDescuento();
 			});
 			$scope.$watch('nuevaCotizacionCtrl.porletProducto.cantidad', function () {
-				var precio                 = (vm.producto == null) ? 0 : vm.producto.precio;
+				var precio                 = (vm.porletProducto.producto == null) ? 0 : vm.porletProducto.producto.precio;
 				vm.porletProducto.subtotal = precio * vm.porletProducto.cantidad;
 				vm.porletProducto._calculaDescuento()
 			});
 			$scope.$watch('nuevaCotizacionCtrl.porletProducto.porcentaje', function () {
 				vm.porletProducto._calculaDescuento()
 			});
-			
+				
 			$scope.$on('$viewContentLoaded', function () {
 				// initialize core components
 				App.initAjax();
