@@ -222,7 +222,7 @@ angular.module('MetronicApp')
 						contacto_id: vm.cotizacion.contacto.id,
 						productos  : productos,
 						bancos     : bancos,
-						vencimiento: vm.cotizacion.vencimiento,
+						vencimiento: moment(vm.cotizacion.vencimiento).format("YYYY-MM-DD"),
 						cxc        : vm.cotizacion.cxc,
 						subtotal   : vm.cotizacion.subtotal,
 						totalIVA   : vm.cotizacion.totalIVA,
