@@ -71,12 +71,14 @@
 							<div class = "clearfix"></div>
 						</div>
 						<div class = "form-group" ng-if = "nuevaCotizacionCtrl.porletProducto.producto != null">
-							 <label>Descuento</label>
-                                                        <div class = "input-group input-group-lg">
+							<div class = "col-md-6">
+								 <label>Descuento</label>
+                                                                <div class = "input-group input-group-lg">
 								<input type = "number"
 								       class = "form-control"
 								       placeholder = "Descuento"
 								       pattern = "\d+(\.\d{2})?"
+								       min="0"
 								       ng-model = "nuevaCotizacionCtrl.porletProducto.cDescuento">
 								<span class = "input-group-btn">
 									<button class = "btn green" type = "button" ng-click = "nuevaCotizacionCtrl.porletProducto.modoDescuento()">
@@ -85,6 +87,22 @@
 									</button>
 								</span>
 							</div>
+							</div>
+							<div class = "col-md-6">
+								<div class = "form-group">
+									<label>Impuesto</label>
+										<div class = "input-group input-group-lg">
+										<input
+											type = "number"
+											class = "form-control"
+											placeholder = "Impuesto"
+											aria-describedby = "sizing-addon1"
+											ng-model = "nuevaCotizacionCtrl.porletProducto.impuesto">
+										<span class = "input-group-addon" id = "sizing-addon1">%</span>
+									</div>
+								</div>
+							</div>
+							<div class = "clearfix"></div>
 						</div>
 						<div class = "form-group" ng-if = "nuevaCotizacionCtrl.porletProducto.producto != null">
 	                                                <label>Observaciones</label>
@@ -110,6 +128,10 @@
 								     ng-class = "{'font-red-thunderbird' : (nuevaCotizacionCtrl.porletProducto.descuento >= nuevaCotizacionCtrl.porletProducto.subtotal)}">
 									$ {{nuevaCotizacionCtrl.porletProducto.descuento | number : 2}}
 								</div>
+							</div>
+							<div class = "row static-info">
+								<div class = "col-md-8 name"> I.V.A: </div>
+								<div class = "col-md-4 value"> $ {{nuevaCotizacionCtrl.porletProducto.iva  | number : 2}} </div>
 							</div>
 							<div class = "row static-info">
 								<div class = "col-md-8 name"> Total: </div>
@@ -150,7 +172,7 @@
 				</div>
 				<div class = "row static-info">
 					<div class = "col-md-8 name"> I.V.A.: </div>
-					<div class = "col-md-4 value"> {{nuevaCotizacionCtrl.cotizacion.iva | number: 2}} % </div>
+					<div class = "col-md-4 value"> $ {{nuevaCotizacionCtrl.cotizacion.totalIVA | number: 2}} </div>
 				</div>
 				<div class = "row static-info">
 					<div class = "col-md-8 name"> Total: </div>
@@ -339,12 +361,14 @@
 				<h3 ng-show = "nuevaCotizacionCtrl.cotizacion.productos.length == 0">No hay productos en la cotización.</h3>
 				<div class = "note bg-grey-cararra bg-font-grey-cararra" ng-repeat = "producto in nuevaCotizacionCtrl.cotizacion.productos">
 					<button type = "button" class = "close" data-dismiss = "alert" aria-hidden = "true" ng-click = "nuevaCotizacionCtrl.porletProducto.eliminaProducto($index)"></button>
-                                        <h3 class = "block"><b> {{producto.producto}} </b>| <span class = "label label-success"> $ {{producto.total | number:2}} </span></h3>
+                                        <h3 class = "block"><b> {{producto.codigo}}</b> | <b> {{producto.producto}} </b>| <span class = "label label-success bold"> $ {{producto.total | number:2}} </span></h3>
                                         <h4> {{producto.descripcion}} </h4>
-					<span>Precio: <b> $ {{producto.precio | number:2}}</b>
-						| Unidad: <b> {{producto.unidad.unidad}} </b>
+					<span>Unidad: <b> {{producto.unidad.unidad}} </b>
+						| Precio Unitario: <b> $ {{producto.precio | number:2}} </b>
 						| Cantidad: <b>{{producto.cantidad}} </b>
+						| Subtotal: <b> $ {{producto.subtotal | number:2}} </b>
 						| Descuento: <b> $ {{producto.descuento | number:2}}</b>
+						| I.V.A.: <b> $ {{producto.iva | number:2}} </b>
 					</span>
 				</div>
 			</div>
@@ -352,7 +376,7 @@
 		<!-- END Lista Productos PORTLET-->
 		
 		<!-- BEGIN Lista Revision y envio PORTLET-->
-		<div class = "portlet light" ng-if = "nuevaCotizacionCtrl.cotizacion.enviar">
+		<div class = "portlet light" ng-show = "nuevaCotizacionCtrl.cotizacion.enviar">
 			<div class = "portlet-title">
 				<div class = "caption">
 					<i class = "fa fa-check font-yellow-casablanca"></i>
@@ -397,8 +421,7 @@
 				<div class = "col-md-6">
 					<h4>Fecha de vencimiento</h4>
 					<div class = "row static-info">
-						<div class = "col-md-4 name"> Fecha: </div>
-						<div class = "col-md-8 value">  {{nuevaCotizacionCtrl.cotizacion.vencimiento | amDateFormat: 'DD / MMMM / YYYY' }} </div>
+						<div class = "col-md-12 value">  {{nuevaCotizacionCtrl.cotizacion.vencimiento | amDateFormat: 'DD / MMMM / YYYY' }} </div>
 					</div>
 					<h4>Bancos</h4>
 					<div class = "row static-info">
@@ -413,9 +436,10 @@
 				
 				<div class = "col-md-12">
 					<hr>
-					<button class = "btn btn-lg yellow-casablanca btn-block uppercase bold">Enviar Cotización</button>
+					<button class = "btn btn-lg yellow-casablanca btn-block uppercase bold" ng-click = "nuevaCotizacionCtrl.porletRevision.envia()">Enviar Cotización</button>
 				</div>
 				<div class = "clearfix"></div>
+				{{nuevaCotizacionCtrl.porletRevision.cotizacion  | json}}
 			</div>
 		</div>
 		<!-- END Lista Revision y envio PORTLET-->

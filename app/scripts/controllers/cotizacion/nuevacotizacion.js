@@ -18,7 +18,7 @@ angular.module('MetronicApp')
 				contacto   : null,
 				productos  : [],
 				subtotal   : 0,
-				iva        : 16,
+				totalIVA   : 0,
 				total      : 0,
 				bancos     : [],
 				vencimiento: null,
@@ -33,6 +33,8 @@ angular.module('MetronicApp')
 				cDescuento        : 0,
 				descuento         : 0,
 				total             : 0,
+				impuesto          : 16, //%
+				iva               : 0,
 				porcentaje        : true,
 				openModalProductos: function () {
 					var modalInstance = $uibModal.open({
@@ -53,19 +55,26 @@ angular.module('MetronicApp')
 				},
 				agregaProducto    : function () {
 					vm.porletProducto.producto.cantidad  = vm.porletProducto.cantidad;
+					vm.porletProducto.producto.subtotal  = vm.porletProducto.subtotal;
 					vm.porletProducto.producto.descuento = vm.porletProducto.descuento;
+					vm.porletProducto.producto.iva       = vm.porletProducto.iva;
 					vm.porletProducto.producto.total     = vm.porletProducto.total;
+					
 					vm.cotizacion.productos.push(vm.porletProducto.producto);
 					
-					vm.cotizacion.subtotal += vm.porletProducto.producto.total;
-					vm.cotizacion.total = vm.cotizacion.subtotal + ((vm.cotizacion.subtotal * vm.cotizacion.iva) / 100);
+					vm.cotizacion.subtotal += vm.porletProducto.producto.subtotal;
+					vm.cotizacion.totalIVA += vm.porletProducto.producto.iva;
+					vm.cotizacion.total += vm.porletProducto.producto.total;
 					
+					// Reset
 					vm.porletProducto.producto   = null;
 					vm.porletProducto.cantidad   = 0;
 					vm.porletProducto.subtotal   = 0;
 					vm.porletProducto.cDescuento = 0;
 					vm.porletProducto.descuento  = 0;
 					vm.porletProducto.total      = 0;
+					vm.porletProducto.impuesto   = 16;
+					vm.porletProducto.iva        = 0;
 					vm.porletProducto.porcentaje = true;
 				},
 				eliminaProducto   : function (index) {
@@ -83,7 +92,8 @@ angular.module('MetronicApp')
 						}
 						else {
 							vm.porletProducto.descuento = (vm.porletProducto.subtotal * vm.porletProducto.cDescuento) / 100;
-							vm.porletProducto.total     = vm.porletProducto.subtotal - vm.porletProducto.descuento;
+							vm.porletProducto.iva       = (((vm.porletProducto.subtotal - vm.porletProducto.descuento) * vm.porletProducto.impuesto) / 100);
+							vm.porletProducto.total     = (vm.porletProducto.subtotal - vm.porletProducto.descuento) + vm.porletProducto.iva;
 						}
 					}
 					else {
@@ -94,7 +104,8 @@ angular.module('MetronicApp')
 						}
 						else {
 							vm.porletProducto.descuento = vm.porletProducto.cDescuento;
-							vm.porletProducto.total     = vm.porletProducto.subtotal - vm.porletProducto.descuento;
+							vm.porletProducto.iva       = (((vm.porletProducto.subtotal - vm.porletProducto.descuento) * vm.porletProducto.impuesto) / 100);
+							vm.porletProducto.total     = (vm.porletProducto.subtotal - vm.porletProducto.descuento) + vm.porletProducto.iva;
 						}
 					}
 				}
@@ -159,6 +170,7 @@ angular.module('MetronicApp')
 			vm.porletBancos      = {
 				bancos: []
 			};
+			
 			/**
 			 * @TODO Hacer peticion mediante $resource
 			 */
@@ -184,6 +196,41 @@ angular.module('MetronicApp')
 						});
 				}
 			};
+			vm.porletRevision = {
+				cotizacion: null,
+				envia     : function () {
+					var productos = [];
+					vm.cotizacion.productos.forEach(function (item, index) {
+						productos[index] = {
+							id       : item.id,
+							cantidad : item.cantidad,
+							precio   : item.precio,
+							descuento: item.descuento,
+							subtotal : item.subtotal,
+							iva      : item.iva,
+							total    : item.total
+						};
+					});
+					
+					var bancos = [];
+					vm.cotizacion.bancos.forEach(function (item, index) {
+						bancos.push(item.id);
+					});
+					
+					vm.porletRevision.cotizacion = {
+						cliente_id : vm.cotizacion.cliente.id,
+						contacto_id: vm.cotizacion.contacto.id,
+						productos  : productos,
+						bancos     : bancos,
+						vencimiento: vm.cotizacion.vencimiento,
+						cxc        : vm.cotizacion.cxc,
+						subtotal   : vm.cotizacion.subtotal,
+						totalIVA   : vm.cotizacion.totalIVA,
+						total      : vm.cotizacion.total
+					};
+					console.log(vm.porletRevision.cotizacion);
+				}
+			};
 			
 			// Watchers Productos
 			$scope.$watch('nuevaCotizacionCtrl.porletProducto.producto.precio', function () {
@@ -191,18 +238,35 @@ angular.module('MetronicApp')
 				vm.porletProducto.subtotal = precio * vm.porletProducto.cantidad;
 				vm.porletProducto._calculaDescuento();
 			});
-			$scope.$watch('nuevaCotizacionCtrl.porletProducto.cDescuento', function () {
-				vm.porletProducto._calculaDescuento();
-			});
 			$scope.$watch('nuevaCotizacionCtrl.porletProducto.cantidad', function () {
 				var precio                 = (vm.porletProducto.producto == null) ? 0 : vm.porletProducto.producto.precio;
 				vm.porletProducto.subtotal = precio * vm.porletProducto.cantidad;
 				vm.porletProducto._calculaDescuento()
 			});
+			$scope.$watch('nuevaCotizacionCtrl.porletProducto.cDescuento', function () {
+				vm.porletProducto._calculaDescuento();
+			});
 			$scope.$watch('nuevaCotizacionCtrl.porletProducto.porcentaje', function () {
 				vm.porletProducto._calculaDescuento()
 			});
-				
+			$scope.$watch('nuevaCotizacionCtrl.porletProducto.impuesto', function () {
+				vm.porletProducto._calculaDescuento()
+			});
+			
+			//Watchers Cotizacion
+			$scope.$watch('nuevaCotizacionCtrl.cotizacion', function () {
+				if (vm.cotizacion.cliente != null &&
+					vm.cotizacion.contacto != null &&
+					vm.cotizacion.productos.length > 0 &&
+					vm.cotizacion.bancos.length > 0 &&
+					vm.cotizacion.vencimiento != null) {
+					vm.cotizacion.enviar = true;
+				}
+				else {
+					vm.cotizacion.enviar = false;
+				}
+			}, true);
+			
 			$scope.$on('$viewContentLoaded', function () {
 				// initialize core components
 				App.initAjax();
