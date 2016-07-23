@@ -225,7 +225,7 @@ angular.module('MetronicApp')
 						vencimiento: moment(vm.cotizacion.vencimiento).format("YYYY-MM-DD"),
 						cxc        : vm.cotizacion.cxc,
 						subtotal   : vm.cotizacion.subtotal,
-						totalIVA   : vm.cotizacion.totalIVA,
+						iva   : vm.cotizacion.totalIVA,
 						total      : vm.cotizacion.total
 					};
 					console.log(vm.porletRevision.cotizacion);
