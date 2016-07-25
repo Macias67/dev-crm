@@ -212,7 +212,7 @@ MetronicApp.service('interceptor', [
 				var toastr = $injector.get('toastr');
 				var $state = $injector.get('$state');
 				
-				if(response.status == 500) {
+				if (response.status == 500) {
 					toastr.error('Hubo error con el servidor', response.statusText);
 					console.error(response.data.mesasge);
 				}
@@ -261,7 +261,7 @@ MetronicApp.config([
 		});
 		
 		$stateProvider
-			// Login
+		// Login
 			.state('login', {
 				url        : '/login',
 				templateUrl: 'views/login.html',
@@ -450,6 +450,20 @@ MetronicApp.config([
 				templateUrl: 'views/cotizaciones/pagos_revisar.html',
 				data       : {
 					pageTitle: 'Pagos por revisar'
+				},
+				controller : 'RevisionPagosCtrl as revisionPagosCtrl',
+				resolve    : {
+					deps: [
+						'$ocLazyLoad', function ($ocLazyLoad) {
+							return $ocLazyLoad.load({
+								name        : 'MetronicApp',
+								insertBefore: '#ng_load_plugins_ng',
+								files       : [
+									'scripts/controllers/cotizacion/revisionpagos.js'
+								]
+							});
+						}
+					]
 				}
 			})
 			//Ejecutivos
@@ -643,7 +657,7 @@ MetronicApp.run([
 		//validator.setValidElementStyling(false);
 		defaultErrorMessageResolver.setI18nFileRootPath('bower_components/angular-auto-validate/dist/lang/');
 		defaultErrorMessageResolver.setCulture('es-CO');
-
+		
 		amMoment.changeLocale('es');
 		
 		$rootScope.$on('$stateChangeStart', function (event, toState) {
