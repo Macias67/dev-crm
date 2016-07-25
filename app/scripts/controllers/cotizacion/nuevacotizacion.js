@@ -9,8 +9,8 @@
  */
 angular.module('MetronicApp')
 	.controller('NuevaCotizacionCtrl', [
-		'$rootScope', '$scope', '$http', 'CRM_APP', 'authUser', '$uibModal', '$filter', '$ngBootbox', 'Cliente', 'Contacto', 'Banco',
-		function ($rootScope, $scope, $http, CRM_APP, authUser, $uibModal, $filter, $ngBootbox, Cliente, Contacto, Banco) {
+		'$rootScope', '$scope', '$http', 'CRM_APP', 'authUser', '$uibModal', '$filter', '$ngBootbox', '$state', 'toastr', 'Cliente', 'Contacto', 'Banco', 'Cotizacion',
+		function ($rootScope, $scope, $http, CRM_APP, authUser, $uibModal, $filter, $ngBootbox, $state, toastr, Cliente, Contacto, Banco, Cotizacion) {
 			var vm = this;
 			
 			vm.cotizacion = {
@@ -78,9 +78,10 @@ angular.module('MetronicApp')
 					vm.porletProducto.porcentaje = true;
 				},
 				eliminaProducto   : function (index) {
-					var producto        = vm.cotizacion.productos[index];
-					vm.cotizacion.subtotal -= producto.total;
-					vm.cotizacion.total = vm.cotizacion.subtotal + ((vm.cotizacion.subtotal * vm.cotizacion.iva) / 100);
+					var producto = vm.cotizacion.productos[index];
+					vm.cotizacion.subtotal -= producto.subtotal;
+					vm.cotizacion.totalIVA -= producto.iva;
+					vm.cotizacion.total -= producto.total;
 					vm.cotizacion.productos.splice(index, 1);
 				},
 				_calculaDescuento : function () {
@@ -113,7 +114,7 @@ angular.module('MetronicApp')
 			vm.porletCliente     = {
 				contactos            : [],
 				reloadData           : function () {
-					Contacto.get({idcliente: vm.cliente.id}, function (contactos) {
+					Contacto.get({idcliente: vm.cotizacion.cliente.id}, function (contactos) {
 						vm.porletCliente.contactos = [];
 						contactos.data.forEach(function (item, index) {
 							if (item.online) {
@@ -225,12 +226,84 @@ angular.module('MetronicApp')
 						vencimiento: moment(vm.cotizacion.vencimiento).format("YYYY-MM-DD"),
 						cxc        : vm.cotizacion.cxc,
 						subtotal   : vm.cotizacion.subtotal,
-						iva   : vm.cotizacion.totalIVA,
+						iva        : vm.cotizacion.totalIVA,
 						total      : vm.cotizacion.total
 					};
-					console.log(vm.porletRevision.cotizacion);
+					
+					App.scrollTop();
+					App.blockUI({
+						target      : '#ui-view',
+						message     : '<b> Generando nueva cotización </b>',
+						boxed       : true,
+						overlayColor: App.getBrandColor('grey'),
+						zIndex      : 99999
+					});
+					
+					var cotizacion = new Cotizacion(vm.porletRevision.cotizacion);
+					cotizacion.$save(function (response) {
+						if (response.hasOwnProperty('errors')) {
+							for (var key in response.errors) {
+								if (response.errors.hasOwnProperty(key)) {
+									toastr.error(response.errors[key][0], 'Hay errores con la cotización.');
+								}
+							}
+							App.unblockUI('#ui-view');
+						}
+						else {
+							resetAll();
+							setTimeout(function () {
+								App.unblockUI('#ui-view');
+								
+								$ngBootbox.customDialog({
+									message: '¿Deseas hacer una nueva cotización?',
+									buttons: {
+										success: {
+											label    : "Nueva Cotización",
+											className: "btn-success",
+											callback : function () {
+											}
+										},
+										warning: {
+											label    : "Salir",
+											className: "btn-default",
+											callback : function () {
+												$state.go('dashboard');
+											}
+										},
+									}
+								});
+							}, 1000);
+							toastr.success('Se generó nueva cotización', 'Nueva Cotización');
+						}
+					});
 				}
 			};
+			
+			function resetAll() {
+				vm.porletProducto.producto   = null;
+				vm.porletProducto.cantidad   = 0;
+				vm.porletProducto.subtotal   = 0;
+				vm.porletProducto.cDescuento = 0;
+				vm.porletProducto.descuento  = 0;
+				vm.porletProducto.total      = 0;
+				vm.porletProducto.impuesto   = 16;
+				vm.porletProducto.iva        = 0;
+				vm.porletProducto.porcentaje = true;
+				
+				vm.porletCliente.contactos = [];
+				
+				vm.cotizacion.cliente     = null;
+				vm.cotizacion.contacto    = null;
+				vm.cotizacion.productos   = [];
+				vm.cotizacion.subtotal    = 0;
+				vm.cotizacion.totalIVA    = 0;
+				vm.cotizacion.total       = 0;
+				vm.cotizacion.bancos      = [];
+				vm.cotizacion.vencimiento = null;
+				vm.cotizacion.cxc         = false;
+				vm.cotizacion.enviar      = false;
+				
+			}
 			
 			// Watchers Productos
 			$scope.$watch('nuevaCotizacionCtrl.porletProducto.producto.precio', function () {

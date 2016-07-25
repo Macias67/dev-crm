@@ -193,7 +193,7 @@
 					<a href = "" class = "expand"> </a>
 					<a class = "reload"
 					   ng-click = "nuevaCotizacionCtrl.porletCliente.reloadData()"
-					   ng-if = "nuevaCotizacionCtrl.cliente != null"></a>
+					   ng-if = "nuevaCotizacionCtrl.cotizacion.cliente != null"></a>
 				</div>
 			</div>
 			<div class = "portlet-body portlet-collapsed">
@@ -441,7 +441,6 @@
 					<button class = "btn btn-lg yellow-casablanca btn-block uppercase bold" ng-click = "nuevaCotizacionCtrl.porletRevision.envia()">Enviar Cotización</button>
 				</div>
 				<div class = "clearfix"></div>
-				{{nuevaCotizacionCtrl.porletRevision.cotizacion  | json}}
 			</div>
 		</div>
 		<!-- END Lista Revision y envio PORTLET-->
