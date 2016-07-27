@@ -47,3 +47,35 @@
 		</div>
 	</div>
 </div>
+
+<div class = "row">
+	<div class = "col-md-9">
+		<div class = "portlet light portlet-fit portlet-datatable ">
+			<div class = "portlet-title">
+				<div class = "caption">
+					<i class = " fa fa-users font-green"></i>
+					<span class = "caption-subject font-green sbold uppercase">Cotizaciones </span>
+				</div>
+				<div class = "actions">
+					<a href = "#/cliente/nuevo" class = "btn btn-xs green">
+						<i class = "fa fa-plus"></i>
+						 Nuevo cliente
+					</a>
+					<button type = "button" class = "btn btn-xs green" ng-click = "revisionPagosCtrl.reloadTable()">
+						<i class = "fa fa-refresh"></i>
+					</button>
+				</div>
+			</div>
+			<div class = "portlet-body">
+				<table id = "tablePagos"
+				       datatable = ""
+				       dt-options = "revisionPagosCtrl.tablePagos.dtOptions"
+				       dt-columns = "revisionPagosCtrl.tablePagos.dtColumns"
+				       dt-instance = "revisionPagosCtrl.tablePagos.dtInstance"
+				       class = "table table-striped table-bordered table-hover">
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class = "col-md-3"></div>
+</div>
