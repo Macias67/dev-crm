@@ -9,50 +9,49 @@
  */
 angular.module('MetronicApp')
 	.controller('RevisionPagosCtrl', [
-		'$rootScope', '$scope', 'Cliente', 'toastr', 'DTOptionsBuilder', 'DTColumnBuilder', '$compile', 'CRM_APP', 'authUser', '$uibModal',
-		function ($rootScope, $scope, Cliente, toastr, DTOptionsBuilder, DTColumnBuilder, $compile, CRM_APP, authUser, $uibModal) {
+		'$rootScope', '$scope', 'Cotizacion', 'toastr', 'DTOptionsBuilder', 'DTColumnBuilder', '$compile', 'CRM_APP', 'authUser', '$uibModal', '$filter',
+		function ($rootScope, $scope, Cotizacion, toastr, DTOptionsBuilder, DTColumnBuilder, $compile, CRM_APP, authUser, $uibModal, $filter) {
 			var vm = this;
 			
 			vm.tablePagos = {
 				message   : '',
 				dtInstance: {},
 				
-				dtOptions: DTOptionsBuilder.newOptions()
-					.withOption('ajax', {
-						// Either you specify the AjaxDataProp here
-						// dataSrc: 'data',
-						url: CRM_APP.url + 'cotizaciones/datatable',
-						type: 'POST',
-						beforeSend: function (xhr) {
-							xhr.setRequestHeader('Accept', CRM_APP.accept);
-							xhr.setRequestHeader('Authorization', 'Bearer ' + authUser.getToken());
-							//xhr.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
-						}
-					})
-// 					.withFnServerData(serverData)
+				dtOptions: DTOptionsBuilder.fromSource(CRM_APP.url + 'cotizaciones?estatus=2')
+					.withFnServerData(serverData)
 					.withLanguageSource('//cdn.datatables.net/plug-ins/1.10.11/i18n/Spanish.json')
 					.withDataProp('data')
-					.withOption('processing', true)
-					.withOption('serverSide', true)
 					.withOption('createdRow', createdRow)
 					.withOption('fnRowCallback', rowCallback)
 					.withPaginationType('bootstrap_full_number')
 					.withBootstrap(),
 				
 				dtColumns: [
-					//DTColumnBuilder.newColumn('id').withTitle('Folio').withOption('sWidth', '10%'),
-// 					DTColumnBuilder.newColumn('cliente.razonsocial').withTitle('Cliente'),
-					DTColumnBuilder.newColumn('razonsocial').withTitle('Cliente'),
-// 					DTColumnBuilder.newColumn('rfc').withTitle('R.F.C.'),
-// 					DTColumnBuilder.newColumn(null).withTitle('Tipo').notSortable().renderWith(tipoCliente).withOption('sWidth', '20%'),
-// 					DTColumnBuilder.newColumn(null).notSortable().renderWith(actionsHtml).withOption('sWidth', '14%'),
+					DTColumnBuilder.newColumn('id').withTitle('Folio').withOption('sWidth', '10%'),
+					DTColumnBuilder.newColumn('null').withTitle('Cliente').renderWith(function (data, type, full) {
+						if (full.cxc) {
+							return full.cliente.razonsocial + ' | ' + '<span class="badge badge-danger"> <b>CxC</b> </span>';
+						}
+						else {
+							return full.cliente.razonsocial;
+						}
+					}),
+					DTColumnBuilder.newColumn('null').withTitle('Se cotizó').renderWith(function (data, type, full) {
+						var fecha = moment(full.fecha);
+						return '<span am-time-ago="' + fecha + ' "></span>';
+					}),
+					DTColumnBuilder.newColumn('null').withTitle('Se comprobó').renderWith(function (data, type, full) {
+						return '<span am-time-ago="' + moment(full.pagos[0].fecha) + ' "></span>';
+					}),
+					DTColumnBuilder.newColumn(null).withTitle('Total archivos').renderWith(totalArchivos).withOption('sWidth', '20%'),
+					DTColumnBuilder.newColumn(null).notSortable().renderWith(actionsHtml).withOption('sWidth', '14%'),
 				]
 			};
 			
 			vm.reloadTable = function () {
 				
 				App.blockUI({
-					target      : '#tableClientes',
+					target      : '#tablePagos',
 					animate     : true,
 					overlayColor: App.getBrandColor('grey')
 				});
@@ -60,62 +59,51 @@ angular.module('MetronicApp')
 				vm.tablePagos.dtInstance.reloadData();
 				
 				setTimeout(function () {
-					App.unblockUI('#tableClientes');
+					App.unblockUI('#tablePagos');
 				}, 1500);
 			};
 			
-			vm.openModalInfoCliente = function (id) {
+			vm.openModalInfoPago = function (id) {
 				App.scrollTop();
 				App.blockUI({
 					target      : '#ui-view',
-					message     : '<b> Mostrando datos del cliente </b>',
+					message     : '<b> Mostrando datos de la cotización </b>',
 					boxed       : true,
 					overlayColor: App.getBrandColor('grey'),
 					zIndex      : 99999
 				});
 				
-				var cliente = Cliente.get({id: id}, function () {
+				var cotizacion = Cotizacion.get({id: id}, function () {
 					App.unblockUI('#ui-view');
 					$uibModal.open({
 						backdrop   : 'static',
-						templateUrl: 'InfoCliente.html',
-						controller : 'InfoClienteCtrl as infoClienteCtrl',
+						templateUrl: 'modalRevision.html',
+						controller : 'ModalRevisaCtrl as modalRevisaCtrl',
 						size       : 'lg',
 						resolve    : {
-							dtCliente: cliente.data
+							dtCotizacion: cotizacion.data
 						}
 					});
-				});
-			};
-			
-			vm.openModalEditaCliente = function (id) {
-				$uibModal.open({
-					backdrop   : 'static',
-					templateUrl: 'EditaCliente.html',
-					controller : 'EditaClienteCtrl as editaClienteCtrl',
-					size       : 'lg',
-					resolve    : {
-						dtCliente: id
-					}
 				});
 			};
 			
 			function serverData(sSource, aoData, fnCallback, oSettings) {
 				oSettings.jqXHR = $.ajax({
 					'dataType'  : 'json',
-					'type'      : 'POST',
-					'url'       : CRM_APP.url + 'cotizaciones/datatable',
+					'type'      : 'GET',
+					'url'       : CRM_APP.url + 'cotizaciones?estatus=2',
 					'data'      : aoData,
 					'success'   : fnCallback,
 					'beforeSend': function (xhr) {
 						xhr.setRequestHeader('Accept', CRM_APP.accept);
 						xhr.setRequestHeader('Authorization', 'Bearer ' + authUser.getToken());
-						xhr.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
+						//xhr.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
 					}
 				});
 			}
 			
 			function rowCallback(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+				
 			}
 			
 			function createdRow(row, data, dataIndex) {
@@ -124,33 +112,20 @@ angular.module('MetronicApp')
 			}
 			
 			function actionsHtml(data, type, full, meta) {
-				return '<button type="button" class="btn blue-steel btn-xs" ng-click = "gestionClientesCtrl.openModalInfoCliente(' + data.id + ')">' +
-					'   <i class="fa fa-plus"></i>' +
-					'</button>&nbsp;' +
-					'<button type="button" class="btn blue btn-xs" ng-click = "gestionClientesCtrl.openModalEditaCliente(' + data.id + ')">' +
-					'   <i class="fa fa-edit"></i>' +
-					'</button>&nbsp;' +
-					'<button type="button" class="btn red btn-xs">' +
-					'   <i class="fa fa-trash-o"></i>' +
+				return '<button ng-click="revisionPagosCtrl.openModalInfoPago(' + data.id + ')" class="btn btn-xs yellow-casablanca" type="button">' +
+					'<i class="fa fa-check"></i>&nbsp;Revisar' +
 					'</button>';
 			};
 			
-			function tipoCliente(data, type, full, meta) {
-				var prospecto, distribuidor;
-				if (data.prospecto) {
-					prospecto = '<span class="badge bg-red-mint bg-font-red-mint badge-roundless"><b>Prospecto</b> </span>&nbsp;';
-				}
-				else {
-					prospecto = '<span class="badge badge-primary badge-roundless">Normal</span>&nbsp;';
-				}
+			function totalArchivos(data, type, full, meta) {
+				var total = 0;
+				data.pagos.forEach(function (item, index) {
+					if (!item.valido) {
+						total += item.comprobantes.length;
+					}
+				});
 				
-				if (data.distribuidor) {
-					distribuidor = '<span class="badge bg-yellow-casablanca bg-font-yellow-casablanca badge-roundless"><b>Distribuidor</b> </span>';
-				}
-				else {
-					distribuidor = '<span class="badge badge-primary badge-roundless">Normal</span>';
-				}
-				return prospecto + distribuidor;
+				return total;
 			};
 			
 			$scope.$on('$viewContentLoaded', function () {
@@ -173,5 +148,17 @@ angular.module('MetronicApp')
 			$rootScope.settings.layout.pageContentWhite  = false;
 			$rootScope.settings.layout.pageBodySolid     = false;
 			$rootScope.settings.layout.pageSidebarClosed = true;
+		}
+	])
+	.controller('ModalRevisaCtrl', [
+		'$rootScope', '$scope', '$uibModalInstance', 'DTOptionsBuilder', 'DTColumnBuilder', 'CRM_APP', '$compile', 'authUser', 'dtCotizacion',
+		function ($rootScope, $scope, $uibModalInstance, DTOptionsBuilder, DTColumnBuilder, CRM_APP, $compile, authUser, dtCotizacion) {
+			var vm = this;
+			
+			vm.cotizacion = dtCotizacion;
+			
+			vm.cancel = function () {
+				$uibModalInstance.dismiss('cancel');
+			};
 		}
 	]);

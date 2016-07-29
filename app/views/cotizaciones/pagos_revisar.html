@@ -49,11 +49,11 @@
 </div>
 
 <div class = "row">
-	<div class = "col-md-9">
+	<div class = "col-md-7">
 		<div class = "portlet light portlet-fit portlet-datatable ">
 			<div class = "portlet-title">
 				<div class = "caption">
-					<i class = " fa fa-users font-green"></i>
+					<i class = " fa fa-file-pdf-o font-green"></i>
 					<span class = "caption-subject font-green sbold uppercase">Cotizaciones </span>
 				</div>
 				<div class = "actions">
@@ -72,10 +72,163 @@
 				       dt-options = "revisionPagosCtrl.tablePagos.dtOptions"
 				       dt-columns = "revisionPagosCtrl.tablePagos.dtColumns"
 				       dt-instance = "revisionPagosCtrl.tablePagos.dtInstance"
-				       class = "table table-striped table-bordered table-hover">
+				       class = "table table-hover table-light">
 				</table>
 			</div>
 		</div>
 	</div>
 	<div class = "col-md-3"></div>
 </div>
+
+<script type = "text/ng-template" id = "modalRevision.html">
+	<div class = "modal-header">
+		<button type = "button" class = "close" aria-hidden = "true" ng-click = "modalRevisaCtrl.cancel()"></button>
+		<h4 class = "modal-title font-green-sharp"><i class = "fa file-pdf-o"></i> Cotización #{{modalRevisaCtrl.cotizacion.id}} </h4>
+	</div>
+	<div class = "modal-body">
+		<h4 class = "page-title"> {{modalRevisaCtrl.cotizacion.cliente.razonsocial}}
+			<span class = "badge bg-yellow-casablanca bg-font-yellow-casablanca badge-roundless" ng-if = "modalRevisaCtrl.cotizacion.cliente.distribuidor"><b>Distribuidor</b></span>
+		</h4>
+		
+		<div class = "row">
+			<div class = "col-lg-3 col-md-3 col-sm-6 col-xs-12">
+				<a class = "dashboard-stat blue" href = "#">
+					<div class = "visual">
+						<i class = "fa fa-comments"></i>
+					</div>
+					<div class = "details">
+						<div class = "number">
+							<span data-counter = "counterup" data-value = "1349">0</span>
+						</div>
+						<div class = "desc"> Casos Abiertos </div>
+					</div>
+				</a>
+			</div>
+			<div class = "col-lg-3 col-md-3 col-sm-6 col-xs-12">
+				<a class = "dashboard-stat green" href = "#">
+					<div class = "visual">
+						<i class = "fa fa-shopping-cart"></i>
+					</div>
+					<div class = "details">
+						<div class = "number">
+							<span data-counter = "counterup" data-value = "549">0</span>
+						</div>
+						<div class = "desc"> Cotización Pendiente</div>
+					</div>
+				</a>
+			</div>
+			<div class = "col-lg-3 col-md-3 col-sm-6 col-xs-12">
+				<a class = "dashboard-stat red" href = "#">
+					<div class = "visual">
+						<i class = "fa fa-bar-chart-o"></i>
+					</div>
+					<div class = "details">
+						<div class = "number">
+							<span data-counter = "counterup" data-value = "12,5">0</span></div>
+						<div class = "desc"> CxC Pendientes </div>
+					</div>
+				</a>
+			</div>
+			<div class = "col-lg-3 col-md-3 col-sm-6 col-xs-12">
+				<a class = "dashboard-stat yellow-mint" href = "#">
+					<div class = "visual">
+						<i class = "fa fa-bar-chart-o"></i>
+					</div>
+					<div class = "details">
+						<div class = "number">
+							<span data-counter = "counterup" data-value = "12,5">10:23</span> hrs </div>
+						<div class = "desc"> Poliza </div>
+					</div>
+				</a>
+			</div>
+		</div>
+		
+		<div class = "row">
+			<div class = "col-md-5">
+				<div class = "col-md-12">
+					<h4 class = "form-section">Información de la cotización</h4>
+					<div class = "row static-info">
+						<div class = "col-md-4 name"> Ejecutivo: </div>
+						<div class = "col-md-8 value"> {{modalRevisaCtrl.cotizacion.ejecutivo.nombre}} </div>
+	                                </div>
+					<div class = "row static-info">
+						<div class = "col-md-4 name"> Fecha: </div>
+						<div class = "col-md-8 value">{{modalRevisaCtrl.cotizacion.fecha | amUtc | amDateFormat:'dddd, DD [de] MMMM [del] YYYY'}} </div>
+	                                </div>
+					<div class = "row static-info">
+						<div class = "col-md-4 name"> Hora: </div>
+						<div class = "col-md-8 value">{{modalRevisaCtrl.cotizacion.fecha | amUtc | amDateFormat:'[A las] h:mm:ss A'}} </div>
+	                                </div>
+					<div class = "row static-info">
+						<div class = "col-md-4 name"> Vencimiento: </div>
+						<div class = "col-md-8 value" am-time-ago = "modalRevisaCtrl.cotizacion.vencimiento"></div>
+	                                </div>
+					
+					<hr>
+					
+					<h4 class = "form-section"> Contacto  </h4>
+					<div class = "row static-info">
+						<div class = "col-md-4 name"> Nombre: </div>
+						<div class = "col-md-8 value">  {{modalRevisaCtrl.cotizacion.contacto.nombre}} </div>
+	                                </div>
+					<div class = "row static-info">
+						<div class = "col-md-4 name"> Teléfono: </div>
+						<div class = "col-md-8 value">  {{modalRevisaCtrl.cotizacion.contacto.telefono | telefono}} </div>
+	                                </div>
+					<div class = "row static-info">
+						<div class = "col-md-4 name"> Email: </div>
+						<div class = "col-md-8 value">  {{modalRevisaCtrl.cotizacion.contacto.email}} </div>
+	                                </div>
+					
+					<hr>
+					
+					<h4 class = "form-section"> Oficina  </h4>
+					<div class = "row static-info">
+						<div class = "col-md-4 name"> Ciudad: </div>
+						<div class = "col-md-8 value">  {{modalRevisaCtrl.cotizacion.oficina.ciudad}} </div>
+	                                </div>
+					<div class = "row static-info">
+						<div class = "col-md-4 name"> Estado: </div>
+						<div class = "col-md-8 value">  {{modalRevisaCtrl.cotizacion.oficina.estado}} </div>
+	                                </div>
+					<!--<div class = "row static-info">-->
+					<!--<div class = "col-md-5 name"> No. Exterior: </div>-->
+					<!--<div class = "col-md-7 value"> {{infoClienteCtrl.cliente.noexterior}} </div>-->
+					<!--</div>-->
+					<!--<div class = "row static-info">-->
+					<!--<div class = "col-md-5 name"> No. Interior: </div>-->
+					<!--<div class = "col-md-7 value">{{infoClienteCtrl.cliente.nointerior}}</div>-->
+					<!--</div>-->
+					<!--<div class = "row static-info">-->
+					<!--<div class = "col-md-5 name"> Colonia: </div>-->
+					<!--<div class = "col-md-7 value">{{infoClienteCtrl.cliente.colonia}}</div>-->
+					<!--</div>-->
+					<!--<div class = "row static-info">-->
+					<!--<div class = "col-md-5 name"> C.P.: </div>-->
+					<!--<div class = "col-md-7 value"> {{infoClienteCtrl.cliente.cp}}</div>-->
+					<!--</div>-->
+					<!--<div class = "row static-info">-->
+					<!--<div class = "col-md-5 name"> Ciudad: </div>-->
+					<!--<div class = "col-md-7 value"> {{infoClienteCtrl.cliente.ciudad}} </div>-->
+					<!--</div>-->
+					<!--<div class = "row static-info">-->
+					<!--<div class = "col-md-5 name"> Municipio: </div>-->
+					<!--<div class = "col-md-7 value"> {{infoClienteCtrl.cliente.municipio}} </div>-->
+					<!--</div>-->
+					<!--<div class = "row static-info">-->
+					<!--<div class = "col-md-5 name"> Estado: </div>-->
+					<!--<div class = "col-md-7 value">{{infoClienteCtrl.cliente.estado}}</div>-->
+					<!--</div>-->
+					<!--<div class = "row static-info">-->
+					<!--<div class = "col-md-5 name"> País: </div>-->
+					<!--<div class = "col-md-7 value">{{infoClienteCtrl.cliente.pais}}</div>-->
+					<!--</div>-->
+				</div>
+			</div>
+		</div>
+		{{modalRevisaCtrl.cotizacion | json}}
+	</div>
+	<div class = "modal-footer">
+		<button class = "btn grey-mint btn-outline" ng-click = "modalRevisaCtrl.cancel()">Cancelar</button>
+	</div>
+</script>
