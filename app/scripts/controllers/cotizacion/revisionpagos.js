@@ -151,11 +151,19 @@ angular.module('MetronicApp')
 		}
 	])
 	.controller('ModalRevisaCtrl', [
-		'$rootScope', '$scope', '$uibModalInstance', 'DTOptionsBuilder', 'DTColumnBuilder', 'CRM_APP', '$compile', 'authUser', 'dtCotizacion',
-		function ($rootScope, $scope, $uibModalInstance, DTOptionsBuilder, DTColumnBuilder, CRM_APP, $compile, authUser, dtCotizacion) {
+		'$rootScope', '$scope', '$uibModalInstance', 'DTOptionsBuilder', 'DTColumnBuilder', 'CRM_APP', '$compile', 'authUser', 'dtCotizacion', '$ngBootbox',
+		function ($rootScope, $scope, $uibModalInstance, DTOptionsBuilder, DTColumnBuilder, CRM_APP, $compile, authUser, dtCotizacion, $ngBootbox) {
 			var vm = this;
 			
 			vm.cotizacion = dtCotizacion;
+			
+			vm.indicaPagada = function (idPago) {
+				
+			};
+			
+			vm.indicaIrregular = function (idPago) {
+				
+			};
 			
 			vm.cancel = function () {
 				$uibModalInstance.dismiss('cancel');

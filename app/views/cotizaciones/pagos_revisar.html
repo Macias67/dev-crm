@@ -49,7 +49,7 @@
 </div>
 
 <div class = "row">
-	<div class = "col-md-7">
+	<div class = "col-md-9">
 		<div class = "portlet light portlet-fit portlet-datatable ">
 			<div class = "portlet-title">
 				<div class = "caption">
@@ -77,7 +77,7 @@
 			</div>
 		</div>
 	</div>
-	<div class = "col-md-3"></div>
+	<div class = "col-md-2"></div>
 </div>
 
 <script type = "text/ng-template" id = "modalRevision.html">
@@ -210,49 +210,9 @@
 						<div class = "col-md-4 name"> Estado: </div>
 						<div class = "col-md-8 value">  {{modalRevisaCtrl.cotizacion.oficina.estado}} </div>
 	                                </div>
-					<!--<div class = "row static-info">-->
-					<!--<div class = "col-md-5 name"> No. Exterior: </div>-->
-					<!--<div class = "col-md-7 value"> {{infoClienteCtrl.cliente.noexterior}} </div>-->
-					<!--</div>-->
-					<!--<div class = "row static-info">-->
-					<!--<div class = "col-md-5 name"> No. Interior: </div>-->
-					<!--<div class = "col-md-7 value">{{infoClienteCtrl.cliente.nointerior}}</div>-->
-					<!--</div>-->
-					<!--<div class = "row static-info">-->
-					<!--<div class = "col-md-5 name"> Colonia: </div>-->
-					<!--<div class = "col-md-7 value">{{infoClienteCtrl.cliente.colonia}}</div>-->
-					<!--</div>-->
-					<!--<div class = "row static-info">-->
-					<!--<div class = "col-md-5 name"> C.P.: </div>-->
-					<!--<div class = "col-md-7 value"> {{infoClienteCtrl.cliente.cp}}</div>-->
-					<!--</div>-->
-					<!--<div class = "row static-info">-->
-					<!--<div class = "col-md-5 name"> Ciudad: </div>-->
-					<!--<div class = "col-md-7 value"> {{infoClienteCtrl.cliente.ciudad}} </div>-->
-					<!--</div>-->
-					<!--<div class = "row static-info">-->
-					<!--<div class = "col-md-5 name"> Municipio: </div>-->
-					<!--<div class = "col-md-7 value"> {{infoClienteCtrl.cliente.municipio}} </div>-->
-					<!--</div>-->
-					<!--<div class = "row static-info">-->
-					<!--<div class = "col-md-5 name"> Estado: </div>-->
-					<!--<div class = "col-md-7 value">{{infoClienteCtrl.cliente.estado}}</div>-->
-					<!--</div>-->
-					<!--<div class = "row static-info">-->
-					<!--<div class = "col-md-5 name"> País: </div>-->
-					<!--<div class = "col-md-7 value">{{infoClienteCtrl.cliente.pais}}</div>-->
-					<!--</div>-->
 				</div>
 			</div>
 			<div class = "col-md-7">
-				<div class = "col-md-12">
-					<h3>Progreso del pago <span class = "label label-info"> 40 % </span></h3>
-					<div class = "progress progress-striped active">
-						<div class = "progress-bar progress-bar-info" role = "progressbar" aria-valuenow = "40" aria-valuemin = "0" aria-valuemax = "100" style = "width: 40%">
-							<span class = "sr-only"> 40% Complete (success) </span>
-						</div>
-					</div>
-				</div>
 				<div class = "col-md-12">
 					<h4 class = "form-section">Pagos a validar</h4>
 					<div class = "note note-info" ng-repeat = "pago in modalRevisaCtrl.cotizacion.pagos" ng-if = "!pago.valido">
@@ -261,15 +221,32 @@
 						<p ng-if = "pago.comentario == ''"> <i>Sin comentarios</i> </p>
 						<p ng-if = "pago.comentario != ''"> {{pago.comentario}} </p>
 						<hr>
-						<a href = "https://google.com" target="_blank" ng-repeat = "comprobante  in pago.comprobantes">{{comprobante.archivo}}</a>
+						<a
+							href = "https://www.baustroonline.com/appint/websiteimcba/recursos/pago_06.jpg"
+							target = "_blank"
+							ng-repeat = "comprobante  in pago.comprobantes">{{comprobante.archivo}}
+						</a>
 						<hr>
-						<button type="button" class="btn green-jungle btn-sm"><i class="fa fa-plus"></i> Abonar</button>
-						<button type="button" class="btn red-thunderbird btn-sm"><i class="fa fa-ban"></i> Irregular</button>
+						<button type = "button" class = "btn green-jungle btn-sm" ng-click = "modalRevisaCtrl.indicaPagada(pago.id)"><i class = "fa fa-check"></i> Pagada</button>
+						<button type = "button" class = "btn red-thunderbird btn-sm" ng-click = "modalRevisaCtrl.indicaIrregular(pago.id)"><i class = "fa fa-ban"></i> Irregular</button>
 					</div>
 				</div>
 			</div>
 		</div>
 		<!--{{modalRevisaCtrl.cotizacion | json}}-->
+	</div>
+	<div class = "modal-footer">
+		<button class = "btn grey-mint btn-outline" ng-click = "modalRevisaCtrl.cancel()">Cerrar</button>
+	</div>
+</script>
+
+<script type = "text/ng-template" id = "modalConfirmaPago.html">
+	<div class = "modal-header">
+		<button type = "button" class = "close" aria-hidden = "true" ng-click = "modalRevisaCtrl.cancel()"></button>
+		<h4 class = "modal-title font-green-sharp"><i class = "fa file-pdf-o"></i> Confirmación </h4>
+	</div>
+	<div class = "modal-body">
+		
 	</div>
 	<div class = "modal-footer">
 		<button class = "btn grey-mint btn-outline" ng-click = "modalRevisaCtrl.cancel()">Cerrar</button>
