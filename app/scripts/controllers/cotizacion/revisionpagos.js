@@ -158,7 +158,7 @@ angular.module('MetronicApp')
 			vm.cotizacion = dtCotizacion;
 			
 			vm.indicaPagada = function (idPago) {
-				
+				console.log(vm.cotizacion);
 			};
 			
 			vm.indicaIrregular = function (idPago) {
