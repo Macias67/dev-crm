@@ -259,11 +259,12 @@
 						<p ng-if = "pago.comentario == ''"> <i>Sin comentarios</i> </p>
 						<p ng-if = "pago.comentario != ''"> {{pago.comentario}} </p>
 						<hr>
-						<a
-							href = "https://www.baustroonline.com/appint/websiteimcba/recursos/pago_06.jpg"
-							target = "_blank"
-							ng-repeat = "comprobante  in pago.comprobantes">{{comprobante.archivo}}
-						</a>
+						<p ng-repeat = "comprobante  in pago.comprobantes">
+							<a
+								href = "https://www.baustroonline.com/appint/websiteimcba/recursos/pago_06.jpg"
+								target = "_blank">{{comprobante.archivo}}
+							</a>
+						</p>
 						<hr>
 						<button type = "button" class = "btn green-jungle btn-sm" ng-click = "modalRevisaCtrl.indicaPagada(pago.id)"><i class = "fa fa-check"></i> Pagada</button>
 						<button type = "button" class = "btn red-thunderbird btn-sm" ng-click = "modalRevisaCtrl.indicaIrregular(pago.id)"><i class = "fa fa-ban"></i> Irregular</button>

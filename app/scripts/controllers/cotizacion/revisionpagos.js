@@ -138,6 +138,10 @@ angular.module('MetronicApp')
 				App.initAjax();
 			});
 			
+			$scope.$on('reloadTable', function () {
+				vm.reloadTable();
+			});
+			
 			//Nombres
 			$rootScope.vista = {
 				titulo   : 'Pagos por revisar',
@@ -151,14 +155,54 @@ angular.module('MetronicApp')
 		}
 	])
 	.controller('ModalRevisaCtrl', [
-		'$rootScope', '$scope', '$uibModalInstance', 'DTOptionsBuilder', 'DTColumnBuilder', 'CRM_APP', '$compile', 'authUser', 'dtCotizacion', '$ngBootbox',
-		function ($rootScope, $scope, $uibModalInstance, DTOptionsBuilder, DTColumnBuilder, CRM_APP, $compile, authUser, dtCotizacion, $ngBootbox) {
+		'$rootScope',
+		'$scope',
+		'$uibModalInstance',
+		'DTOptionsBuilder',
+		'DTColumnBuilder',
+		'CRM_APP',
+		'$compile',
+		'authUser',
+		'dtCotizacion',
+		'$ngBootbox',
+		'Pago',
+		'toastr',
+		function ($rootScope, $scope, $uibModalInstance, DTOptionsBuilder, DTColumnBuilder, CRM_APP, $compile, authUser, dtCotizacion, $ngBootbox, Pago, toastr) {
 			var vm = this;
 			
 			vm.cotizacion = dtCotizacion;
 			
 			vm.indicaPagada = function (idPago) {
-				console.log(vm.cotizacion);
+				//console.log(vm.cotizacion);
+				App.scrollTop();
+				App.blockUI({
+					target      : '#ui-view',
+					message     : '<b> Generando nuevo Caso </b>',
+					boxed       : true,
+					overlayColor: App.getBrandColor('grey'),
+					zIndex      : 99999
+				});
+				
+				Pago.valida({idCotizacion: vm.cotizacion.id, id: idPago}, {valido: true}, function (response) {
+					if (response.hasOwnProperty('errors')) {
+						for (var key in response.errors) {
+							if (response.errors.hasOwnProperty(key)) {
+								toastr.error(response.errors[key][0], 'Hay errores con la cotización.');
+							}
+						}
+						App.unblockUI('#ui-view');
+					}
+					else {
+						setTimeout(function () {
+							$uibModalInstance.dismiss('cancel');
+							App.unblockUI('#ui-view');
+							toastr.success('Se generó nuevo caso en espera de asignar líder.', 'Nuevo caso sin líder');
+							$rootScope.$broadcast('reloadTable');
+						}, 1000);
+						
+						console.log(response);
+					}
+				});
 			};
 			
 			vm.indicaIrregular = function (idPago) {
