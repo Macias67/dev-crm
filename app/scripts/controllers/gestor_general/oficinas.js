@@ -9,8 +9,8 @@
  */
 angular.module('MetronicApp')
 	.controller('OficinasCtrl', [
-		'DTOptionsBuilder', 'DTColumnBuilder', '$compile', '$auth', '$scope', '$rootScope', '$uibModal', 'CRM_APP', 'Oficina', '$ngBootbox', 'toastr',
-		function (DTOptionsBuilder, DTColumnBuilder, $compile, $auth, $scope, $rootScope, $uibModal, CRM_APP, Oficina, $ngBootbox, toastr) {
+		'DTOptionsBuilder', 'DTColumnBuilder', '$compile', '$auth', '$scope', '$rootScope', '$uibModal', 'CRM_APP', 'Oficina', '$ngBootbox', 'toastr', 'OficinaFB',
+		function (DTOptionsBuilder, DTColumnBuilder, $compile, $auth, $scope, $rootScope, $uibModal, CRM_APP, Oficina, $ngBootbox, toastr, OficinaFB) {
 			
 			$scope.$on('$viewContentLoaded', function () {
 				// initialize core components
@@ -18,6 +18,7 @@ angular.module('MetronicApp')
 			});
 			
 			var vm = this;
+			vm.oficinas = OficinaFB.root();
 			
 			//Nombres
 			$rootScope.vista = {
@@ -187,8 +188,8 @@ angular.module('MetronicApp')
 		}
 	])
 	.controller('ModalOficinaNuevaCtrl', [
-		'$rootScope', '$scope', '$uibModalInstance', '$filter', 'GeoCoder', 'toastr', 'NavigatorGeolocation', 'NgMap', 'Oficina', 'dtOficina',
-		function ($rootScope, $scope, $uibModalInstance, $filter, GeoCoder, toastr, NavigatorGeolocation, NgMap, Oficina, dtOficina) {
+		'$rootScope', '$scope', '$uibModalInstance', '$filter', 'GeoCoder', 'toastr', 'NavigatorGeolocation', 'NgMap', 'Oficina', 'dtOficina', 'OficinaFB',
+		function ($rootScope, $scope, $uibModalInstance, $filter, GeoCoder, toastr, NavigatorGeolocation, NgMap, Oficina, dtOficina, OficinaFB) {
 			var vm = this;
 			
 			var formEdit   = false;
@@ -318,6 +319,8 @@ angular.module('MetronicApp')
 					overlayColor: App.getBrandColor('grey'),
 					zIndex      : 99999
 				});
+				
+				OficinaFB.set(vm.form);
 				
 				if (formEdit) {
 					vm.form.telefonos = vm.form.telefonos.toString();
