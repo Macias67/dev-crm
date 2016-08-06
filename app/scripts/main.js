@@ -26,7 +26,7 @@ var MetronicApp = angular.module('MetronicApp', [
 	'angular.filter',
 	'angularMoment',
 	'checklist-model',
-        'firebase',
+	'firebase',
 	//Servicios
 	'authService'
 ]);
@@ -410,6 +410,29 @@ MetronicApp.config([
 					dataCliente: [
 						'$stateParams', 'Cliente', function ($stateParams, Cliente) {
 							return Cliente.get({id: $stateParams.idcliente}).$promise;
+						}
+					]
+				}
+			})
+			//Casos
+			.state('casos/por-asignar', {
+				url        : '/casos/por-asiginar',
+				parent     : 'tmpl',
+				templateUrl: 'views/casos/casos_porasignar.html',
+				data       : {
+					pageTitle: 'Casos por asignar'
+				},
+				controller : 'CasosPorAsignarCtrl as casosPorAsignarCtrl',
+				resolve    : {
+					deps: [
+						'$ocLazyLoad', function ($ocLazyLoad) {
+							return $ocLazyLoad.load({
+								name        : 'MetronicApp',
+								insertBefore: '#ng_load_plugins_ng',
+								files       : [
+									'scripts/controllers/casos/casosporasignar.js'
+								]
+							});
 						}
 					]
 				}

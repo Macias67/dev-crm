@@ -7,7 +7,12 @@
 	<!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
 	<!-- DOC: Set data-keep-expand="true" to keep the submenues expanded -->
 	<!-- DOC: Set data-auto-speed="200" to adjust the sub menu slide up/down speed -->
-	<ul class = "page-sidebar-menu page-sidebar-menu-light page-sidebar-menu-compact page-sidebar-menu-hover-submenu" data-keep-expanded = "false" data-auto-scroll = "true" data-slide-speed = "200" ng-class = "{'page-sidebar-menu-closed': settings.layout.pageSidebarClosed}">
+	<ul class = "page-sidebar-menu page-sidebar-menu-light page-sidebar-menu-compact page-sidebar-menu-hover-submenu"
+	    data-keep-expanded = "false"
+	    data-auto-scroll = "true"
+	    data-slide-speed = "200"
+	    ng-class = "{'page-sidebar-menu-closed': settings.layout.pageSidebarClosed}">
+		
 		<li class = "start">
 			<a href = "#/dashboard">
 				<i class = "icon-home"></i>
@@ -31,6 +36,28 @@
 				<li>
 					<a href = "#/clientes">
 						<i class = "fa fa-cogs"></i> Gestión
+					</a>
+				</li>
+			</ul>
+		</li>
+		
+		<li class = "nav-item">
+			<a href = "javascript:;" class = "nav-link nav-toggle">
+				<i class = "fa fa-book"></i>
+				<span class = "title"> <b>Casos</b></span>
+				<span class = "arrow "></span>
+			</a>
+			<ul class = "sub-menu">
+				<li>
+					<a href = "#/casos/por-asiginar">
+						<i class = "fa fa-exclamation-circle"></i>
+						<span class = "title">Casos por asignar</span>
+						<span class = "badge badge-danger">5</span>
+					</a>
+				</li>
+				<li>
+					<a href = "#/casos">
+						<i class = "fa fa-list"></i> Registro de casos
 					</a>
 				</li>
 			</ul>
@@ -77,8 +104,7 @@
 				</li>
 			</ul>
 		</li>
-
-		<!-- Eventos -->
+		
 		<li class = "nav-item">
 			<a href = "javascript:;" class = "nav-link nav-toggle">
 				<i class = "fa fa-calendar"></i>
