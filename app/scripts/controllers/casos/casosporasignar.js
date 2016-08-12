@@ -9,8 +9,8 @@
  */
 angular.module('MetronicApp')
 	.controller('CasosPorAsignarCtrl', [
-		'$rootScope', '$scope', 'Cotizacion', 'toastr', 'DTOptionsBuilder', 'DTColumnBuilder', '$compile', 'CRM_APP', 'authUser', '$uibModal', '$filter',
-		function ($rootScope, $scope, Cotizacion, toastr, DTOptionsBuilder, DTColumnBuilder, $compile, CRM_APP, authUser, $uibModal, $filter) {
+		'$rootScope', '$scope', 'Cotizacion', 'Caso', 'toastr', 'DTOptionsBuilder', 'DTColumnBuilder', '$compile', 'CRM_APP', 'authUser', '$uibModal', '$filter',
+		function ($rootScope, $scope, Cotizacion, Caso, toastr, DTOptionsBuilder, DTColumnBuilder, $compile, CRM_APP, authUser, $uibModal, $filter) {
 			var vm = this;
 			
 			vm.tableCasos = {
@@ -27,7 +27,7 @@ angular.module('MetronicApp')
 					.withBootstrap(),
 				
 				dtColumns: [
-					DTColumnBuilder.newColumn('id').withTitle('ID').withOption('sWidth', '5%'),,
+					DTColumnBuilder.newColumn('id').withTitle('ID').withOption('sWidth', '5%'), ,
 					DTColumnBuilder.newColumn('null').withTitle('Cliente').renderWith(function (data, type, full) {
 						if (full.cotizacion.cxc) {
 							return full.cliente.razonsocial + ' | ' + '<span class="badge badge-danger"> <b>CxC</b> </span>';
@@ -62,7 +62,7 @@ angular.module('MetronicApp')
 				App.scrollTop();
 				App.blockUI({
 					target      : '#ui-view',
-					message     : '<b> Mostrando datos de la cotización </b>',
+					message     : '<b> Mostrando detalles de la cotización </b>',
 					boxed       : true,
 					overlayColor: App.getBrandColor('grey'),
 					zIndex      : 99999
@@ -77,6 +77,30 @@ angular.module('MetronicApp')
 						size       : 'lg',
 						resolve    : {
 							dtCotizacion: cotizacion.data
+						}
+					});
+				});
+			};
+			
+			vm.openModalAsignacion = function (id) {
+				App.scrollTop();
+				App.blockUI({
+					target      : '#ui-view',
+					message     : '<b> Mostrando detalles del caso </b>',
+					boxed       : true,
+					overlayColor: App.getBrandColor('grey'),
+					zIndex      : 99999
+				});
+				
+				var caso = Caso.get({id: id}, function () {
+					App.unblockUI('#ui-view');
+					$uibModal.open({
+						backdrop   : 'static',
+						templateUrl: 'modalAsigna.html',
+						controller : 'ModalAsignaCtrl as modalAsignaCtrl',
+						size       : 'lg',
+						resolve    : {
+							dtCaso: caso.data
 						}
 					});
 				});
@@ -109,7 +133,7 @@ angular.module('MetronicApp')
 				return '<button ng-click="casosPorAsignarCtrl.openModalCotizacion(' + data.id + ')" class="btn btn-xs yellow-casablanca" type="button">' +
 					'<i class="fa fa-list"></i>&nbsp;Ver cotización' +
 					'</button>&nbsp;' +
-					'<button ng-click="casosPorAsignarCtrl.openModalCotizacion(' + data.id + ')" class="btn btn-xs green-turquoise" type="button">' +
+					'<button ng-click="casosPorAsignarCtrl.openModalAsignacion(' + data.id + ')" class="btn btn-xs green-turquoise" type="button">' +
 					'<i class="fa fa-black-tie"></i>&nbsp;Asignar caso' +
 					'</button>';
 			};
@@ -194,5 +218,26 @@ angular.module('MetronicApp')
 				$uibModalInstance.dismiss('cancel');
 			};
 		}
+	])
+	.controller('ModalAsignaCtrl', [
+		'$rootScope',
+		'$scope',
+		'$uibModalInstance',
+		'DTOptionsBuilder',
+		'DTColumnBuilder',
+		'CRM_APP',
+		'$compile',
+		'authUser',
+		'dtCaso',
+		'$ngBootbox',
+		'toastr',
+		function ($rootScope, $scope, $uibModalInstance, DTOptionsBuilder, DTColumnBuilder, CRM_APP, $compile, authUser, dtCaso, $ngBootbox, toastr) {
+			var vm = this;
+			
+			vm.caso = dtCaso;
+			
+			vm.cancel = function () {
+				$uibModalInstance.dismiss('cancel');
+			};
+		}
 	]);
-;

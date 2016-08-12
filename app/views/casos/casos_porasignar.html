@@ -19,8 +19,8 @@
 	</ul>
 </div>
 
-<div class="row">
-	<div class="col-md-9">
+<div class = "row">
+	<div class = "col-md-9">
 		<div class = "portlet light portlet-fit portlet-datatable ">
 			<div class = "portlet-title">
 				<div class = "caption">
@@ -247,5 +247,61 @@
 	</div>
 	<div class = "modal-footer">
 		<button class = "btn grey-mint btn-outline" ng-click = "modalRevisaCtrl.cancel()">Cerrar</button>
+	</div>
+</script>
+
+<script type = "text/ng-template" id = "modalAsigna.html">
+	<div class = "modal-header">
+		<button type = "button" class = "close" aria-hidden = "true" ng-click = "modalAsignaCtrl.cancel()"></button>
+		<h4 class = "modal-title font-green-sharp"><i class = "fa fa-star"></i> Caso no. {{modalAsignaCtrl.caso.id}} </h4>
+	</div>
+	<div class = "modal-body">
+		<h4 class = "page-title"> {{modalAsignaCtrl.caso.cliente.razonsocial}}
+			<span class = "badge bg-yellow-casablanca bg-font-yellow-casablanca badge-roundless" ng-if = "modalAsignaCtrl.caso.cliente.distribuidor"><b>Distribuidor</b></span>
+		</h4>
+		
+		<div class = "row" ng-if = "modalAsignaCtrl.caso.cliente.distribuidor">
+			<div class = "col-md-12">
+				<div class = "alert alert-block alert-danger fade in">
+	                                <h4 class = "alert-heading">Este cliente es un <b>distribuidor</b>.</h4>
+	                                <p> Por lo tanto este caso lo puedes cerrar automaticamente sin necesidad de asignarlo a un ejecutivo. </p>
+					<hr>
+	                                <p>
+		                                <button type = "button" class = "btn green-turquoise btn-lg"><i class = "fa fa-sign-out"></i> Cerrar caso</button>
+	                                </p>
+				</div>
+			</div>
+		</div>
+		
+		<div class = "row">
+			<div class = "col-md-6">
+				<h4 class = "form-section">Asigna a ejecutivo</h4>
+				<form role="form">
+					<div class = "form-body">
+						<div class="form-group">
+							<select class="form-control">
+								<option>Option 1</option>
+								<option>Option 2</option>
+								<option>Option 3</option>
+								<option>Option 4</option>
+								<option>Option 5</option>
+							</select>
+						</div>
+					</div>
+				</form>
+				
+				<hr>
+				
+				<h4 class = "form-section">Detalles del caso</h4>
+				<div class = "note note-info" ng-repeat = "producto in modalAsignaCtrl.caso.cotizacion.productos">
+                                        <h4 class = "block">{{producto.nombre}}</h4>
+                                        <p> <b>Descripción: </b>{{producto.descripcion}} </p>
+				</div>
+			</div>
+			<div class = "col-md-6"></div>
+		</div>
+	</div>
+	<div class = "modal-footer">
+		<button class = "btn grey-mint btn-outline" ng-click = "modalAsignaCtrl.cancel()">Cerrar</button>
 	</div>
 </script>
