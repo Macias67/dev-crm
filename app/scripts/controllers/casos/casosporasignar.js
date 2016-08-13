@@ -9,8 +9,20 @@
  */
 angular.module('MetronicApp')
 	.controller('CasosPorAsignarCtrl', [
-		'$rootScope', '$scope', 'Cotizacion', 'Caso', 'toastr', 'DTOptionsBuilder', 'DTColumnBuilder', '$compile', 'CRM_APP', 'authUser', '$uibModal', '$filter',
-		function ($rootScope, $scope, Cotizacion, Caso, toastr, DTOptionsBuilder, DTColumnBuilder, $compile, CRM_APP, authUser, $uibModal, $filter) {
+		'$rootScope',
+		'$scope',
+		'Cotizacion',
+		'Caso',
+		'Ejecutivo',
+		'toastr',
+		'DTOptionsBuilder',
+		'DTColumnBuilder',
+		'$compile',
+		'CRM_APP',
+		'authUser',
+		'$uibModal',
+		'$filter',
+		function ($rootScope, $scope, Cotizacion, Caso, Ejecutivo, toastr, DTOptionsBuilder, DTColumnBuilder, $compile, CRM_APP, authUser, $uibModal, $filter) {
 			var vm = this;
 			
 			vm.tableCasos = {
@@ -92,16 +104,19 @@ angular.module('MetronicApp')
 					zIndex      : 99999
 				});
 				
-				var caso = Caso.get({id: id}, function () {
-					App.unblockUI('#ui-view');
-					$uibModal.open({
-						backdrop   : 'static',
-						templateUrl: 'modalAsigna.html',
-						controller : 'ModalAsignaCtrl as modalAsignaCtrl',
-						size       : 'lg',
-						resolve    : {
-							dtCaso: caso.data
-						}
+				var caso = Caso.query({id: id}, function () {
+					var ejecutivos = Ejecutivo.get(function () {
+						App.unblockUI('#ui-view');
+						$uibModal.open({
+							backdrop   : 'static',
+							templateUrl: 'modalAsigna.html',
+							controller : 'ModalAsignaCtrl as modalAsignaCtrl',
+							size       : 'lg',
+							resolve    : {
+								dtCaso     : caso.data,
+								dtEjecutivo: ejecutivos
+							}
+						});
 					});
 				});
 			};
@@ -223,18 +238,14 @@ angular.module('MetronicApp')
 		'$rootScope',
 		'$scope',
 		'$uibModalInstance',
-		'DTOptionsBuilder',
-		'DTColumnBuilder',
-		'CRM_APP',
-		'$compile',
-		'authUser',
+		'dtEjecutivo',
 		'dtCaso',
-		'$ngBootbox',
-		'toastr',
-		function ($rootScope, $scope, $uibModalInstance, DTOptionsBuilder, DTColumnBuilder, CRM_APP, $compile, authUser, dtCaso, $ngBootbox, toastr) {
-			var vm = this;
+		function ($rootScope, $scope, $uibModalInstance, dtEjecutivo, dtCaso) {
+			var vm        = this;
+			vm.caso       = dtCaso;
+			vm.ejecutivos = dtEjecutivo.data;
 			
-			vm.caso = dtCaso;
+			vm.ejecutivoSelected = vm.ejecutivos[0];
 			
 			vm.cancel = function () {
 				$uibModalInstance.dismiss('cancel');

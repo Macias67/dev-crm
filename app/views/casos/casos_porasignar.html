@@ -276,15 +276,13 @@
 		<div class = "row">
 			<div class = "col-md-6">
 				<h4 class = "form-section">Asigna a ejecutivo</h4>
-				<form role="form">
+				<form role = "form">
 					<div class = "form-body">
-						<div class="form-group">
-							<select class="form-control">
-								<option>Option 1</option>
-								<option>Option 2</option>
-								<option>Option 3</option>
-								<option>Option 4</option>
-								<option>Option 5</option>
+						<div class = "form-group">
+							<select
+								class = "form-control input-lg"
+								ng-options = "ejecutivo.nombre +' '+ejecutivo.apellido + ' | '+ ejecutivo.departamento.area for ejecutivo in modalAsignaCtrl.ejecutivos"
+								ng-model = "modalAsignaCtrl.ejecutivoSelected">
 							</select>
 						</div>
 					</div>
@@ -298,7 +296,9 @@
                                         <p> <b>Descripción: </b>{{producto.descripcion}} </p>
 				</div>
 			</div>
-			<div class = "col-md-6"></div>
+			<div class = "col-md-6">
+				{{modalAsignaCtrl.ejecutivoSelected | json}}
+			</div>
 		</div>
 	</div>
 	<div class = "modal-footer">
