@@ -267,7 +267,9 @@
 	                                <p> Por lo tanto este caso lo puedes cerrar automaticamente sin necesidad de asignarlo a un ejecutivo. </p>
 					<hr>
 	                                <p>
-		                                <button type = "button" class = "btn green-turquoise btn-lg"><i class = "fa fa-sign-out"></i> Cerrar caso</button>
+		                                <button type = "button" class = "btn green-turquoise btn-lg" ng-click = "modalAsignaCtrl.cierraCaso()">
+			                                <i class = "fa fa-sign-out"></i> Cerrar caso
+		                                </button>
 	                                </p>
 				</div>
 			</div>
@@ -285,6 +287,12 @@
 								ng-model = "modalAsignaCtrl.ejecutivoSelected">
 							</select>
 						</div>
+						<div class = "form-group">
+							<button class = "btn red-thunderbird btn-block" ng-click = "modalAsignaCtrl.asignaCaso()">
+								<i class = "fa fa-mail-forward"></i>
+								<b>Asignar a {{modalAsignaCtrl.ejecutivoSelected.nombre + ' '+modalAsignaCtrl.ejecutivoSelected.apellido}}</b>
+							</button>
+						</div>
 					</div>
 				</form>
 				
@@ -297,6 +305,42 @@
 				</div>
 			</div>
 			<div class = "col-md-6">
+				<h4 class = "form-section">Resumen de casos distribuidos</h4>
+				<div class = "table-scrollable table-scrollable-borderless">
+					<table class = "table table-hover table-light">
+						<thead>
+							<tr class = "uppercase">
+								<th> Ejecutivo </th>
+								<th> Líder en casos* </th>
+								<th> % Avance total </th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td> Luis Macias </td>
+								<td> 21  </td>
+								<td>
+									<span class = "label label-sm label-success"> 63% </span>
+								</td>
+							</tr>
+							<tr>
+								<td> Eleazar Frías </td>
+								<td> 14 </td>
+								<td>
+									<span class = "label label-sm label-success"> 79% </span>
+								</td>
+							</tr>
+							<tr>
+								<td> Gloria Camarena </td>
+								<td> 12 </td>
+								<td>
+									<span class = "label label-sm label-success"> 22% </span>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<span class="help-block"> *Casos en proceso. </span>
+				</div>
 				{{modalAsignaCtrl.ejecutivoSelected | json}}
 			</div>
 		</div>

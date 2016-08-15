@@ -240,7 +240,6 @@ MetronicApp.service('interceptor', [
 /* Setup Rounting For All Pages */
 MetronicApp.config([
 	'$stateProvider', '$urlRouterProvider', '$authProvider', '$httpProvider', 'toastrConfig', 'CRM_APP',
-	
 	function ($stateProvider, $urlRouterProvider, $authProvider, $httpProvider, toastrConfig, CRM_APP) {
 		
 		$httpProvider.interceptors.push('interceptor');

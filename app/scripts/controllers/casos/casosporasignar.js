@@ -193,7 +193,6 @@ angular.module('MetronicApp')
 			vm.cotizacion = dtCotizacion;
 			
 			vm.indicaPagada = function (idPago) {
-				//console.log(vm.cotizacion);
 				App.scrollTop();
 				App.blockUI({
 					target      : '#ui-view',
@@ -240,12 +239,37 @@ angular.module('MetronicApp')
 		'$uibModalInstance',
 		'dtEjecutivo',
 		'dtCaso',
-		function ($rootScope, $scope, $uibModalInstance, dtEjecutivo, dtCaso) {
+		'$ngBootbox',
+		function ($rootScope, $scope, $uibModalInstance, dtEjecutivo, dtCaso, $ngBootbox) {
 			var vm        = this;
 			vm.caso       = dtCaso;
-			vm.ejecutivos = dtEjecutivo.data;
+			vm.ejecutivos = [];
+			
+			dtEjecutivo.data.forEach(function (item, index) {
+				if (item.online) {
+					vm.ejecutivos.push(item);
+				}
+			});
 			
 			vm.ejecutivoSelected = vm.ejecutivos[0];
+			
+			vm.asignaCaso = function () {
+				$ngBootbox.confirm('¿Seguro de asignar el caso a <b>' + vm.ejecutivoSelected.nombre + ' ' + vm.ejecutivoSelected.apellido + '</b>?')
+					.then(function () {
+						console.log('Confirmed!');
+					}, function () {
+						console.log('Confirm dismissed!');
+					});
+			};
+			
+			vm.cierraCaso = function () {
+				$ngBootbox.confirm('¿Seguro que quieres cerrar el caso?')
+					.then(function () {
+						console.log('Confirmed!');
+					}, function () {
+						console.log('Confirm dismissed!');
+					});
+			};
 			
 			vm.cancel = function () {
 				$uibModalInstance.dismiss('cancel');

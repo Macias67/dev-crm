@@ -196,11 +196,10 @@ angular.module('MetronicApp')
 						setTimeout(function () {
 							$uibModalInstance.dismiss('cancel');
 							App.unblockUI('#ui-view');
-							toastr.success('Se generó nuevo caso en espera de asignar líder.', 'Nuevo caso sin líder');
+							
+							toastr.success('Se ha abierto un nuevo caso para el cliente ' + response.data.cliente.razonsocial + ' en espera de asignación de líder.', 'Caso #' + response.data.id + ' en espera de líder.');
 							$rootScope.$broadcast('reloadTable');
 						}, 1000);
-						
-						console.log(response);
 					}
 				});
 			};
