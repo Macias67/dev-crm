@@ -214,6 +214,7 @@ MetronicApp.service('interceptor', [
 				var $state = $injector.get('$state');
 				
 				if (response.status == 500) {
+					App.unblockUI('#ui-view');
 					toastr.error('Hubo error con el servidor', response.statusText);
 					console.error(response.data.mesasge);
 				}
@@ -414,6 +415,28 @@ MetronicApp.config([
 				}
 			})
 			//Casos
+			.state('casos', {
+				url        : '/casos',
+				parent     : 'tmpl',
+				templateUrl: 'views/casos/registro_casos.html',
+				data       : {
+					pageTitle: 'Gestión de Casos'
+				},
+				controller : 'GestionCasosCtrl as gestionCasosCtrl',
+				resolve    : {
+					deps: [
+						'$ocLazyLoad', function ($ocLazyLoad) {
+							return $ocLazyLoad.load({
+								name        : 'MetronicApp',
+								insertBefore: '#ng_load_plugins_ng',
+								files       : [
+									'scripts/controllers/casos/gestioncasos.js'
+								]
+							});
+						}
+					]
+				}
+			})
 			.state('casos/por-asignar', {
 				url        : '/casos/por-asiginar',
 				parent     : 'tmpl',

@@ -240,7 +240,9 @@ angular.module('MetronicApp')
 		'dtEjecutivo',
 		'dtCaso',
 		'$ngBootbox',
-		function ($rootScope, $scope, $uibModalInstance, dtEjecutivo, dtCaso, $ngBootbox) {
+		'toastr',
+		'Lider',
+		function ($rootScope, $scope, $uibModalInstance, dtEjecutivo, dtCaso, $ngBootbox, toastr, Lider) {
 			var vm        = this;
 			vm.caso       = dtCaso;
 			vm.ejecutivos = [];
@@ -256,9 +258,34 @@ angular.module('MetronicApp')
 			vm.asignaCaso = function () {
 				$ngBootbox.confirm('¿Seguro de asignar el caso a <b>' + vm.ejecutivoSelected.nombre + ' ' + vm.ejecutivoSelected.apellido + '</b>?')
 					.then(function () {
-						console.log('Confirmed!');
+						App.scrollTop();
+						App.blockUI({
+							target      : '#ui-view',
+							message     : '<b> Asignando líder... </b>',
+							boxed       : true,
+							overlayColor: App.getBrandColor('grey'),
+							zIndex      : 99999
+						});
+						
+						var lider = new Lider({lider: vm.ejecutivoSelected.id});
+						lider.$save({idCaso: vm.caso.id}, function (response) {
+							App.unblockUI('#ui-view');
+							if (response.hasOwnProperty('errors')) {
+								for (var key in response.errors) {
+									if (response.errors.hasOwnProperty(key)) {
+										toastr.error(response.errors[key][0], 'Hay errores con la asignación.');
+									}
+								}
+							}
+							else {
+								setTimeout(function () {
+									$uibModalInstance.dismiss('cancel');
+									toastr.success('Se le ha notificado a ' + response.data.nombre + ' que es líder del caso #' + vm.caso.id, response.data.nombre + ' es líder del caso.');
+									$rootScope.$broadcast('reloadTable');
+								}, 1000);
+							}
+						});
 					}, function () {
-						console.log('Confirm dismissed!');
 					});
 			};
 			
