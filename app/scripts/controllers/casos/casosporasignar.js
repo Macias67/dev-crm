@@ -218,8 +218,6 @@ angular.module('MetronicApp')
 							toastr.success('Se generó nuevo caso en espera de asignar líder.', 'Nuevo caso sin líder');
 							$rootScope.$broadcast('reloadTable');
 						}, 1000);
-						
-						console.log(response);
 					}
 				});
 			};

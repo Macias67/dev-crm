@@ -437,6 +437,28 @@ MetronicApp.config([
 					]
 				}
 			})
+			.state('mis-casos', {
+				url        : '/mis-casos',
+				parent     : 'tmpl',
+				templateUrl: 'views/casos/mis_casos.html',
+				data       : {
+					pageTitle: 'Mis Casos'
+				},
+				controller : 'MisCasosCtrl as misCasosCtrl',
+				resolve    : {
+					deps: [
+						'$ocLazyLoad', function ($ocLazyLoad) {
+							return $ocLazyLoad.load({
+								name        : 'MetronicApp',
+								insertBefore: '#ng_load_plugins_ng',
+								files       : [
+									'scripts/controllers/casos/miscasos.js'
+								]
+							});
+						}
+					]
+				}
+			})
 			.state('casos/por-asignar', {
 				url        : '/casos/por-asiginar',
 				parent     : 'tmpl',
