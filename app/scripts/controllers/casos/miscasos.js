@@ -16,7 +16,8 @@ angular.module('MetronicApp')
 			vm.tableCasosAsignados = {
 				dtInstance: {},
 				
-				dtOptions: DTOptionsBuilder.fromSource('http://beta.json-generator.com/api/json/get/V1AcSFVc-')
+				// Prueba: http://beta.json-generator.com/api/json/get/V1AcSFVc-
+				dtOptions: DTOptionsBuilder.fromSource('http://api.crm/api/casos?estatus=2')
 					.withFnServerData(serverData)
 					.withLanguageSource('//cdn.datatables.net/plug-ins/1.10.11/i18n/Spanish.json')
 					.withDataProp('data')
@@ -35,7 +36,7 @@ angular.module('MetronicApp')
 							return full.cliente.razonsocial;
 						}
 					}).withOption('sWidth', '60%'),
-					DTColumnBuilder.newColumn(null).notSortable().renderWith(function (data, type, full, meta) {
+					DTColumnBuilder.newColumn(null).withTitle('Estatus').notSortable().renderWith(function (data, type, full, meta) {
 						return '<span class="label label-sm label-success ' + data.estatus.class + '"><b>' + data.estatus.estatus + '</b></span>';
 					}).withOption('sWidth', '10%'),
 					DTColumnBuilder.newColumn(null).notSortable().renderWith(actionsHtml).withOption('sWidth', '30%'),
@@ -62,12 +63,12 @@ angular.module('MetronicApp')
 				oSettings.jqXHR = $.ajax({
 					'dataType'  : 'json',
 					'type'      : 'GET',
-					'url'       : 'http://beta.json-generator.com/api/json/get/V1AcSFVc-',
+					'url'       : 'http://api.crm/api/casos?estatus=2',
 					'data'      : aoData,
 					'success'   : fnCallback,
 					'beforeSend': function (xhr) {
 						xhr.setRequestHeader('Accept', CRM_APP.accept);
-						//xhr.setRequestHeader('Authorization', 'Bearer ' + authUser.getToken());
+						xhr.setRequestHeader('Authorization', 'Bearer ' + authUser.getToken());
 					}
 				});
 			}
