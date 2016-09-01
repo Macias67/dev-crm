@@ -481,6 +481,35 @@ MetronicApp.config([
 					]
 				}
 			})
+			.state('caso', {
+				url        : '/caso/:idcaso',
+				parent     : 'tmpl',
+				templateUrl: 'views/casos/gestion_caso.html',
+				data       : {
+					pageTitle: 'Detalles de caso'
+				},
+				controller : 'DetalleCasoCtrl as detalleCasoCtrl',
+				resolve    : {
+					deps    : [
+						'$ocLazyLoad', function ($ocLazyLoad) {
+							return $ocLazyLoad.load([
+								{
+									name        : 'MetronicApp',
+									insertBefore: '#ng_load_plugins_ng',
+									files       : [
+										'scripts/controllers/casos/detallecaso.js'
+									]
+								}
+							]);
+						}
+					],
+					dataCaso: [
+						'$stateParams', 'Caso', function ($stateParams, Caso) {
+							return Caso.get({id: $stateParams.idcaso}).$promise;
+						}
+					]
+				}
+			})
 			// Cotizaciones
 			.state('cotizaciones', {
 				url        : '/cotizaciones',

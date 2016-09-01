@@ -9,8 +9,8 @@
  */
 angular.module('MetronicApp')
 	.controller('MisCasosCtrl', [
-		'$rootScope', '$scope', 'DTOptionsBuilder', 'DTColumnBuilder', '$compile', 'CRM_APP', 'authUser', '$uibModal',
-		function ($rootScope, $scope, DTOptionsBuilder, DTColumnBuilder, $compile, CRM_APP, authUser, $uibModal) {
+		'$rootScope', '$scope', 'DTOptionsBuilder', 'DTColumnBuilder', '$compile', 'CRM_APP', 'authUser', '$uibModal', '$state',
+		function ($rootScope, $scope, DTOptionsBuilder, DTColumnBuilder, $compile, CRM_APP, authUser, $uibModal, $state) {
 			var vm = this;
 			
 			vm.tableCasosAsignados = {
@@ -56,7 +56,7 @@ angular.module('MetronicApp')
 			};
 			
 			vm.openModalDetalles = function (id) {
-				
+				$state.go('caso', {idcaso: id});
 			};
 			
 			function serverData(sSource, aoData, fnCallback, oSettings) {
