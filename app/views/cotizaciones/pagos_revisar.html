@@ -259,21 +259,23 @@
 				</div>
 				<div class = "col-md-12">
 					<h4 class = "form-section">Pagos a validar</h4>
-					<div class = "note note-info" ng-repeat = "pago in modalRevisaCtrl.cotizacion.pagos" ng-if = "!pago.valido">
-						<h4 class = "block">Subido por: {{pago.contacto}}</h4>
-						<b>{{pago.fecha | amUtc | amDateFormat:'dddd, DD [de] MMMM [del] YYYY [a las] h:mm:ss A'}}</b> | <b am-time-ago = "pago.fecha"></b>
-						<p ng-if = "pago.comentario == ''"> <i>Sin comentarios</i> </p>
-						<p ng-if = "pago.comentario != ''"> {{pago.comentario}} </p>
-						<hr>
-						<p ng-repeat = "comprobante  in pago.comprobantes">
-							<a
-								href = "https://www.baustroonline.com/appint/websiteimcba/recursos/pago_06.jpg"
-								target = "_blank">{{comprobante.archivo}}
-							</a>
-						</p>
-						<hr>
-						<button type = "button" class = "btn green-jungle btn-sm" ng-click = "modalRevisaCtrl.indicaPagada(pago.id)"><i class = "fa fa-check"></i> Pagada</button>
-						<button type = "button" class = "btn red-thunderbird btn-sm" ng-click = "modalRevisaCtrl.indicaIrregular(pago.id)"><i class = "fa fa-ban"></i> Irregular</button>
+					<div class="portlet-body">
+						<div class = "note note-info" ng-repeat = "pago in modalRevisaCtrl.cotizacion.pagos" ng-show = "!pago.valido">
+							<h4 class = "block">Subido por: {{pago.contacto}}</h4>
+							<b>{{pago.fecha | amUtc | amDateFormat:'dddd, DD [de] MMMM [del] YYYY [a las] h:mm:ss A'}}</b> | <b am-time-ago = "pago.fecha"></b>
+							<p ng-if = "pago.comentario == ''"> <i>Sin comentarios</i> </p>
+							<p ng-if = "pago.comentario != ''"> {{pago.comentario}} </p>
+							<hr>
+							<p ng-repeat = "comprobante  in pago.comprobantes">
+								<a
+									href = "https://www.baustroonline.com/appint/websiteimcba/recursos/pago_06.jpg"
+									target = "_blank">{{comprobante.archivo}}
+								</a>
+							</p>
+							<hr>
+							<button type = "button" class = "btn green-jungle btn-sm" ng-click = "modalRevisaCtrl.indicaPagada(pago.id, $index)"><i class = "fa fa-check"></i> Pagada</button>
+							<button type = "button" class = "btn red-thunderbird btn-sm" ng-click = "modalRevisaCtrl.indicaIrregular(pago.id)"><i class = "fa fa-ban"></i> Irregular</button>
+						</div>
 					</div>
 				</div>
 			</div>

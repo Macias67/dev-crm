@@ -133,11 +133,6 @@ angular.module('MetronicApp')
 				App.initAjax();
 			});
 			
-			$scope.$on('$viewContentLoaded', function () {
-				// initialize core components
-				App.initAjax();
-			});
-			
 			$scope.$on('reloadTable', function () {
 				vm.reloadTable();
 			});
@@ -172,7 +167,7 @@ angular.module('MetronicApp')
 			
 			vm.cotizacion = dtCotizacion;
 			
-			vm.indicaPagada = function (idPago) {
+			vm.indicaPagada = function (idPago, index) {
 				//console.log(vm.cotizacion);
 				App.scrollTop();
 				App.blockUI({
@@ -191,6 +186,13 @@ angular.module('MetronicApp')
 							}
 						}
 						App.unblockUI('#ui-view');
+					}
+					else if (!response.hasOwnProperty('data')) {
+						vm.cotizacion.pagos[index].valido = true;
+						App.unblockUI('#ui-view');
+						App.scrollTop();
+						toastr.success('Se ha registrado correctamente el pago.', 'Se ha validado el pago.');
+						$rootScope.$broadcast('reloadTable');
 					}
 					else {
 						setTimeout(function () {
