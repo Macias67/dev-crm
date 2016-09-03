@@ -50,47 +50,51 @@
 </div>
 
 <div class = "row">
-	<div class = "col-md-4">
+	<div class = "col-md-3">
 		<div class = "portlet light portlet-fit ">
 			<div class = "portlet-title">
 				<div class = "caption">
 					<i class = " icon-layers font-green"></i>
-					<span class = "caption-subject font-green bold uppercase">Detalle del caso</span>
+					<span class = "caption-subject font-green bold uppercase">Cliente</span>
 				</div>
 			</div>
 			<div class = "portlet-body">
-				<h5>Cliente</h5>
-				<div class = "row static-info">
-					<div class = "col-md-3 name"> Razón Social: </div>
-					<div class = "col-md-9 value"> {{detalleCasoCtrl.caso.cliente.razonsocial}} </div>
-				</div>
-				<div class = "row static-info">
-					<div class = "col-md-3 name"> R.F.C.: </div>
-					<div class = "col-md-9 value"> {{detalleCasoCtrl.caso.cliente.rfc}} </div>
-				</div>
-				<br>
-				<h5>Contacto</h5>
-				<div class = "row static-info">
-					<div class = "col-md-3 name"> Nombre: </div>
-					<div class = "col-md-9 value"> {{detalleCasoCtrl.caso.cotizacion.contacto.nombre}}</div>
-				</div>
-				<div class = "row static-info">
-					<div class = "col-md-3 name"> Email: </div>
-					<div class = "col-md-9 value"> {{detalleCasoCtrl.caso.cotizacion.contacto.email}}</div>
-				</div>
-				<div class = "row static-info">
-					<div class = "col-md-3 name"> Teléfono: </div>
-					<div class = "col-md-9 value">{{detalleCasoCtrl.caso.cotizacion.contacto.telefono | telefono}} </div>
-				</div>
+				<dl>
+					<dt>Cliente</dt>
+					<dd>{{detalleCasoCtrl.caso.cliente.razonsocial}}</dd>
+					<dd><i>{{detalleCasoCtrl.caso.cliente.rfc}}</i></dd>
+					<br>
+					<dt>Contacto</dt>
+					<dd>{{detalleCasoCtrl.caso.cotizacion.contacto.nombre}}</dd>
+					<dd>{{detalleCasoCtrl.caso.cotizacion.contacto.email}}</dd>
+					<dd>{{detalleCasoCtrl.caso.cotizacion.contacto.telefono | telefono}}</dd>
+				</dl>
 			</div>
 		</div>
 	</div>
-	<div class = "col-md-6">
+	<div class = "col-md-5">
 		<div class = "portlet light portlet-fit ">
 			<div class = "portlet-title">
 				<div class = "caption">
 					<i class = " icon-layers font-green"></i>
-					<span class = "caption-subject font-green bold uppercase">Resumen</span>
+					<span class = "caption-subject font-green bold uppercase">Detalles cotización</span>
+				</div>
+				<div class = "tools">
+					<a href = "javascript:;" class = "expand"> </a>
+				</div>
+			</div>
+			<div class = "portlet-body portlet-collapsed">
+				<dl ng-repeat = "producto in detalleCasoCtrl.caso.cotizacion.productos">
+					<dt>{{($index+1)+'. '+producto.nombre}}</dt>
+					<dd ng-if = "producto.descripcion != ''">{{producto.descripcion}}</dd>
+				</dl>
+			</div>
+		</div>
+		<div class = "portlet light portlet-fit ">
+			<div class = "portlet-title">
+				<div class = "caption">
+					<i class = " icon-layers font-green"></i>
+					<span class = "caption-subject font-green bold uppercase">Tareas</span>
 				</div>
 			</div>
 			<div class = "portlet-body">
@@ -98,7 +102,7 @@
 			</div>
 		</div>
 	</div>
-	<div class = "col-md-2">
+	<div class = "col-md-4">
 		<div class = "portlet light portlet-fit ">
 			<div class = "portlet-title">
 				<div class = "caption">
