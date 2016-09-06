@@ -50,7 +50,35 @@
 </div>
 
 <div class = "row">
+	<div class = "col-md-12">
+		<div class = "alert alert-block alert-danger fade in">
+			<h4 class = "alert-heading">Se te ha asignado este nuevo caso.</h4>
+			<p> Debes de aceptar ser líder de este caso antes de continuar o reasginar el caso a otro ejecutivo. </p>
+			<br>
+			<p>
+			    <button type="button" class="btn green-meadow"><b>Aceptar caso</b></button>
+			    <button type="button" class="btn red-sunglo"><b>Reasginar caso</b></button>
+			</p>
+		</div>
+	</div>
 	<div class = "col-md-3">
+		<div class = "portlet light portlet-fit ">
+			<div class = "portlet-title">
+				<div class = "caption">
+					<i class = " icon-layers font-green"></i>
+					<span class = "caption-subject font-green bold uppercase">Detalles cotización</span>
+				</div>
+				<div class = "tools">
+					<a href = "javascript:;" class = "expand"> </a>
+				</div>
+			</div>
+			<div class = "portlet-body portlet-collapsed">
+				<dl ng-repeat = "producto in detalleCasoCtrl.caso.cotizacion.productos">
+					<dt>{{($index+1)+'. '+producto.nombre}}</dt>
+					<dd ng-if = "producto.descripcion != ''">{{producto.descripcion}}</dd>
+				</dl>
+			</div>
+		</div>
 		<div class = "portlet light portlet-fit ">
 			<div class = "portlet-title">
 				<div class = "caption">
@@ -71,13 +99,11 @@
 				</dl>
 			</div>
 		</div>
-	</div>
-	<div class = "col-md-5">
 		<div class = "portlet light portlet-fit ">
 			<div class = "portlet-title">
 				<div class = "caption">
-					<i class = " icon-layers font-green"></i>
-					<span class = "caption-subject font-green bold uppercase">Detalles cotización</span>
+					<i class = " icon-layers font-red-thunderbird"></i>
+					<span class = "caption-subject font-red-thunderbird bold uppercase">Reasginar caso</span>
 				</div>
 				<div class = "tools">
 					<a href = "javascript:;" class = "expand"> </a>
@@ -90,6 +116,8 @@
 				</dl>
 			</div>
 		</div>
+	</div>
+	<div class = "col-md-5">
 		<div class = "portlet light portlet-fit ">
 			<div class = "portlet-title">
 				<div class = "caption">
