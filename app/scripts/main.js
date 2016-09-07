@@ -494,6 +494,14 @@ MetronicApp.config([
 						'$ocLazyLoad', function ($ocLazyLoad) {
 							return $ocLazyLoad.load([
 								{
+									name        : 'MetronicAppCss',
+									insertBefore: '#ng_load_plugins_css',
+									files       : [
+										'assets/apps/css/todo-2.min.css',
+									],
+									serie       : true
+								},
+								{
 									name        : 'MetronicApp',
 									insertBefore: '#ng_load_plugins_ng',
 									files       : [
