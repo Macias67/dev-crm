@@ -497,7 +497,7 @@ MetronicApp.config([
 									name        : 'MetronicAppCss',
 									insertBefore: '#ng_load_plugins_css',
 									files       : [
-										'assets/apps/css/todo-2.min.css',
+										'assets/apps/css/todo-2.css',
 									],
 									serie       : true
 								},
@@ -507,7 +507,15 @@ MetronicApp.config([
 									files       : [
 										'scripts/controllers/casos/detallecaso.js'
 									]
-								}
+								},
+								{
+									name        : 'MetronicAppCss',
+									insertBefore: '#ng_load_plugins_js',
+									files       : [
+										'assets/apps/scripts/todo-2.min.js',
+									],
+									serie       : true
+								},
 							]);
 						}
 					],
