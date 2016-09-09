@@ -488,7 +488,7 @@ MetronicApp.config([
 				data       : {
 					pageTitle: 'Detalles de caso'
 				},
-				controller : 'DetalleCasoCtrl as detalleCasoCtrl',
+				controller : 'GestionCasosCtrl as gestionCasosCtrl',
 				resolve    : {
 					deps    : [
 						'$ocLazyLoad', function ($ocLazyLoad) {
@@ -505,7 +505,7 @@ MetronicApp.config([
 									name        : 'MetronicApp',
 									insertBefore: '#ng_load_plugins_ng',
 									files       : [
-										'scripts/controllers/casos/detallecaso.js'
+										'scripts/controllers/casos/gestioncasos.js'
 									]
 								},
 								{
