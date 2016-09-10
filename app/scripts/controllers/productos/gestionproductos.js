@@ -280,7 +280,6 @@ angular.module('MetronicApp')
 		function ($rootScope, $scope, $uibModalInstance, $filter, toastr, Producto) {
 			var vm = this;
 			
-			
 			App.unblockUI('#tableUnidades');
 			
 			vm.guarda = function () {

@@ -19,10 +19,25 @@ angular.module('MetronicApp')
 			}, 2000);
 			
 			vm.nuevaTarea = function () {
+				App.scrollTop();
+				App.blockUI({
+					target      : '#ui-view',
+					animate     : true,
+					overlayColor: App.getBrandColor('blue'),
+					zIndex      : 9999
+				});
+				
 				$uibModal.open({
 					backdrop   : 'static',
 					templateUrl: 'modalNuevaTarea.html',
-					controller : 'ModalNuevaTarea as modalNuevaTarea'
+					controller : 'ModalNuevaTarea as modalNuevaTarea',
+					resolve    : {
+						dataEjecutivos: [
+							'Ejecutivo', function (Ejecutivo) {
+								return Ejecutivo.get({online:true}).$promise;
+							}
+						]
+					}
 				});
 			};
 			
@@ -64,10 +79,15 @@ angular.module('MetronicApp')
 		}
 	])
 	.controller('ModalNuevaTarea', [
-		'$rootScope', '$scope', '$uibModalInstance', function ($rootScope, $scope, $uibModalInstance) {
-			var vm = this;
+		'$rootScope', '$scope', '$uibModalInstance', 'dataEjecutivos', function ($rootScope, $scope, $uibModalInstance, dataEjecutivos) {
+			App.unblockUI('#ui-view');
+			
+			var vm        = this;
+			vm.ejecutivos = dataEjecutivos.data;
+			vm.ejecutivoSelected = vm.ejecutivos[0];
 			
 			vm.cancel = function () {
+				console.log(vm.ejecutivos);
 				$uibModalInstance.dismiss('cancel');
 			};
 		}
