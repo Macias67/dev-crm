@@ -28,13 +28,35 @@ angular.module('MetronicApp')
 				});
 				
 				$uibModal.open({
-					backdrop   : 'static',
+					backdrop   : 'false',
 					templateUrl: 'modalNuevaTarea.html',
 					controller : 'ModalNuevaTarea as modalNuevaTarea',
 					resolve    : {
 						dataEjecutivos: [
 							'Ejecutivo', function (Ejecutivo) {
-								return Ejecutivo.get({online:true}).$promise;
+								return Ejecutivo.get({online: true}).$promise;
+							}
+						]
+					}
+				});
+			};
+			
+			vm.modalDistribucionTareas = function () {
+				App.blockUI({
+					target      : '#ui-view',
+					animate     : true,
+					overlayColor: App.getBrandColor('blue'),
+					zIndex      : 9999
+				});
+				
+				$uibModal.open({
+					backdrop   : 'static',
+					templateUrl: 'modalGestionTareas.html',
+					controller : 'ModalDistribucionTareas as modalDistribucionTareas',
+					resolve    : {
+						dataEjecutivos: [
+							'Ejecutivo', function (Ejecutivo) {
+								return Ejecutivo.get({online: true}).$promise;
 							}
 						]
 					}
@@ -79,12 +101,24 @@ angular.module('MetronicApp')
 		}
 	])
 	.controller('ModalNuevaTarea', [
-		'$rootScope', '$scope', '$uibModalInstance', 'dataEjecutivos', function ($rootScope, $scope, $uibModalInstance, dataEjecutivos) {
+		'$rootScope', '$scope', '$uibModalInstance', 'dataEjecutivos', '$uibModal', function ($rootScope, $scope, $uibModalInstance, dataEjecutivos, $uibModal) {
 			App.unblockUI('#ui-view');
 			
+			var vm               = this;
+			vm.ejecutivos        = dataEjecutivos.data;
+			vm.ejecutivoSelected = vm.ejecutivos[0];
+			
+			vm.cancel = function () {
+				console.log(vm.ejecutivos);
+				$uibModalInstance.dismiss('cancel');
+			};
+		}
+	])
+	.controller('ModalDistribucionTareas', [
+		'$rootScope', '$scope', '$uibModalInstance', 'dataEjecutivos', function ($rootScope, $scope, $uibModalInstance, dataEjecutivos) {
 			var vm        = this;
 			vm.ejecutivos = dataEjecutivos.data;
-			vm.ejecutivoSelected = vm.ejecutivos[0];
+			App.unblockUI('#ui-view');
 			
 			vm.cancel = function () {
 				console.log(vm.ejecutivos);
