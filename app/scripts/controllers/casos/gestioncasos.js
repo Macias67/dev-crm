@@ -9,8 +9,8 @@
  */
 angular.module('MetronicApp')
 	.controller('GestionCasosCtrl', [
-		'$rootScope', '$scope', 'dataCaso', '$uibModal',
-		function ($rootScope, $scope, dataCaso, $uibModal) {
+		'$rootScope', '$scope', 'dataCaso', '$uibModal', 'Caso',
+		function ($rootScope, $scope, dataCaso, $uibModal, Caso) {
 			var vm  = this;
 			vm.caso = dataCaso.data;
 			
@@ -18,7 +18,15 @@ angular.module('MetronicApp')
 				App.unblockUI('#ui-view');
 			}, 2000);
 			
-			vm.nuevaTarea = function () {
+			vm.calculoAvanceGeneral = function () {
+				var total = 0;
+				vm.caso.tareas.forEach(function (tarea, index) {
+					total += tarea.avance;
+				});
+				return total / vm.caso.tareas.length;
+			};
+			
+			vm.nuevaTarea = function (idCaso) {
 				App.scrollTop();
 				App.blockUI({
 					target      : '#ui-view',
@@ -36,7 +44,8 @@ angular.module('MetronicApp')
 							'Ejecutivo', function (Ejecutivo) {
 								return Ejecutivo.get({online: true}).$promise;
 							}
-						]
+						],
+						idCaso        : idCaso
 					}
 				});
 			};
@@ -63,6 +72,20 @@ angular.module('MetronicApp')
 				});
 			};
 			
+			vm.reloadTareas = function () {
+				App.scrollTop();
+				App.blockUI({
+					target      : '#ui-view',
+					animate     : true,
+					overlayColor: App.getBrandColor('blue'),
+					zIndex      : 9999
+				});
+				Caso.get({id: vm.caso.id}, function (response) {
+					App.unblockUI('#ui-view');
+					vm.caso = response.data;
+				});
+			};
+			
 			vm.detalleTarea = function (idTarea) {
 				
 			};
@@ -70,6 +93,10 @@ angular.module('MetronicApp')
 			vm.editaTarea = function (idTarea) {
 				
 			};
+			
+			$scope.$on('creadaNuevaTarea', function (e, args) {
+				vm.caso = args;
+			});
 			
 			$scope.$on('$viewContentLoaded', function () {
 				// initialize core components
@@ -101,15 +128,61 @@ angular.module('MetronicApp')
 		}
 	])
 	.controller('ModalNuevaTarea', [
-		'$rootScope', '$scope', '$uibModalInstance', 'dataEjecutivos', '$uibModal', function ($rootScope, $scope, $uibModalInstance, dataEjecutivos, $uibModal) {
+		'$rootScope',
+		'$scope',
+		'$uibModalInstance',
+		'dataEjecutivos',
+		'idCaso',
+		'Tarea',
+		'toastr',
+		function ($rootScope, $scope, $uibModalInstance, dataEjecutivos, idCaso, Tarea, toastr) {
 			App.unblockUI('#ui-view');
 			
-			var vm               = this;
-			vm.ejecutivos        = dataEjecutivos.data;
-			vm.ejecutivoSelected = vm.ejecutivos[0];
+			var vm        = this;
+			vm.ejecutivos = dataEjecutivos.data;
+			
+			vm.tareaForm = {};
+			
+			vm.tarea = {
+				ejecutivo  : vm.ejecutivos[0],
+				titulo     : null,
+				descripcion: null
+			};
+			
+			vm.guarda = function () {
+				App.scrollTop();
+				App.blockUI({
+					target      : '#ui-view',
+					message     : '<b>Generando nueva tarea</b>',
+					boxed       : true,
+					overlayColor: App.getBrandColor('grey'),
+					zIndex      : 99999
+				});
+				
+				var ejecutivo      = vm.tarea.ejecutivo;
+				vm.tarea.ejecutivo = vm.tarea.ejecutivo.id;
+				
+				Tarea.save({idcaso: idCaso}, vm.tarea, function (response) {
+					if (response.hasOwnProperty('errors')) {
+						for (var key in response.errors) {
+							if (response.errors.hasOwnProperty(key)) {
+								toastr.error(response.errors[key][0], 'Hay errores con la tarea.');
+							}
+						}
+						App.unblockUI('#ui-view');
+					}
+					else {
+						$uibModalInstance.close();
+						$rootScope.$broadcast('creadaNuevaTarea', response.data);
+						setTimeout(function () {
+							App.unblockUI('#ui-view');
+						}, 1000);
+						toastr.success('Se generó nueva tarea para ' + ejecutivo.nombre + ' ' + ejecutivo.apellido + '.', 'Nueva tarea asignada.');
+					}
+				});
+			};
 			
 			vm.cancel = function () {
-				console.log(vm.ejecutivos);
 				$uibModalInstance.dismiss('cancel');
 			};
 		}

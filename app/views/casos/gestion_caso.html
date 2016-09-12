@@ -128,13 +128,15 @@
 						<span class = "caption-subject font-green-sharp bold uppercase">Tune Website</span>
 					</div>
 					<div class = "actions">
-						<a class = "btn btn-circle green-jungle" ng-click = "gestionCasosCtrl.nuevaTarea()">
+						<a class = "btn btn-circle green-jungle" ng-click = "gestionCasosCtrl.nuevaTarea(gestionCasosCtrl.caso.id)">
 							<i class = "fa fa-plus"></i> <b>Nueva tarea</b>
 						</a>
 						<a class = "btn btn-circle blue-steel" ng-click = "gestionCasosCtrl.modalDistribucionTareas()">
 							<i class = "fa fa-pie-chart"></i> <b>Distribución de tareas</b>
 						</a>
-						<a class = "btn btn-circle btn-icon-only btn-default" href = "javascript:;" data-original-title = "Recargar" title = "Recargar"><i class = "fa fa-refresh"></i></a>
+						<a class = "btn btn-circle btn-icon-only btn-default" href = "javascript:;" data-original-title = "Recargar" title = "Recargar" ng-click = "gestionCasosCtrl.reloadTareas()">
+							<i class = "fa fa-refresh"></i>
+						</a>
 						<a class = "btn btn-circle btn-icon-only btn-default fullscreen" href = "javascript:;" data-original-title = "Pantalla Completa" title = "Pantalla Completa"></a>
 					</div>
 				</div>
@@ -151,10 +153,13 @@
 									<div class = "todo-tasklist-item-text"><b>{{tarea.titulo}}</b></div>
 									<div class = "todo-tasklist-item-text"> {{tarea.descripcion}} </div>
 									<br>
-									<div class = "todo-tasklist-item-text"><i class = "fa fa-calendar"></i> <b>Cierre tentativa:</b> 21/Sep/2014</div>
-									<div class = "todo-tasklist-item-text"><i class = "fa fa-clock-o"></i> <b>Tiempo:</b> 3:32:23 </div>
-									<div class = "todo-tasklist-item-text"><i class = "fa fa-comment"></i> <b>Privados:</b> 23 mensajes </div>
-									<div class = "todo-tasklist-item-text"><i class = "fa fa-comment-o"></i> <b>Públicos:</b> 17 mensajes </div>
+									<div class = "todo-tasklist-item-text"><i class = "fa fa-calendar"></i> <b>Cierre tentativa:</b>
+										<span ng-if = "tarea.fecha_tentativa == null"> <i>Sin definir por {{tarea.ejecutivo.nombre}}</i> </span>
+										<span ng-if = "tarea.fecha_tentativa != null">{{tarea.fecha_tentativa}}</span>
+									</div>
+									<div class = "todo-tasklist-item-text"><i class = "fa fa-clock-o"></i> <b>Tiempo:</b> {{tarea.duracion_segundos}} </div>
+									<div class = "todo-tasklist-item-text"><i class = "fa fa-comment"></i> <b>Privados:</b> {{tarea.notas.privadas.length}} mensajes </div>
+									<div class = "todo-tasklist-item-text"><i class = "fa fa-comment-o"></i> <b>Públicos:</b> {{tarea.notas.publicas.length}} mensajes </div>
 									<hr>
 									<div class = "todo-tasklist-controls">
 										<div class = "todo-tasklist-item-text"><b>Avance:</b> {{tarea.avance}}%</div>
@@ -188,38 +193,28 @@
 				</div>
 			</div>
 			<div class = "portlet-body">
-				<div class = "alert alert-info">
+				
+				<div class = "alert alert-warning" ng-if = "gestionCasosCtrl.caso.fechatentativacierre == null">
+                                        <strong>Aún no se tiene el cálculo tentativo de cierre del caso.</strong>
+				</div>
+				
+				<div class = "alert alert-info" ng-if = "gestionCasosCtrl.caso.fechatentativacierre != null">
 					<strong>En tiempo para terminar a la fecha tentativa.</strong>
 				</div>
-				<h5>Avance general: <b>43%</b></h5>
+				
+				<h5  uib-popover = "I appeared on mouse enter!" popover-trigger = "'mouseenter'">Avance general: <b>{{gestionCasosCtrl.calculoAvanceGeneral() | number:0}} % del caso se ha realizado.</b></h5>
 				<div class = "progress">
-					<div class = "progress-bar bg-yellow-gold" style = "width: 35%">
-						<span class = "sr-only"> 35% Complete (success) </span>
-					</div>
-					<div class = "progress-bar progress-bar-warning" style = "width: 20%">
-						<span class = "sr-only"> 20% Complete (warning) </span>
-					</div>
-					<div class = "progress-bar progress-bar-danger" style = "width: 10%">
-						<span class = "sr-only"> 10% Complete (danger) </span>
+					<div class = "progress-bar bg-{{tarea.ejecutivo.class}}"
+					     ng-style = "{width: (tarea.avance/gestionCasosCtrl.caso.tareas.length)+'%'}"
+					     ng-repeat = "tarea in gestionCasosCtrl.caso.tareas">
+						<span class = "sr-only"> {{(tarea.avance/gestionCasosCtrl.caso.tareas.length)}} % Completado </span>
 					</div>
 				</div>
 				
 				<ul class = "list-group">
-					<li class = "list-group-item">
-						<b>Luis Macias</b>
-						<span class = "badge bg-yellow-gold"> <b>35%</b> </span>
-					</li>
-					<li class = "list-group-item"> Dapibus ac facilisis in
-						<span class = "badge badge-success"> 11 </span>
-					</li>
-					<li class = "list-group-item"> Morbi leo risus
-						<span class = "badge badge-danger"> new </span>
-					</li>
-					<li class = "list-group-item"> Porta ac consectetur ac
-						<span class = "badge badge-warning"> 4 </span>
-					</li>
-					<li class = "list-group-item"> Vestibulum at eros
-						<span class = "badge badge-info"> 3 </span>
+					<li class = "list-group-item" ng-repeat = "tarea in gestionCasosCtrl.caso.tareas">
+						<b>{{tarea.ejecutivo.nombre}}</b>
+						<span class = "badge bg-{{tarea.ejecutivo.class}}"> <b>{{(tarea.avance)}} %</b> </span>
 					</li>
 				</ul>
 			</div>
@@ -233,17 +228,18 @@
 		<h4 class = "modal-title font-green-sharp"><i class = "fa file-pdf-o"></i> Nueva tarea </h4>
 	</div>
 	<div class = "modal-body">
-		<form action = "#" class = "form-horizontal">
+		<form name = "modalNuevaTarea.tareaForm" class = "form-horizontal">
 			<!-- TASK HEAD -->
 			<div class = "form">
 				<!-- TASK TAGS -->
 				<div class = "form-group">
 					<div class = "col-md-12">
-						<label>Ejecutivo:</label>
+						<label for = "ejecutivo">Ejecutivo:</label>
 						<select
+							id = "ejecutivo"
 							class = "form-control input-sm"
 							ng-options = "ejecutivo.nombre +' '+ejecutivo.apellido + ' | '+ ejecutivo.departamento.area for ejecutivo in modalNuevaTarea.ejecutivos"
-							ng-model = "modalNuevaTarea.ejecutivoSelected"
+							ng-model = "modalNuevaTarea.tarea.ejecutivo"
 							required>
 						</select>
 					</div>
@@ -252,15 +248,15 @@
 				<!-- TASK TITLE -->
 				<div class = "form-group">
 					<div class = "col-md-12">
-						<label>Título de la tarea:</label>
-						<input type = "text" class = "form-control input-lg" required>
+						<label for = "titulo">Título de la tarea:</label>
+						<input type = "text" id = "titulo" class = "form-control input-lg" ng-model = "modalNuevaTarea.tarea.titulo" required>
 					</div>
 				</div>
 				<!-- TASK DESC -->
 				<div class = "form-group">
 					<div class = "col-md-12">
-						<label>Descripción:</label>
-						<textarea class = "form-control todo-taskbody-taskdesc" rows = "4" required></textarea>
+						<label for = "descripcion">Descripción:</label>
+						<textarea id = "descripcion" class = "form-control" rows = "4" ng-model = "modalNuevaTarea.tarea.descripcion" required></textarea>
 					</div>
 				</div>
 				<!-- END TASK DESC -->
@@ -268,7 +264,7 @@
 		</form>
 	</div>
 	<div class = "modal-footer">
-		<button type = "button" class = "btn red-sunglo">Asignar Tarea</button>
+		<button type = "button" class = "btn red-sunglo" ng-disabled = "!modalNuevaTarea.tareaForm.$valid" ng-click = "modalNuevaTarea.guarda()">Asignar Tarea</button>
 		<button class = "btn grey-mint btn-outline" ng-click = "modalNuevaTarea.cancel()">Cerrar</button>
 	</div>
 </script>
