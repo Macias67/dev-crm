@@ -31,3 +31,18 @@ div[ui-view].ng-leave {
     animation: fadeOut .4s;
     display: block !important;
 }
+
+/*To do tasklist*/
+.todo-tasklist-item {
+    background: #FAFAFA none repeat scroll 0 0;
+    margin-bottom: 15px;
+    overflow: hidden;
+    padding: 20px;
+}
+
+div .todo-tasklist-item:hover {
+    background-color: #FAFAFA;
+    -webkit-box-shadow: 2px 2px 3px 1px rgba(0,0,0,0.05);
+    box-shadow: 2px 2px 3px 1px rgba(0,0,0,0.05);
+    cursor: default;
+}

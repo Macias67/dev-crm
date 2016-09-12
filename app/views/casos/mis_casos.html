@@ -28,7 +28,7 @@
 					<span class = "caption-subject font-green sbold uppercase"> Mis casos asignados </span>
 				</div>
 				<div class = "actions">
-					<button type = "button" class = "btn btn-xs green" ng-click = "misCasosCtrl.reloadTable()">
+					<button type = "button" class = "btn btn-xs green" ng-click = "misCasosCtrl.reloadTableAsignados()">
 						<i class = "fa fa-refresh"></i>
 					</button>
 				</div>
@@ -39,6 +39,30 @@
 				       dt-options = "misCasosCtrl.tableCasosAsignados.dtOptions"
 				       dt-columns = "misCasosCtrl.tableCasosAsignados.dtColumns"
 				       dt-instance = "misCasosCtrl.tableCasosAsignados.dtInstance"
+				       class = "table table-hover table-light">
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class = "col-md-6">
+		<div class = "portlet light portlet-fit portlet-datatable ">
+			<div class = "portlet-title">
+				<div class = "caption">
+					<i class = " fa fa-file-pdf-o font-green"></i>
+					<span class = "caption-subject font-green sbold uppercase"> Mis casos en proceso </span>
+				</div>
+				<div class = "actions">
+					<button type = "button" class = "btn btn-xs green" ng-click = "misCasosCtrl.tableCasosProceso.reloadTable()">
+						<i class = "fa fa-refresh"></i>
+					</button>
+				</div>
+			</div>
+			<div class = "portlet-body">
+				<table id = "tableCasosProceso"
+				       datatable = ""
+				       dt-options = "misCasosCtrl.tableCasosProceso.dtOptions"
+				       dt-columns = "misCasosCtrl.tableCasosProceso.dtColumns"
+				       dt-instance = "misCasosCtrl.tableCasosProceso.dtInstance"
 				       class = "table table-hover table-light">
 				</table>
 			</div>

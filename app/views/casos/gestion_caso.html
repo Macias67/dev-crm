@@ -116,6 +116,19 @@
 				</dl>
 			</div>
 		</div>
+		<div class = "portlet light portlet-fit ">
+			<div class = "portlet-title">
+				<div class = "caption">
+					<i class = "fa fa-exchange font-red-thunderbird"></i>
+					<span class = "caption-subject font-red-thunderbird bold uppercase">Estatus del caso</span>
+				</div>
+				<div class = "tools">
+					<a href = "javascript:;" class = "expand"> </a>
+				</div>
+			</div>
+			<div class = "portlet-body portlet-collapsed">
+			</div>
+		</div>
 	</div>
 	<div class = "col-md-5">
 		<div class = "todo-content">
@@ -123,9 +136,8 @@
 				<!-- PROJECT HEAD -->
 				<div class = "portlet-title">
 					<div class = "caption">
-						<i class = "icon-bar-chart font-green-sharp hide"></i>
-						<span class = "caption-helper">GlobalEx Tasks:</span> &nbsp;
-						<span class = "caption-subject font-green-sharp bold uppercase">Tune Website</span>
+						<i class = " icon-layers font-green"></i>
+						<span class = "caption-subject font-green bold uppercase">Tareas</span>
 					</div>
 					<div class = "actions">
 						<a class = "btn btn-circle green-jungle" ng-click = "gestionCasosCtrl.nuevaTarea(gestionCasosCtrl.caso.id)">
@@ -144,12 +156,15 @@
 				<div class = "portlet-body">
 					<div class = "row">
 						<div class = "col-md-12">
+							<h3 ng-if = "gestionCasosCtrl.caso.tareas.length == 0">Empieza a asginar tareas a los ejecutivos.</h3>
 							<div class = "todo-tasklist">
-								<div class = "todo-tasklist-item todo-tasklist-item-border-green" ng-repeat = "tarea in gestionCasosCtrl.caso.tareas">
-									<img class = "todo-userpic pull-left" src = "../assets/pages/media/users/avatar4.jpg" width = "27px" height = "27px">
-									<div class = "todo-tasklist-item-title">
-										{{tarea.ejecutivo.nombre}} <span class = "label {{tarea.estatus.class}} pull-right"> <b>{{tarea.estatus.estatus}}</b> </span>
+								<div class = "todo-tasklist-item mt-element-ribbon" ng-repeat = "tarea in gestionCasosCtrl.caso.tareas" ng-style = "{'border-left': '4px solid '+tarea.ejecutivo.color}">
+									<div class = "ribbon ribbon-right ribbon-clip ribbon-shadow ribbon-round ribbon-border-dash-hor bg-font-{{tarea.estatus.class}} uppercase">
+										<div class = "ribbon-sub ribbon-clip ribbon-right" ng-style = "{'background-color': tarea.estatus.color}"></div>
+										<b>{{tarea.estatus.estatus}}</b>
 									</div>
+									<img class = "todo-userpic pull-left" src = "../assets/pages/media/users/avatar4.jpg" width = "27px" height = "27px">
+									
 									<div class = "todo-tasklist-item-text"><b>{{tarea.titulo}}</b></div>
 									<div class = "todo-tasklist-item-text"> {{tarea.descripcion}} </div>
 									<br>
@@ -164,7 +179,7 @@
 									<div class = "todo-tasklist-controls">
 										<div class = "todo-tasklist-item-text"><b>Avance:</b> {{tarea.avance}}%</div>
 										<div class = "progress progress-striped active">
-											<div class = "progress-bar progress-bar-info" role = "progressbar" aria-valuenow = "{{tarea.avance}}" aria-valuemin = "0" aria-valuemax = "100" style = "width: {{tarea.avance}}%">
+											<div class = "progress-bar {{tarea.ejecutivo.class}}" role = "progressbar" aria-valuenow = "{{tarea.avance}}" aria-valuemin = "0" aria-valuemax = "100" style = "width: {{tarea.avance}}%">
 												<span class = "sr-only"> {{tarea.avance}}% Complete</span>
 											</div>
 										</div>
@@ -194,16 +209,23 @@
 			</div>
 			<div class = "portlet-body">
 				
+				<h4>Estatus del caso:</h4>
+				<!--<span class = "label {{gestionCasosCtrl.caso.estatus.class}} col-md-12"> {{gestionCasosCtrl.caso.estatus.estatus}} </span>-->
+				<div class = "btn {{gestionCasosCtrl.caso.estatus.class}} btn-block" style = "cursor:default;"> <b class = "uppercase">{{gestionCasosCtrl.caso.estatus.estatus}}</b></div>
+				
+				<hr>
+				
 				<div class = "alert alert-warning" ng-if = "gestionCasosCtrl.caso.fechatentativacierre == null">
-                                        <strong>Aún no se tiene el cálculo tentativo de cierre del caso.</strong>
+                                       <i class = "fa fa-warning"></i>  <strong> Aún no se tiene el cálculo tentativo de cierre del caso.</strong>
 				</div>
 				
 				<div class = "alert alert-info" ng-if = "gestionCasosCtrl.caso.fechatentativacierre != null">
 					<strong>En tiempo para terminar a la fecha tentativa.</strong>
 				</div>
 				
-				<h5  uib-popover = "I appeared on mouse enter!" popover-trigger = "'mouseenter'">Avance general: <b>{{gestionCasosCtrl.calculoAvanceGeneral() | number:0}} % del caso se ha realizado.</b></h5>
-				<div class = "progress">
+				<h5 ng-if = "gestionCasosCtrl.caso.tareas.length == 0">Avance general: <b>No se han asignado tareas.</b></h5>
+				<h5 ng-if = "gestionCasosCtrl.caso.tareas.length != 0">Avance general: <b>{{gestionCasosCtrl.calculoAvanceGeneral() | number:0}} % del caso se ha realizado.</b></h5>
+				<div class = "progress" ng-if = "gestionCasosCtrl.caso.tareas.length != 0">
 					<div class = "progress-bar bg-{{tarea.ejecutivo.class}}"
 					     ng-style = "{width: (tarea.avance/gestionCasosCtrl.caso.tareas.length)+'%'}"
 					     ng-repeat = "tarea in gestionCasosCtrl.caso.tareas">
@@ -213,7 +235,8 @@
 				
 				<ul class = "list-group">
 					<li class = "list-group-item" ng-repeat = "tarea in gestionCasosCtrl.caso.tareas">
-						<b>{{tarea.ejecutivo.nombre}}</b>
+						<b>{{tarea.ejecutivo.nombre}}</b><br>
+						 <span>{{tarea.titulo}}</span>
 						<span class = "badge bg-{{tarea.ejecutivo.class}}"> <b>{{(tarea.avance)}} %</b> </span>
 					</li>
 				</ul>

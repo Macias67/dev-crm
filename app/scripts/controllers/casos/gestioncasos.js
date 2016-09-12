@@ -117,8 +117,8 @@ angular.module('MetronicApp')
 			
 			//Nombres
 			$rootScope.vista = {
-				titulo   : 'Caso #' + vm.caso.id,
-				subtitulo: 'Caso del cliente ' + vm.caso.cliente.razonsocial
+				titulo   : 'Caso No. ' + vm.caso.id,
+				subtitulo: 'Cliente: ' + vm.caso.cliente.razonsocial
 			};
 			
 			// set sidebar closed and body solid layout mode

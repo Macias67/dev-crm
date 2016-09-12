@@ -43,7 +43,60 @@ angular.module('MetronicApp')
 				]
 			};
 			
-			vm.reloadTable = function () {
+			vm.tableCasosProceso = {
+				dtInstance: {},
+				
+				// Prueba: http://beta.json-generator.com/api/json/get/V1AcSFVc-
+				dtOptions: DTOptionsBuilder.fromSource('http://api.crm/api/casos?estatus=4')
+					.withFnServerData(function (sSource, aoData, fnCallback, oSettings) {
+						oSettings.jqXHR = $.ajax({
+							'dataType'  : 'json',
+							'type'      : 'GET',
+							'url'       : 'http://api.crm/api/casos?estatus=4',
+							'data'      : aoData,
+							'success'   : fnCallback,
+							'beforeSend': function (xhr) {
+								xhr.setRequestHeader('Accept', CRM_APP.accept);
+								xhr.setRequestHeader('Authorization', 'Bearer ' + authUser.getToken());
+							}
+						});
+					})
+					.withLanguageSource('//cdn.datatables.net/plug-ins/1.10.11/i18n/Spanish.json')
+					.withDataProp('data')
+					.withOption('createdRow', createdRow)
+					.withOption('fnRowCallback', rowCallback)
+					.withPaginationType('bootstrap_full_number')
+					.withBootstrap(),
+				
+				dtColumns  : [
+					DTColumnBuilder.newColumn('id').withTitle('ID').withOption('sWidth', '5%'),
+					DTColumnBuilder.newColumn('null').withTitle('Cliente').renderWith(function (data, type, full) {
+						if (full.cotizacion.cxc) {
+							return full.cliente.razonsocial + ' | ' + '<span class="badge badge-danger"> <b>CxC</b> </span>';
+						}
+						else {
+							return full.cliente.razonsocial;
+						}
+					}).withOption('sWidth', '60%'),
+					DTColumnBuilder.newColumn(null).withTitle('Estatus').notSortable().renderWith(function (data, type, full, meta) {
+						return '<span class="label label-sm label-success ' + data.estatus.class + '"><b>' + data.estatus.estatus + '</b></span>';
+					}).withOption('sWidth', '10%'),
+					DTColumnBuilder.newColumn(null).notSortable().renderWith(actionsHtml).withOption('sWidth', '30%'),
+				],
+				reloadTable: function () {
+					App.blockUI({
+						target      : '#tableCasosProceso',
+						animate     : true,
+						overlayColor: App.getBrandColor('grey')
+					});
+					vm.tableCasosProceso.dtInstance.reloadData();
+					setTimeout(function () {
+						App.unblockUI('#tableCasosProceso');
+					}, 1500);
+				}
+			};
+			
+			vm.reloadTableAsignados = function () {
 				App.blockUI({
 					target      : '#tableCasos',
 					animate     : true,
