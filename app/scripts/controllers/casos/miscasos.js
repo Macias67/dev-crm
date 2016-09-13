@@ -17,7 +17,7 @@ angular.module('MetronicApp')
 				dtInstance: {},
 				
 				// Prueba: http://beta.json-generator.com/api/json/get/V1AcSFVc-
-				dtOptions: DTOptionsBuilder.fromSource('http://api.crm/api/casos?estatus=2')
+				dtOptions: DTOptionsBuilder.fromSource(CRM_APP.url + 'casos?estatus=2')
 					.withFnServerData(serverData)
 					.withLanguageSource('//cdn.datatables.net/plug-ins/1.10.11/i18n/Spanish.json')
 					.withDataProp('data')
@@ -37,7 +37,7 @@ angular.module('MetronicApp')
 						}
 					}).withOption('sWidth', '60%'),
 					DTColumnBuilder.newColumn(null).withTitle('Estatus').notSortable().renderWith(function (data, type, full, meta) {
-						return '<span class="label label-sm label-success ' + data.estatus.class + '"><b>' + data.estatus.estatus + '</b></span>';
+						return '<span class="label label-sm label-success bg-' + data.estatus.class + '"><b>' + data.estatus.estatus + '</b></span>';
 					}).withOption('sWidth', '10%'),
 					DTColumnBuilder.newColumn(null).notSortable().renderWith(actionsHtml).withOption('sWidth', '30%'),
 				]
@@ -79,7 +79,7 @@ angular.module('MetronicApp')
 						}
 					}).withOption('sWidth', '60%'),
 					DTColumnBuilder.newColumn(null).withTitle('Estatus').notSortable().renderWith(function (data, type, full, meta) {
-						return '<span class="label label-sm label-success ' + data.estatus.class + '"><b>' + data.estatus.estatus + '</b></span>';
+						return '<span class="label label-sm label-success bg-' + data.estatus.class + '"><b>' + data.estatus.estatus + '</b></span>';
 					}).withOption('sWidth', '10%'),
 					DTColumnBuilder.newColumn(null).notSortable().renderWith(actionsHtml).withOption('sWidth', '30%'),
 				],
@@ -116,7 +116,7 @@ angular.module('MetronicApp')
 				oSettings.jqXHR = $.ajax({
 					'dataType'  : 'json',
 					'type'      : 'GET',
-					'url'       : 'http://api.crm/api/casos?estatus=2',
+					'url'       : CRM_APP.url + 'casos?estatus=2',
 					'data'      : aoData,
 					'success'   : fnCallback,
 					'beforeSend': function (xhr) {
