@@ -2,17 +2,17 @@
 
 /**
  * @ngdoc service
- * @name MetronicApp.tarea
+ * @name MetronicApp.Tarea
  * @description
- * # tarea
+ * # Tarea
  * Factory in the MetronicApp.
  */
 angular.module('MetronicApp')
-	.factory('Tarea', [
+	.factory('CasoTarea', [
 		'$resource', 'CRM_APP', 'authUser',
 		function ($resource, CRM_APP, authUser) {
-			return $resource(CRM_APP.url + 'tareas/:idtarea',
-				{idtarea: '@idtarea'},
+			return $resource(CRM_APP.url + 'casos/:idcaso/tareas/:idtarea',
+				{idcaso: '@idcaso', idtarea: '@idtarea'},
 				{
 					get   : {
 						isArray: false,

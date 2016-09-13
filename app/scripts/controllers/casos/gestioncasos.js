@@ -34,7 +34,6 @@ angular.module('MetronicApp')
 					overlayColor: App.getBrandColor('blue'),
 					zIndex      : 9999
 				});
-				
 				$uibModal.open({
 					backdrop   : 'false',
 					templateUrl: 'modalNuevaTarea.html',
@@ -57,7 +56,6 @@ angular.module('MetronicApp')
 					overlayColor: App.getBrandColor('blue'),
 					zIndex      : 9999
 				});
-				
 				$uibModal.open({
 					backdrop   : 'static',
 					templateUrl: 'modalGestionTareas.html',
@@ -93,7 +91,6 @@ angular.module('MetronicApp')
 					overlayColor: App.getBrandColor('blue'),
 					zIndex      : 9999
 				});
-				
 				$uibModal.open({
 					backdrop   : 'static',
 					templateUrl: 'modalDetallesTarea.html',
@@ -108,7 +105,6 @@ angular.module('MetronicApp')
 					overlayColor: App.getBrandColor('blue'),
 					zIndex      : 9999
 				});
-				
 				$uibModal.open({
 					backdrop   : 'static',
 					templateUrl: 'modalEditaTarea.html',
@@ -155,9 +151,9 @@ angular.module('MetronicApp')
 		'$uibModalInstance',
 		'dataEjecutivos',
 		'idCaso',
-		'Tarea',
+		'CasoTarea',
 		'toastr',
-		function ($rootScope, $scope, $uibModalInstance, dataEjecutivos, idCaso, Tarea, toastr) {
+		function ($rootScope, $scope, $uibModalInstance, dataEjecutivos, idCaso, CasoTarea, toastr) {
 			App.unblockUI('#ui-view');
 			
 			var vm        = this;
@@ -184,7 +180,7 @@ angular.module('MetronicApp')
 				var ejecutivo      = vm.tarea.ejecutivo;
 				vm.tarea.ejecutivo = vm.tarea.ejecutivo.id;
 				
-				Tarea.save({idcaso: idCaso}, vm.tarea, function (response) {
+				CasoTarea.save({idcaso: idCaso}, vm.tarea, function (response) {
 					if (response.hasOwnProperty('errors')) {
 						for (var key in response.errors) {
 							if (response.errors.hasOwnProperty(key)) {

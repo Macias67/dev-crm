@@ -1,18 +1,18 @@
 'use strict';
 
-describe('Service: Tarea', function () {
+describe('Service: tarea', function () {
 
   // load the service's module
   beforeEach(module('MetronicApp'));
 
   // instantiate service
-  var Tarea;
-  beforeEach(inject(function (_Tarea_) {
-    Tarea = _Tarea_;
+  var tarea;
+  beforeEach(inject(function (_tarea_) {
+    tarea = _tarea_;
   }));
 
   it('should do something', function () {
-    expect(!!Tarea).toBe(true);
+    expect(!!tarea).toBe(true);
   });
 
 });

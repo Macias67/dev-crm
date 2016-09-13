@@ -64,11 +64,35 @@
 				</div>
 			</div>
 			<div class = "portlet-body">
-				<table id = "tableCasos"
+				<table id = "tableTareasAsignadas"
 				       datatable = ""
 				       dt-options = "misTareasCtrl.tableTareasAsignadas.dtOptions"
 				       dt-columns = "misTareasCtrl.tableTareasAsignadas.dtColumns"
 				       dt-instance = "misTareasCtrl.tableTareasAsignadas.dtInstance"
+				       class = "table table-hover table-light">
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class = "col-md-6">
+		<div class = "portlet light portlet-fit portlet-datatable ">
+			<div class = "portlet-title">
+				<div class = "caption">
+					<i class = " fa fa-file-pdf-o font-green"></i>
+					<span class = "caption-subject font-green sbold uppercase"> Nuevas tareas asignadas </span>
+				</div>
+				<div class = "actions">
+					<button type = "button" class = "btn btn-xs green" ng-click = "misTareasCtrl.tableTareasProceso.reloadTable()">
+						<i class = "fa fa-refresh"></i>
+					</button>
+				</div>
+			</div>
+			<div class = "portlet-body">
+				<table id = "tableTareasProceso"
+				       datatable = ""
+				       dt-options = "misTareasCtrl.tableTareasProceso.dtOptions"
+				       dt-columns = "misTareasCtrl.tableTareasProceso.dtColumns"
+				       dt-instance = "misTareasCtrl.tableTareasProceso.dtInstance"
 				       class = "table table-hover table-light">
 				</table>
 			</div>

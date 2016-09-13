@@ -108,7 +108,7 @@ angular.module('MetronicApp')
 				}, 1500);
 			};
 			
-			vm.openModalDetalles = function (id) {
+			vm.openDetalles = function (id) {
 				$state.go('caso', {idcaso: id});
 			};
 			
@@ -136,7 +136,7 @@ angular.module('MetronicApp')
 			}
 			
 			function actionsHtml(data, type, full, meta) {
-				return '<button ng-click="misCasosCtrl.openModalDetalles(' + data.id + ')" class="btn btn-xs yellow-casablanca" type="button">' +
+				return '<button ng-click="misCasosCtrl.openDetalles(' + data.id + ')" class="btn btn-xs yellow-casablanca" type="button">' +
 					'<i class="fa fa-list"></i>&nbsp;Ver detalles' +
 					'</button>';
 			};
