@@ -526,6 +526,55 @@ MetronicApp.config([
 					]
 				}
 			})
+			// Tarea
+			.state('mis-tareas', {
+				url        : '/mis-tareas',
+				parent     : 'tmpl',
+				templateUrl: 'views/tareas/mis_tareas.html',
+				data       : {
+					pageTitle: 'Mis Tareas'
+				},
+				controller : 'MisTareasCtrl as misTareasCtrl',
+				resolve    : {
+					deps: [
+						'$ocLazyLoad', function ($ocLazyLoad) {
+							return $ocLazyLoad.load([
+								{
+									name        : 'MetronicApp',
+									insertBefore: '#ng_load_plugins_ng',
+									files       : [
+										'scripts/controllers/tareas/mistareas.js'
+									]
+								}
+							]);
+						}
+					],
+				}
+			})
+			.state('tareas', {
+				url        : '/tareas',
+				parent     : 'tmpl',
+				templateUrl: 'views/tareas/tareas_gestion.html',
+				data       : {
+					pageTitle: 'Gestión de tareas'
+				},
+				controller : 'GestionTareasCtrl as gestionTareasCtrl',
+				resolve    : {
+					deps: [
+						'$ocLazyLoad', function ($ocLazyLoad) {
+							return $ocLazyLoad.load([
+								{
+									name        : 'MetronicApp',
+									insertBefore: '#ng_load_plugins_ng',
+									files       : [
+										'scripts/controllers/tareas/gestiontareas.js'
+									]
+								}
+							]);
+						}
+					],
+				}
+			})
 			// Cotizaciones
 			.state('cotizaciones', {
 				url        : '/cotizaciones',

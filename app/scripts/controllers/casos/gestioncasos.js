@@ -87,11 +87,33 @@ angular.module('MetronicApp')
 			};
 			
 			vm.detalleTarea = function (idTarea) {
+				App.blockUI({
+					target      : '#ui-view',
+					animate     : true,
+					overlayColor: App.getBrandColor('blue'),
+					zIndex      : 9999
+				});
 				
+				$uibModal.open({
+					backdrop   : 'static',
+					templateUrl: 'modalDetallesTarea.html',
+					controller : 'ModalDetalleTareas as modalDetalleTareas'
+				});
 			};
 			
 			vm.editaTarea = function (idTarea) {
+				App.blockUI({
+					target      : '#ui-view',
+					animate     : true,
+					overlayColor: App.getBrandColor('blue'),
+					zIndex      : 9999
+				});
 				
+				$uibModal.open({
+					backdrop   : 'static',
+					templateUrl: 'modalEditaTarea.html',
+					controller : 'ModalEditaTareas as modalEditaTareas'
+				});
 			};
 			
 			$scope.$on('creadaNuevaTarea', function (e, args) {
@@ -195,6 +217,26 @@ angular.module('MetronicApp')
 			
 			vm.cancel = function () {
 				console.log(vm.ejecutivos);
+				$uibModalInstance.dismiss('cancel');
+			};
+		}
+	])
+	.controller('ModalDetalleTareas', [
+		'$rootScope', '$scope', '$uibModalInstance', function ($rootScope, $scope, $uibModalInstance) {
+			var vm = this;
+			App.unblockUI('#ui-view');
+			
+			vm.cancel = function () {
+				$uibModalInstance.dismiss('cancel');
+			};
+		}
+	])
+	.controller('ModalEditaTareas', [
+		'$rootScope', '$scope', '$uibModalInstance', function ($rootScope, $scope, $uibModalInstance) {
+			var vm = this;
+			App.unblockUI('#ui-view');
+			
+			vm.cancel = function () {
 				$uibModalInstance.dismiss('cancel');
 			};
 		}

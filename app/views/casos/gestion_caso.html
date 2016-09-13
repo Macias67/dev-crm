@@ -102,6 +102,16 @@
 		<div class = "portlet light portlet-fit ">
 			<div class = "portlet-title">
 				<div class = "caption">
+					<i class = " icon-layers font-yellow-crusta"></i>
+					<span class = "caption-subject font-yellow-crusta bold uppercase">Póliza</span>
+				</div>
+			</div>
+			<div class = "portlet-body">
+			</div>
+		</div>
+		<div class = "portlet light portlet-fit ">
+			<div class = "portlet-title">
+				<div class = "caption">
 					<i class = "fa fa-refresh font-red-thunderbird"></i>
 					<span class = "caption-subject font-red-thunderbird bold uppercase">Reasginar caso</span>
 				</div>
@@ -164,13 +174,20 @@
 										<b>{{tarea.estatus.estatus}}</b>
 									</div>
 									<img class = "todo-userpic pull-left" src = "../assets/pages/media/users/avatar4.jpg" width = "27px" height = "27px">
-									
+									<div class = "todo-tasklist-item-title">{{tarea.ejecutivo.nombre}}</div>
 									<div class = "todo-tasklist-item-text"><b>{{tarea.titulo}}</b></div>
 									<div class = "todo-tasklist-item-text"> {{tarea.descripcion}} </div>
 									<br>
+									<div class = "todo-tasklist-item-text"><i class = "fa fa-calendar"></i> <b>Inicio programado: </b>
+										<span ng-if = "tarea.fecha_tentativa == null"> <i>Sin definir por {{tarea.ejecutivo.nombre}}</i> </span>
+										<span ng-if = "tarea.fecha_tentativa != null">{{tarea.fecha_tentativa}}</span>
+									</div>
 									<div class = "todo-tasklist-item-text"><i class = "fa fa-calendar"></i> <b>Cierre tentativa:</b>
 										<span ng-if = "tarea.fecha_tentativa == null"> <i>Sin definir por {{tarea.ejecutivo.nombre}}</i> </span>
 										<span ng-if = "tarea.fecha_tentativa != null">{{tarea.fecha_tentativa}}</span>
+									</div>
+									<div class = "todo-tasklist-item-text"><i class = "fa fa-hourglass-start"></i> <b>Duración estimada:</b>
+										<span>4:30 horas.</span>
 									</div>
 									<div class = "todo-tasklist-item-text"><i class = "fa fa-clock-o"></i> <b>Tiempo:</b> {{tarea.duracion_segundos}} </div>
 									<div class = "todo-tasklist-item-text"><i class = "fa fa-comment"></i> <b>Privados:</b> {{tarea.notas.privadas.length}} mensajes </div>
@@ -186,8 +203,8 @@
 									</div>
 									<hr>
 									<div class = "todo-tasklist-controls">
-										<button type = "button" class = "btn green btn-xs">Ver detalles</button>
-										<button type = "button" class = "btn green btn-xs">Editar</button>
+										<button type = "button" class = "btn green btn-xs" ng-click = "gestionCasosCtrl.detalleTarea()">Ver detalles</button>
+										<button type = "button" class = "btn green btn-xs" ng-click = "gestionCasosCtrl.editaTarea()">Editar</button>
 									</div>
 								</div>
 							</div>
@@ -301,7 +318,32 @@
 		
 	</div>
 	<div class = "modal-footer">
-		<button type = "button" class = "btn red-sunglo">Asignar Tarea</button>
 		<button class = "btn grey-mint btn-outline" ng-click = "modalDistribucionTareas.cancel()">Cerrar</button>
+	</div>
+</script>
+
+<script type = "text/ng-template" id = "modalDetallesTarea.html">
+	<div class = "modal-header">
+		<button type = "button" class = "close" aria-hidden = "true" ng-click = "modalDetalleTareas.cancel()"></button>
+		<h4 class = "modal-title font-green-sharp"><i class = "fa file-pdf-o"></i> Tarea No.  </h4>
+	</div>
+	<div class = "modal-body">
+		
+	</div>
+	<div class = "modal-footer">
+		<button class = "btn grey-mint btn-outline" ng-click = "modalDetalleTareas.cancel()">Cerrar</button>
+	</div>
+</script>
+
+<script type = "text/ng-template" id = "modalEditaTarea.html">
+	<div class = "modal-header">
+		<button type = "button" class = "close" aria-hidden = "true" ng-click = "modalEditaTareas.cancel()"></button>
+		<h4 class = "modal-title font-green-sharp"><i class = "fa file-pdf-o"></i> Tarea No. </h4>
+	</div>
+	<div class = "modal-body">
+		
+	</div>
+	<div class = "modal-footer">
+		<button class = "btn grey-mint btn-outline" ng-click = "modalEditaTareas.cancel()">Cerrar</button>
 	</div>
 </script>
