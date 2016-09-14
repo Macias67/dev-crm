@@ -9,10 +9,18 @@
  */
 angular.module('MetronicApp')
 	.controller('GestionTareaCtrl', [
-		'$rootScope', '$scope', 'dataTarea', '$uibModal',
-		function ($rootScope, $scope, dataTarea, $uibModal) {
+		'$rootScope', '$scope', 'dataTarea', '$uibModal', 'authUser', '$state',
+		function ($rootScope, $scope, dataTarea, $uibModal, authUser, $state) {
 			var vm   = this;
 			vm.tarea = dataTarea.data;
+			
+			vm.vistaCaso = function () {
+				if (vm.tarea.caso.lider.id == authUser.getSessionData().id) {
+					$state.go('caso', {idcaso:vm.tarea.caso.id});
+				} else {
+					alert('no eres lider');
+				}
+			};
 			
 			setTimeout(function () {
 				App.unblockUI('#ui-view');

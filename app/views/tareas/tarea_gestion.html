@@ -49,6 +49,75 @@
 	</div>
 </div>
 
-<div class="row">
-	{{gestionTareaCtrl.tarea | json}}
+<div class = "row">
+	<div class = "col-md-3">
+		<div class = "portlet light">
+			<div class = "portlet-title">
+				<div class = "caption">
+					<i class = "icon-puzzle font-grey-gallery"></i>
+					<span class = "caption-subject bold font-grey-gallery uppercase"> Tools </span>
+					<span class = "caption-helper">more samples...</span>
+				</div>
+				<div class = "tools">
+					<a href = "" class = "collapse" data-original-title = "" title = ""> </a>
+					<a href = "#portlet-config" data-toggle = "modal" class = "config" data-original-title = "" title = ""> </a>
+					<a href = "" class = "reload" data-original-title = "" title = ""> </a>
+					<a href = "" class = "fullscreen" data-original-title = "" title = ""> </a>
+					<a href = "" class = "remove" data-original-title = "" title = ""> </a>
+				</div>
+			</div>
+			<div class = "portlet-body">
+				<h4>Heading text goes here...</h4>
+			</div>
+		</div>
+	</div>
+	<div class = "col-md-5">
+		<div class = "portlet light">
+			<div class = "portlet-title">
+				<div class = "caption">
+					<i class = "icon-puzzle font-grey-gallery"></i>
+					<span class = "caption-subject bold font-grey-gallery uppercase"> Tools </span>
+					<span class = "caption-helper">more samples...</span>
+				</div>
+				<div class = "tools">
+					<a href = "" class = "collapse" data-original-title = "" title = ""> </a>
+					<a href = "#portlet-config" data-toggle = "modal" class = "config" data-original-title = "" title = ""> </a>
+					<a href = "" class = "reload" data-original-title = "" title = ""> </a>
+					<a href = "" class = "fullscreen" data-original-title = "" title = ""> </a>
+					<a href = "" class = "remove" data-original-title = "" title = ""> </a>
+				</div>
+			</div>
+			<div class = "portlet-body">
+				<h4>Heading text goes here...</h4>
+			</div>
+		</div>
+	</div>
+	<div class = "col-md-4">
+		<div class = "portlet light">
+			<div class = "portlet-title">
+				<div class = "caption">
+					<i class = "icon-puzzle font-grey-gallery"></i>
+					<span class = "caption-subject bold font-grey-gallery uppercase"> Caso </span>
+				</div>
+				<div class = "tools">
+					<a href = "" class = "collapse" data-original-title = "" title = ""> </a>
+					<a href = "#portlet-config" data-toggle = "modal" class = "config" data-original-title = "" title = ""> </a>
+					<a href = "" class = "reload" data-original-title = "" title = ""> </a>
+					<a href = "" class = "fullscreen" data-original-title = "" title = ""> </a>
+					<a href = "" class = "remove" data-original-title = "" title = ""> </a>
+				</div>
+			</div>
+			<div class = "portlet-body">
+				<dl>
+					<dt>Lider</dt>
+					<dd>{{gestionTareaCtrl.tarea.caso.lider.nombre}}</dd>
+					<dd><i>{{gestionTareaCtrl.caso.cliente.rfc}}</i></dd>
+					<br>
+					<dt>Avance</dt>
+				</dl>
+				<hr>
+				<button class = "btn blue btn-block" ng-click = "gestionTareaCtrl.vistaCaso()"><b>Detalles del caso</b></button>
+			</div>
+		</div>
+	</div>
 </div>
