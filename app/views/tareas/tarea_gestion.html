@@ -53,7 +53,7 @@
 	<div class = "col-md-12">
 		<div class = "alert alert-danger">
 			<strong>¡Faltan datos por asignar!</strong>
-			Antes de continuar, debes establecer fecha de inicio de la tarea, tiempo de duración aproximada y fecha de cierre tentativo. Haz clic <a href = "javascript:;" class = "alert-link">aquí</a> para hacerlo.
+			Antes de continuar, debes establecer fecha de inicio de la tarea, tiempo de duración aproximada y fecha de cierre tentativo. Haz clic <a href = "javascript:;" ng-click = "gestionTareaCtrl.modalAsignaFechas()" class = "alert-link">aquí</a> para hacerlo.
 		</div>
 		<div class = "alert alert-danger">
 			<strong>¡Vas atrasado!</strong> La fecha tentativa de cierre del caso ya pasó, procura terminar la tarea lo más pronto posible.
@@ -87,7 +87,6 @@
 				</div>
 			</div>
 		</div>
-		
 	</div>
 	<div class = "col-md-4">
 		<div class = "portlet light">
@@ -129,8 +128,9 @@
 						<dt>Estatus</dt>
 						<span class = "badge bg-{{gestionTareaCtrl.caso.estatus.class}} bold"> {{gestionTareaCtrl.caso.estatus.estatus}} </span>
 					</div>
-					<br>
-					<br>
+				</div>
+				<br>
+				<div class = "row">
 					<div class = "col-md-12">
 						<dt>Fecha tentativa de cierre: </dt>
 						<dd ng-if = "gestionTareaCtrl.caso.fechatentativacierre == null">Aún sin calcularse.</dd>
@@ -156,3 +156,43 @@
 		</div>
 	</div>
 </div>
+
+<script type = "text/ng-template" id = "modalAsignaFechas.html">
+	<div class = "modal-header">
+		<button type = "button" class = "close" aria-hidden = "true" ng-click = "modalAsignaFechas.cancel()"></button>
+		<h4 class = "modal-title font-green-sharp"><i class = "fa fa-truck"></i> Nuevo producto </h4>
+	</div>
+	<div class = "modal-body form">
+		<div class = "col-md-6">
+			<form role = "form" name = "modalAsignaFechas.formFechas">
+				<div class = "form-body">
+					<div class = "form-group">
+						<label>Fecha de inicio: </label>
+						<br>
+						<datetimepicker
+							ng-model = "modalAsignaFechas.form.fechadeinicio"
+							date-format = "dd-MMM-yyyy"
+							minute-step = "15"
+							date-options = "modalAsignaFechas.dateOptions"
+							date-disabled = "modalAsignaFechas.disabled(date, mode)"
+							date-opened = "false"
+							show-spinners = "true"
+						required>
+						</datetimepicker>
+					</div>
+				</div>
+			</form>
+			{{modalAsignaFechas.form | json}}
+		</div>
+		<div class = "col-md-6"></div>
+		<div class = "clearfix"></div>
+	</div>
+	<div class = "modal-footer">
+		<button class = "btn green-jungle btn-outline sbold uppercase"
+		        ng-click = "modalAsignaFechas.guarda()"
+		        ng-disabled = "!modalAsignaFechas.formFechas.$valid">
+			Guardar
+		</button>
+		<button class = "btn grey-mint btn-outline" ng-click = "modalAsignaFechas.cancel()">Cancelar</button>
+	</div>
+</script>
