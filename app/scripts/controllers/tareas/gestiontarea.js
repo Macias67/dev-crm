@@ -9,22 +9,50 @@
  */
 angular.module('MetronicApp')
 	.controller('GestionTareaCtrl', [
-		'$rootScope', '$scope', 'dataTarea', '$uibModal', 'authUser', '$state',
-		function ($rootScope, $scope, dataTarea, $uibModal, authUser, $state) {
+		'$rootScope', '$scope', 'dataTarea', '$uibModal', 'authUser', '$state', 'Caso', 'Tarea',
+		function ($rootScope, $scope, dataTarea, $uibModal, authUser, $state, Caso, Tarea) {
 			var vm   = this;
 			vm.tarea = dataTarea.data;
 			
+			vm.reloadCaso = function () {
+				var cargadoCaso  = false;
+				var cargadoTarea = false;
+				App.scrollTop();
+				App.blockUI({
+					target      : '#ui-view',
+					animate     : true,
+					overlayColor: App.getBrandColor('grey')
+				});
+				
+				Caso.get({id: vm.tarea.caso.id}, function (response) {
+					vm.caso     = response.data;
+					cargadoCaso = true;
+					
+					if (cargadoTarea) {
+						App.unblockUI('#ui-view');
+					}
+				});
+				
+				Tarea.get({idtarea: vm.tarea.id}, function (response) {
+					vm.tarea     = response.data;
+					cargadoTarea = true;
+					
+					if (cargadoCaso) {
+						App.unblockUI('#ui-view');
+					}
+				});
+				
+				
+			};
+			
 			vm.vistaCaso = function () {
 				if (vm.tarea.caso.lider.id == authUser.getSessionData().id) {
-					$state.go('caso', {idcaso:vm.tarea.caso.id});
-				} else {
+					$state.go('caso', {idcaso: vm.tarea.caso.id});
+				}
+				else {
 					alert('no eres lider');
 				}
 			};
-			
-			setTimeout(function () {
-				App.unblockUI('#ui-view');
-			}, 2000);
 			
 			$scope.$on('$viewContentLoaded', function () {
 				// initialize core components
@@ -38,6 +66,11 @@ angular.module('MetronicApp')
 					overlayColor: App.getBrandColor('grey')
 				});
 				
+				Caso.get({id: vm.tarea.caso.id}, function (response) {
+					vm.caso = response.data;
+					App.unblockUI('#ui-view');
+				});
+				
 				dataTarea.$promise.catch(function (err) {
 					console.log(err);
 				});
@@ -45,8 +78,8 @@ angular.module('MetronicApp')
 			
 			//Nombres
 			$rootScope.vista = {
-				titulo   : 'Tarea No. ',
-				subtitulo: 'Tarea: '
+				titulo   : 'Tarea No. ' + vm.tarea.id,
+				subtitulo: 'Gestión de la tarea. '
 			};
 			
 			// set sidebar closed and body solid layout mode
