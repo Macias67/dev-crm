@@ -12,6 +12,7 @@ var MetronicApp = angular.module('MetronicApp', [
 	'ngSanitize',
 	'ngResource',
 	'ngAnimate',
+	'ngAudio',
 	'ngTagsInput',
 	'ngBootbox',
 	'LocalStorageModule',
@@ -125,7 +126,10 @@ MetronicApp.factory('settings', [
 
 /* Setup App Main Controller */
 MetronicApp.controller('AppController', [
-	'$scope', '$rootScope', function ($scope, $rootScope) {
+	'$scope', '$rootScope', 'CotizacionFB', function ($scope, $rootScope, CotizacionFB) {
+		CotizacionFB.notifCasoPorAsignar();
+		
+		
 		$scope.$on('$viewContentLoaded', function () {
 			App.initComponents(); // init core components
 			//Layout.init(); //  Init entire layout(header, footer, sidebar, etc) on page load if the partials included in server side instead of loading with ng-include directive
@@ -155,9 +159,21 @@ MetronicApp.controller('HeaderController', [
 
 /* Setup Layout Part - Sidebar */
 MetronicApp.controller('SidebarController', [
-	'$scope', function ($scope) {
+	'$scope', 'CotizacionFB', function ($scope, CotizacionFB) {
+		var vm = this;
+		
+		CotizacionFB.refArray().on('value', function (snapshot) {
+			vm.totalCasosPorAsignar = snapshot.numChildren();
+		});
+		
 		$scope.$on('$includeContentLoaded', function () {
 			Layout.initSidebar(); // init sidebar
+			
+			vm.totalCasosPorAsignar = 0;
+			var totalCasosPorAsignar = CotizacionFB.array();
+			totalCasosPorAsignar.$loaded().then(function () {
+				vm.totalCasosPorAsignar = totalCasosPorAsignar.length;
+			});
 		});
 	}
 ]);
@@ -818,7 +834,7 @@ MetronicApp.config([
 		angular.extend(toastrConfig, {
 			allowHtml      : true,
 			closeButton    : true,
-			extendedTimeOut: 1000,
+			extendedTimeOut: 1500,
 			iconClasses    : {
 				error  : 'toast-error',
 				info   : 'toast-info',
@@ -831,7 +847,7 @@ MetronicApp.config([
 			onTap          : null,
 			progressBar    : true,
 			tapToDismiss   : true,
-			timeOut        : 5000,
+			timeOut        : 7000,
 			titleClass     : 'toast-title',
 			toastClass     : 'toast'
 		});

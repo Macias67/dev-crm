@@ -139,6 +139,7 @@
 				<a href = "javascript:;" class = "icon-btn">
 					<i class = "fa fa-folder-open"></i>
 					<div>&nbsp;&nbsp;Casos por asignar&nbsp;&nbsp;</div>
+					<span class = "badge badge-danger"> {{dashboardCtrl.totalCasosPorAsignar}} </span>
 				</a>
 				<a href = "javascript:;" class = "icon-btn">
 					<i class = "fa fa-arrow-circle-o-up"></i>
@@ -148,32 +149,6 @@
 					<i class = "fa fa-list"></i>
 					<div>&nbsp;&nbsp;Tickets&nbsp;&nbsp;</div>
 				</a>
-			</div>
-		</div>
-	</div>
-</div>
-
-<div class = "row">
-	<div class = "col-md-6">
-		<div class = "portlet light portlet-fit portlet-datatable ">
-			<div class = "portlet-title">
-				<div class = "caption">
-					<i class = " fa fa-building-o font-green"></i>
-					<span class = "caption-subject font-green sbold uppercase">Oficinas</span>
-				</div>
-				<div class = "actions">
-					<button type = "button" class = "btn btn-xs green" ng-click = "dashboardCtrl.openModalForm()">
-						<i class = "fa fa-plus"></i>
-						 Nueva oficina
-					</button>
-					<button type = "button" class = "btn btn-xs green" ng-click = "dashboardCtrl.reloadTable()">
-						<i class = "fa fa-refresh"></i>
-					</button>
-				</div>
-			</div>
-			<div class = "portlet-body">
-				<table id = "tableOficinas" datatable = "" dt-options = "dashboardCtrl.tableOficinas.dtOptions" dt-columns = "dashboardCtrl.tableOficinas.dtColumns" dt-instance = "dashboardCtrl.tableOficinas.dtInstance" class = "table table-striped table-bordered table-hover">
-				</table>
 			</div>
 		</div>
 	</div>

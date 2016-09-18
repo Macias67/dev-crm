@@ -65,17 +65,17 @@
 		
 		<!-- BEGIN JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->
 		
-		
-		<script src = "https://www.gstatic.com/firebasejs/3.2.1/firebase.js"></script>
+		<script src = "https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
 		<script>
-			// Initialize Firebase
-			var config = {
-				apiKey       : "AIzaSyAW9HLtzFbMjIcVC9kZaoXFp4AbH0m2bHM",
-				authDomain   : "api-crm-f87c8.firebaseapp.com",
-				databaseURL  : "https://api-crm-f87c8.firebaseio.com",
-				storageBucket: "api-crm-f87c8.appspot.com",
-			};
-			firebase.initializeApp(config);
+		// Initialize Firebase
+		var config = {
+			apiKey           : "AIzaSyAW9HLtzFbMjIcVC9kZaoXFp4AbH0m2bHM",
+			authDomain       : "api-crm-f87c8.firebaseapp.com",
+			databaseURL      : "https://api-crm-f87c8.firebaseio.com",
+			storageBucket    : "api-crm-f87c8.appspot.com",
+			messagingSenderId: "738619244670"
+		};
+		firebase.initializeApp(config);
 		</script>
 		
 		
@@ -125,6 +125,7 @@
 		 <script src = "bower_components/ng-tags-input/ng-tags-input.min.js" type = "text/javascript"></script>
 		<script src = "bower_components/angular-moment/angular-moment.min.js" type = "text/javascript"></script>
 		<script src = "bower_components/checklist-model/checklist-model.js" type = "text/javascript"></script>
+		<script src = "bower_components/angular-audio/app/angular.audio.js" type = "text/javascript"></script>
 		<script src = "bower_components/jspdf/dist/jspdf.min.js" type = "text/javascript"></script>
 		<script src = "bower_components/angularfire/dist/angularfire.min.js"></script>
 		<!-- END CORE ANGULARJS PLUGINS -->
@@ -139,6 +140,7 @@
 		<!-- BEGIN APP LEVEL ANGULARJS SCRIPTS -->
 		<script src = "scripts/main.js" type = "text/javascript"></script>
 		<script src = "scripts/directives.js" type = "text/javascript"></script>
+		<script src = "scripts/services/notifservice.js" type = "text/javascript"></script>
 		<script src = "scripts/services/authservice.js" type = "text/javascript"></script>
 		<script src = "scripts/services/oficina.js" type = "text/javascript"></script>
 		<script src = "scripts/services/cliente.js" type = "text/javascript"></script>
@@ -155,6 +157,7 @@
 		<script src = "scripts/services/tarea.js" type = "text/javascript"></script>
 		
 		<script src = "scripts/services/oficinafb.js" type = "text/javascript"></script>
+		<script src = "scripts/services/firebase/cotizacionfb.js" type = "text/javascript"></script>
 		
 		<script src = "scripts/filters/crm-filter.js" type = "text/javascript"></script>
 

@@ -161,14 +161,14 @@ angular.module('MetronicApp')
 		'dtCotizacion',
 		'$ngBootbox',
 		'Pago',
-		'toastr',
-		function ($rootScope, $scope, $uibModalInstance, DTOptionsBuilder, DTColumnBuilder, CRM_APP, $compile, authUser, dtCotizacion, $ngBootbox, Pago, toastr) {
+		'NotifService',
+		'CotizacionFB',
+		function ($rootScope, $scope, $uibModalInstance, DTOptionsBuilder, DTColumnBuilder, CRM_APP, $compile, authUser, dtCotizacion, $ngBootbox, Pago, NotifService, CotizacionFB) {
 			var vm = this;
 			
 			vm.cotizacion = dtCotizacion;
 			
 			vm.indicaPagada = function (idPago, index) {
-				//console.log(vm.cotizacion);
 				App.scrollTop();
 				App.blockUI({
 					target      : '#ui-view',
@@ -182,7 +182,7 @@ angular.module('MetronicApp')
 					if (response.hasOwnProperty('errors')) {
 						for (var key in response.errors) {
 							if (response.errors.hasOwnProperty(key)) {
-								toastr.error(response.errors[key][0], 'Hay errores con la cotización.');
+								NotifService.error(response.errors[key][0], 'Hay errores con la cotización.');
 							}
 						}
 						App.unblockUI('#ui-view');
@@ -191,7 +191,7 @@ angular.module('MetronicApp')
 						vm.cotizacion.pagos[index].valido = true;
 						App.unblockUI('#ui-view');
 						App.scrollTop();
-						toastr.success('Se ha registrado correctamente el pago.', 'Se ha validado el pago.');
+						NotifService.info('Se ha registrado correctamente el pago.', 'Se ha validado el pago.');
 						$rootScope.$broadcast('reloadTable');
 					}
 					else {
@@ -199,8 +199,20 @@ angular.module('MetronicApp')
 							$uibModalInstance.dismiss('cancel');
 							App.unblockUI('#ui-view');
 							
-							toastr.success('Se ha abierto un nuevo caso para el cliente ' + response.data.cliente.razonsocial + ' en espera de asignación de líder.', 'Caso #' + response.data.id + ' en espera de líder.');
-							$rootScope.$broadcast('reloadTable');
+							//referencia nueva
+							var cotizacion = CotizacionFB.toObject(CotizacionFB.refObject(response.data.id));
+							cotizacion.cliente = {
+								id: response.data.cliente.id,
+								razonsocial: response.data.cliente.razonsocial,
+								email: response.data.cliente.email
+							};
+							
+							// Guarda actualiza
+							cotizacion.$save().then(function (ref) {
+								$uibModalInstance.close();
+								$rootScope.$broadcast('reloadTable');
+								NotifService.success('La cotización se encuentra pagada y se ha abierto el caso en espera de líder.', 'Pago validado con éxito.');
+							});
 						}, 1000);
 					}
 				});
