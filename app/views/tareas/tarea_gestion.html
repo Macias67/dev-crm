@@ -93,6 +93,16 @@
 			<div class = "portlet-title">
 				<div class = "caption">
 					<i class = "icon-puzzle font-grey-gallery"></i>
+					<span class = "caption-subject bold font-grey-gallery uppercase"> Programar tarea</span>
+				</div>
+			</div>
+			<div class = "portlet-body">
+			</div>
+		</div>
+		<div class = "portlet light">
+			<div class = "portlet-title">
+				<div class = "caption">
+					<i class = "icon-puzzle font-grey-gallery"></i>
 					<span class = "caption-subject bold font-grey-gallery uppercase"> Caso No. {{gestionTareaCtrl.caso.id}}</span>
 				</div>
 				<div class = "actions">
@@ -167,18 +177,10 @@
 			<form role = "form" name = "modalAsignaFechas.formFechas">
 				<div class = "form-body">
 					<div class = "form-group">
-						<label>Fecha de inicio: </label>
-						<br>
-						<datetimepicker
-							ng-model = "modalAsignaFechas.form.fechadeinicio"
-							date-format = "dd-MMM-yyyy"
-							minute-step = "15"
-							date-options = "modalAsignaFechas.dateOptions"
-							date-disabled = "modalAsignaFechas.disabled(date, mode)"
-							date-opened = "false"
-							show-spinners = "true"
-						required>
-						</datetimepicker>
+						<input type="text" class="form-control" datetime-picker="dd MMM yyyy HH:mm" ng-model="myDate" is-open="isOpen"  />
+						<span class="input-group-btn">
+							<button type="button" class="btn btn-default" ng-click="openCalendar($event, prop)"><i class="fa fa-calendar"></i></button>
+						</span>
 					</div>
 				</div>
 			</form>
