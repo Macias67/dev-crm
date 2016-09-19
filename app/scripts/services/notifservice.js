@@ -24,7 +24,7 @@ angular.module('MetronicApp')
 					toastr.warning(mensaje, titulo);
 				},
 				error: function (mensaje, titulo) {
-					ngAudio.load('sounds/unique.mp3').play();
+					ngAudio.load('sounds/cool.mp3').play();
 					toastr.error(mensaje, titulo);
 				}
 			};

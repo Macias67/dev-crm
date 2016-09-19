@@ -169,7 +169,7 @@ MetronicApp.controller('SidebarController', [
 		$scope.$on('$includeContentLoaded', function () {
 			Layout.initSidebar(); // init sidebar
 			
-			vm.totalCasosPorAsignar = 0;
+			vm.totalCasosPorAsignar  = 0;
 			var totalCasosPorAsignar = CotizacionFB.array();
 			totalCasosPorAsignar.$loaded().then(function () {
 				vm.totalCasosPorAsignar = totalCasosPorAsignar.length;
@@ -227,13 +227,18 @@ MetronicApp.service('interceptor', [
 			},
 			
 			responseError: function (response) {
-				var toastr = $injector.get('toastr');
+				var NotifService = $injector.get('NotifService');
 				var $state = $injector.get('$state');
 				
 				if (response.status == 500) {
 					App.unblockUI('#ui-view');
-					toastr.error('Hubo error con el servidor', response.statusText);
-					console.error(response.data.mesasge);
+					NotifService.error(response.data.message, 'Error ' + response.statusText);
+				}
+				
+				if (response.status == 401) {
+					NotifService.error(response.data.message, 'Error ' + response.data.status_code);
+					App.unblockUI('#ui-view');
+					App.unblockUI();
 				}
 
 // 				var toastr = $injector.get('toastr');
@@ -333,6 +338,21 @@ MetronicApp.config([
 				},
 				abstract   : true
 			})
+			// Template Cliente
+			.state('tmpl_cliente', {
+				templateUrl: 'views/tmpl_client.html',
+				data       : {
+					requiredLogin: true,
+					bodyClass    : 'page-header-fixed page-sidebar-closed-hide-logo page-container-bg-solid page-sidebar-closed-hide-logo'
+				},
+				abstract   : true
+			})
+			
+			
+			/**
+			 * Vistas del CRM
+			 */
+			
 			// Dashboard
 			.state('dashboard', {
 				url        : '/dashboard',
@@ -829,7 +849,34 @@ MetronicApp.config([
 				data       : {
 					pageTitle: 'Obervaciones de pago'
 				}
-			});
+			})
+			
+			/**
+			 * Vistas del cliente
+			 */
+			// Panel Cliente
+			.state('panel-cliente', {
+				url        : '/panel-cliente',
+				parent     : 'tmpl_cliente',
+				templateUrl: 'views/client_app/inicio/dashboard.html',
+				data       : {
+					pageTitle: 'Bienvenido'
+				},
+				controller : 'DashboardController as dashboardCtrl',
+				resolve    : {
+					deps: [
+						'$ocLazyLoad', function ($ocLazyLoad) {
+							return $ocLazyLoad.load({
+								name        : 'MetronicApp',
+								insertBefore: '#ng_load_plugins_ng',
+								files       : [
+									'scripts/controllers/DashboardController.js'
+								]
+							});
+						}
+					]
+				}
+			})
 		
 		angular.extend(toastrConfig, {
 			allowHtml      : true,

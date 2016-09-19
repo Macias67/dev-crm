@@ -1,0 +1,31 @@
+<!-- BEGIN HEADER -->
+<div data-ng-include = "'views/client_app/partials/header.html'" data-ng-controller = "HeaderController as headerCtrl" class = "page-header navbar navbar-fixed-top"></div>
+<!-- END HEADER -->
+
+<div class = "clearfix"> </div>
+
+<!-- BEGIN CONTAINER -->
+
+<div class = "page-container">
+	<!-- BEGIN SIDEBAR -->
+	<div data-ng-include = "'views/client_app/partials/sidebar.html'" data-ng-controller = "SidebarController as sidebarController" class = "page-sidebar-wrapper"> </div>
+        <!-- END SIDEBAR -->
+
+	<div class = "page-content-wrapper">
+		<div class = "page-content">
+			<!-- BEGIN STYLE CUSTOMIZER(optional) -->
+			<div data-ng-include = "'views/partials/theme-panel.html'" data-ng-controller = "ThemePanelController" class = "theme-panel hidden-xs hidden-sm"> </div>
+                        <!-- END STYLE CUSTOMIZER -->
+
+                        <!-- BEGIN ACTUAL CONTENT -->
+			<div ui-view></div>
+                        <!-- END ACTUAL CONTENT -->
+		</div>
+	</div>
+</div>
+
+<!-- BEGIN FOOTER -->
+<div data-ng-include = "'views/partials/footer.html'" data-ng-controller = "FooterController" class = "page-footer"> </div>
+<!-- END FOOTER -->
+
+<!-- END CONTAINER -->

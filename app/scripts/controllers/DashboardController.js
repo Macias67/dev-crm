@@ -13,7 +13,7 @@ angular.module('MetronicApp')
 			$scope.$on('$viewContentLoaded', function () {
 				// initialize core components
 				App.initAjax();
-				
+								
 				vm.totalCasosPorAsignar  = 0;
 				var totalCasosPorAsignar = CotizacionFB.array();
 				totalCasosPorAsignar.$loaded().then(function () {

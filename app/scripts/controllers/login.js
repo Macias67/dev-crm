@@ -11,12 +11,6 @@ var Loginapp = angular.module('MetronicApp');
 
 Loginapp.controller('LoginCtrl', [
 	'$scope', 'authUser', function ($scope, authUser) {
-		$scope.$on('$viewContentLoaded', function () {
-			// initialize core components
-			App.initAjax();
-			Login.init();
-		});
-		
 		var vm       = this;
 		vm.formLogin = {
 			email   : 'luismacias.angulo@gmail.com',
@@ -25,6 +19,12 @@ Loginapp.controller('LoginCtrl', [
 		
 		vm.login = function () {
 			authUser.loginApi(vm.formLogin);
-		}
+		};
+		
+		$scope.$on('$viewContentLoaded', function () {
+			// initialize core components
+			App.initAjax();
+			Login.init();
+		});
 	}
 ]);
