@@ -9,10 +9,27 @@
  */
 angular.module('MetronicApp')
 	.controller('GestionTareaCtrl', [
-		'$rootScope', '$scope', 'dataTarea', '$uibModal', 'authUser', '$state', 'Caso', 'Tarea',
-		function ($rootScope, $scope, dataTarea, $uibModal, authUser, $state, Caso, Tarea) {
+		'$rootScope', '$scope', 'dataTarea', '$uibModal', 'authUser', '$state', 'Caso', 'Tarea', '$timeout',
+		function ($rootScope, $scope, dataTarea, $uibModal, authUser, $state, Caso, Tarea, $timeout) {
 			var vm   = this;
 			vm.tarea = dataTarea.data;
+			
+			vm.notas = {
+				formNotas: null,
+				form     : {
+					descripcion: '',
+					tipo: 'publica',
+					archivo: ''
+				},
+				loading  : false,
+				guarda   : function () {
+					this.loading = true;
+					console.log(this.form);
+					$timeout(function() {
+						vm.notas.loading = false;
+					}, 2000);
+				}
+			};
 			
 			vm.modalAsignaFechas = function () {
 				$uibModal.open({

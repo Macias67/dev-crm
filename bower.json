@@ -46,7 +46,8 @@
     "jspdf": "jsPDF-html2canvas#^1.2.61",
     "angularfire": "^2.0.1",
     "angular-audio": "^1.7.3",
-    "bootstrap-ui-datetime-picker": "^2.4.3"
+    "bootstrap-ui-datetime-picker": "^2.4.3",
+    "angular-ladda": "^0.4.2"
   },
   "devDependencies": {
     "angular-mocks": "^1.4.0"

@@ -28,6 +28,7 @@ var MetronicApp = angular.module('MetronicApp', [
 	'angular.filter',
 	'angularMoment',
 	'checklist-model',
+	'angular-ladda',
 	'firebase',
 	//Servicios
 	'authService'
