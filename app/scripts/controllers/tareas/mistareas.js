@@ -114,7 +114,7 @@ angular.module('MetronicApp')
 						return '<span class="label label-sm label-success bg-' + data.estatus.class + '"><b>' + data.estatus.estatus + '</b></span>';
 					}).withOption('sWidth', '10%'),
 					DTColumnBuilder.newColumn(null).notSortable().renderWith(function (data, type, full, meta) {
-						return '<button class="btn btn-xs yellow-casablanca" type="button">' +
+						return '<button ng-click="misTareasCtrl.abreDetalleTarea(' + data.id + ')" class="btn btn-xs yellow-casablanca" type="button">' +
 							'<i class="fa fa-list"></i>&nbsp;Ver detalles' +
 							'</button>';
 					}).withOption('sWidth', '20%'),

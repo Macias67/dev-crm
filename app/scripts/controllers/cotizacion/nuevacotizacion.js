@@ -198,8 +198,16 @@ angular.module('MetronicApp')
 				}
 			};
 			vm.porletRevision = {
-				cotizacion: null,
-				envia     : function () {
+				cotizacion : null,
+				vistaPrevia: function () {
+					$uibModal.open({
+						backdrop   : 'static',
+						templateUrl: 'modalPreviaCotizacion.html',
+						controller : 'PreviaCotizacion as previaCotizacion',
+						size       : 'lg'
+					});
+				},
+				envia      : function () {
 					var productos = [];
 					vm.cotizacion.productos.forEach(function (item, index) {
 						productos[index] = {
@@ -535,6 +543,23 @@ angular.module('MetronicApp')
 				setTimeout(function () {
 					App.unblockUI('#tableClientes');
 				}, 1500);
+			};
+			
+			vm.cancel = function () {
+				$uibModalInstance.dismiss('cancel');
+			};
+		}
+	])
+	.controller('PreviaCotizacion', [
+		'$rootScope', '$scope', '$uibModalInstance', 'DTOptionsBuilder', 'DTColumnBuilder', 'CRM_APP', '$compile', 'authUser',
+		function ($rootScope, $scope, $uibModalInstance, DTOptionsBuilder, DTColumnBuilder, CRM_APP, $compile, authUser) {
+			var vm = this;
+			
+			vm.descarga = function () {
+			};
+			
+			vm.imprime = function () {
+				
 			};
 			
 			vm.cancel = function () {

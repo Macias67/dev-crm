@@ -15,6 +15,7 @@ var MetronicApp = angular.module('MetronicApp', [
 	'ngAudio',
 	'ngTagsInput',
 	'ngBootbox',
+	'ngFileUpload',
 	'LocalStorageModule',
 	'satellizer',
 	'permission',
@@ -662,13 +663,23 @@ MetronicApp.config([
 				resolve    : {
 					deps: [
 						'$ocLazyLoad', function ($ocLazyLoad) {
-							return $ocLazyLoad.load({
-								name        : 'MetronicApp',
-								insertBefore: '#ng_load_plugins_ng',
-								files       : [
-									'scripts/controllers/cotizacion/nuevacotizacion.js'
-								]
-							});
+							return $ocLazyLoad.load([
+								{
+									name        : 'MetronicApp',
+									insertBefore: '#ng_load_plugins_css',
+									files       : [
+										'../assets/pages/css/invoice-2.min.css'
+									],
+									serie       : true
+								},
+								{
+									name        : 'MetronicApp',
+									insertBefore: '#ng_load_plugins_ng',
+									files       : [
+										'scripts/controllers/cotizacion/nuevacotizacion.js'
+									]
+								}
+							]);
 						}
 					]
 				}

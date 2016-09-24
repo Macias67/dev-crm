@@ -9,8 +9,8 @@
  */
 angular.module('MetronicApp')
 	.controller('GestionTareaCtrl', [
-		'$rootScope', '$scope', 'dataTarea', '$uibModal', 'authUser', '$state', 'Caso', 'Tarea', '$timeout',
-		function ($rootScope, $scope, dataTarea, $uibModal, authUser, $state, Caso, Tarea, $timeout) {
+		'$rootScope', '$scope', 'dataTarea', '$uibModal', 'authUser', '$state', 'Caso', 'Tarea', 'NotifService', '$filter', 'TareaNota', 'NotaFB',
+		function ($rootScope, $scope, dataTarea, $uibModal, authUser, $state, Caso, Tarea, NotifService, $filter, TareaNota, NotaFB) {
 			var vm   = this;
 			vm.tarea = dataTarea.data;
 			
@@ -18,16 +18,64 @@ angular.module('MetronicApp')
 				formNotas: null,
 				form     : {
 					descripcion: '',
-					tipo: 'publica',
-					archivo: ''
+					tipo       : 1,
+					file       : null
 				},
 				loading  : false,
+				progress : 0,
 				guarda   : function () {
-					this.loading = true;
-					console.log(this.form);
-					$timeout(function() {
+					vm.notas.loading = true;
+					
+					var tareaNota = new TareaNota(vm.notas.form);
+					tareaNota.$save({idtarea: vm.tarea.id}, function (response) {
+						vm.tarea         = response.data;
+						var notas        = vm.tarea.notas.todas;
+						var selectedNota = notas[notas.length - 1];
+						NotaFB.refObject(selectedNota.id).set(selectedNota)
+							.then(function () {
+								console.log('Synchronization succeeded');
+							})
+							.catch(function (error) {
+								console.log('Synchronization failed');
+							});
+						
 						vm.notas.loading = false;
-					}, 2000);
+					}, function (error) {
+						console.log(error);
+						vm.notas.loading = false;
+					});
+					
+					
+					var file = vm.notas.form.file;
+					if (file != null) {
+						var uploadTask = firebase.storage().ref().child('notas/' + file.name).put(file);
+						uploadTask.on('state_changed', function (snapshot) {
+							// Observe state change events such as progress, pause, and resume
+							// See below for more detail
+							$scope.$apply(function () {
+								vm.notas.progress = $filter('number')((snapshot.bytesTransferred / snapshot.totalBytes) * 100, 0);
+							});
+						}, function (error) {
+							// Handle unsuccessful uploads
+						}, function () {
+							// Handle successful uploads on complete
+							// For instance, get the download URL: https://firebasestorage.googleapis.com/...
+							var downloadURL = uploadTask.snapshot.downloadURL;
+							console.log(downloadURL);
+							$scope.$apply(function () {
+								vm.notas.formNotas.$setPristine();
+								vm.notas.formNotas.$setUntouched();
+								vm.notas.formNotas.$dirty = false;
+								vm.notas.form             = {
+									descripcion: '',
+									tipo       : 1,
+									file       : null
+								};
+								vm.notas.loading          = false;
+								vm.notas.progress         = 0;
+							});
+						});
+					}
 				}
 			};
 			
