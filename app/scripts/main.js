@@ -874,7 +874,7 @@ MetronicApp.config([
 				data       : {
 					pageTitle: 'Bienvenido'
 				},
-				controller : 'DashboardController as dashboardCtrl',
+				controller : 'DashboardCtrl as dashboardCtrl',
 				resolve    : {
 					deps: [
 						'$ocLazyLoad', function ($ocLazyLoad) {
@@ -882,7 +882,7 @@ MetronicApp.config([
 								name        : 'MetronicApp',
 								insertBefore: '#ng_load_plugins_ng',
 								files       : [
-									'scripts/controllers/DashboardController.js'
+									'scripts/controllers/client-app/inicio/dashboard.js'
 								]
 							});
 						}

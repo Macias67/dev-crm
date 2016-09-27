@@ -1,1 +1,135 @@
-<p>This is the cliente_app/inicio/dashboard view.</p>
+<h3 class = "page-title"> {{vista.titulo}}
+	<small>{{vista.subtitulo}}</small>
+</h3>
+
+<div class = "page-bar">
+	<ul class = "page-breadcrumb">
+		<li>
+			<i class = "fa fa-home"></i>
+			<a href = "#/dashboard">Inicio</a>
+			<i class = "fa fa-angle-right"></i>
+		</li>
+		<li>
+			<a href = "#">Blank Page</a>
+			<i class = "fa fa-angle-right"></i>
+		</li>
+		<li>
+			<span>Page Layouts</span>
+		</li>
+	</ul>
+	<div class = "page-toolbar">
+		<div class = "btn-group pull-right">
+			<button type = "button" class = "btn btn-fit-height grey-salt dropdown-toggle" data-toggle = "dropdown" data-hover = "dropdown" data-delay = "1000" data-close-others = "true"> Actions
+				<i class = "fa fa-angle-down"></i>
+			</button>
+			<ul class = "dropdown-menu pull-right" role = "menu">
+				<li>
+					<a href = "#">
+						<i class = "icon-bell"></i>
+					</a>
+				</li>
+				<li>
+					<a href = "#">
+						<i class = "icon-shield"></i> Another action
+					</a>
+				</li>
+				<li>
+					<a href = "#">
+						<i class = "icon-user"></i> Something else here
+					</a>
+				</li>
+				<li class = "divider"> </li>
+				<li>
+					<a href = "#">
+						<i class = "icon-bag"></i> Separated link
+					</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>
+
+<!-- BEGIN DASHBOARD STATS 1-->
+<div class = "row">
+	<div class = "col-lg-3 col-md-3 col-sm-6 col-xs-12">
+		<a class = "dashboard-stat dashboard-stat-v2 blue" href = "#">
+			<div class = "visual">
+				<i class = "fa fa-comments"></i>
+			</div>
+			<div class = "details">
+				<div class = "number">
+					<span data-counter = "counterup" data-value = "1349">0</span>
+				</div>
+				<div class = "desc">Cotizaciones Pendientes </div>
+			</div>
+		</a>
+	</div>
+	<div class = "col-lg-3 col-md-3 col-sm-6 col-xs-12">
+		<a class = "dashboard-stat dashboard-stat-v2 red" href = "#">
+			<div class = "visual">
+				<i class = "fa fa-bar-chart-o"></i>
+			</div>
+			<div class = "details">
+				<div class = "number">
+					<span data-counter = "counterup" data-value = "12,5">0</span>M$ </div>
+				<div class = "desc"> Tareas </div>
+			</div>
+		</a>
+	</div>
+	<div class = "col-lg-3 col-md-3 col-sm-6 col-xs-12">
+		<a class = "dashboard-stat dashboard-stat-v2 green" href = "#">
+			<div class = "visual">
+				<i class = "fa fa-shopping-cart"></i>
+			</div>
+			<div class = "details">
+				<div class = "number">
+					<span data-counter = "counterup" data-value = "549">0</span>
+				</div>
+				<div class = "desc"> Mensajes </div>
+			</div>
+		</a>
+	</div>
+	<div class = "col-lg-3 col-md-3 col-sm-6 col-xs-12">
+		<a class = "dashboard-stat dashboard-stat-v2 purple" href = "#">
+			<div class = "visual">
+				<i class = "fa fa-globe"></i>
+			</div>
+			<div class = "details">
+				<div class = "number"> +
+					<span data-counter = "counterup" data-value = "89"></span>% </div>
+				<div class = "desc"> Póliza </div>
+			</div>
+		</a>
+	</div>
+</div>
+<div class = "clearfix"></div>
+<!-- END DASHBOARD STATS 1-->
+
+<div class = "row">
+	<div class = "col-md-7">
+		<!-- BEGIN BORDERED TABLE PORTLET-->
+		<div class = "portlet light portlet-fit ">
+			<div class = "portlet-title">
+				<div class = "caption">
+					<i class = "icon-settings font-red"></i>
+					<span class = "caption-subject font-red sbold uppercase">Cotizaciones pendientes</span>
+				</div>
+				<div class = "actions">
+					<button type="button" class="btn btn-xs green" ng-click="dashboardCtrl.tableCotizaciones.reloadTable()">
+						<i class="fa fa-refresh"></i>
+					</button>
+				</div>
+			</div>
+			<div class = "portlet-body">
+				<table id = "tableCotizaciones"
+				       datatable = ""
+				       dt-options = "dashboardCtrl.tableCotizaciones.dtOptions"
+				       dt-columns = "dashboardCtrl.tableCotizaciones.dtColumns"
+				       dt-instance = "dashboardCtrl.tableCotizaciones.dtInstance"
+				       class = "table table-hover table-light">
+				</table>
+			</div>
+		</div>
+		<!-- END BORDERED TABLE PORTLET-->
+	</div>
+</div>
