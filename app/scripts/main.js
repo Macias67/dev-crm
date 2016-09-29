@@ -286,7 +286,7 @@ MetronicApp.config([
 		});
 		
 		$stateProvider
-		// Login
+			// Login
 			.state('login', {
 				url        : '/login',
 				templateUrl: 'views/login.html',
@@ -349,8 +349,7 @@ MetronicApp.config([
 				},
 				abstract   : true
 			})
-			
-			
+						
 			/**
 			 * Vistas del CRM
 			 */
@@ -359,7 +358,7 @@ MetronicApp.config([
 			.state('dashboard', {
 				url        : '/dashboard',
 				parent     : 'tmpl',
-				templateUrl: 'views/inicio/dashboard.html',
+				templateUrl: 'views/vista-ejecutivo/inicio/dashboard.html',
 				data       : {
 					pageTitle: 'Bienvenido'
 				},
@@ -371,7 +370,7 @@ MetronicApp.config([
 								name        : 'MetronicApp',
 								insertBefore: '#ng_load_plugins_ng',
 								files       : [
-									'scripts/controllers/DashboardController.js'
+									'scripts/controllers/ejecutivo/DashboardController.js'
 								]
 							});
 						}
@@ -382,7 +381,7 @@ MetronicApp.config([
 			.state('clientes', {
 				url        : '/clientes',
 				parent     : 'tmpl',
-				templateUrl: 'views/clientes/gestion_clientes.html',
+				templateUrl: 'views/vista-ejecutivo/clientes/gestion_clientes.html',
 				data       : {
 					pageTitle: 'Clientes'
 				},
@@ -394,7 +393,7 @@ MetronicApp.config([
 								name        : 'MetronicApp',
 								insertBefore: '#ng_load_plugins_ng',
 								files       : [
-									'scripts/controllers/clientes/gestionclientes.js'
+									'scripts/controllers/ejecutivo/clientes/gestionclientes.js'
 								]
 							});
 						}
@@ -404,7 +403,7 @@ MetronicApp.config([
 			.state('cliente/nuevo', {
 				url        : '/cliente/nuevo',
 				parent     : 'tmpl',
-				templateUrl: 'views/clientes/form_cliente.html',
+				templateUrl: 'views/vista-ejecutivo/clientes/form_cliente.html',
 				data       : {
 					pageTitle: 'Nuevo Cliente'
 				},
@@ -416,7 +415,7 @@ MetronicApp.config([
 								name        : 'MetronicApp',
 								insertBefore: '#ng_load_plugins_ng',
 								files       : [
-									'scripts/controllers/clientes/nuevocliente.js'
+									'scripts/controllers/ejecutivo/clientes/nuevocliente.js'
 								]
 							});
 						}
@@ -426,7 +425,7 @@ MetronicApp.config([
 			.state('cliente-perfil', {
 				url        : '/cliente/:idcliente',
 				parent     : 'tmpl',
-				templateUrl: 'views/clientes/perfil_cliente.html',
+				templateUrl: 'views/vista-ejecutivo/clientes/perfil_cliente.html',
 				data       : {
 					pageTitle: 'Clientes'
 				},
@@ -457,7 +456,7 @@ MetronicApp.config([
 			.state('casos', {
 				url        : '/casos',
 				parent     : 'tmpl',
-				templateUrl: 'views/casos/registro_casos.html',
+				templateUrl: 'views/vista-ejecutivo/casos/registro_casos.html',
 				data       : {
 					pageTitle: 'Gestión de Casos'
 				},
@@ -469,7 +468,7 @@ MetronicApp.config([
 								name        : 'MetronicApp',
 								insertBefore: '#ng_load_plugins_ng',
 								files       : [
-									'scripts/controllers/casos/gestioncasos.js'
+									'scripts/controllers/ejecutivo/casos/gestioncasos.js'
 								]
 							});
 						}
@@ -479,7 +478,7 @@ MetronicApp.config([
 			.state('mis-casos', {
 				url        : '/mis-casos',
 				parent     : 'tmpl',
-				templateUrl: 'views/casos/mis_casos.html',
+				templateUrl: 'views/vista-ejecutivo/casos/mis_casos.html',
 				data       : {
 					pageTitle: 'Mis Casos'
 				},
@@ -491,7 +490,7 @@ MetronicApp.config([
 								name        : 'MetronicApp',
 								insertBefore: '#ng_load_plugins_ng',
 								files       : [
-									'scripts/controllers/casos/miscasos.js'
+									'scripts/controllers/ejecutivo/casos/miscasos.js'
 								]
 							});
 						}
@@ -501,7 +500,7 @@ MetronicApp.config([
 			.state('casos/por-asignar', {
 				url        : '/casos/por-asiginar',
 				parent     : 'tmpl',
-				templateUrl: 'views/casos/casos_porasignar.html',
+				templateUrl: 'views/vista-ejecutivo/casos/casos_porasignar.html',
 				data       : {
 					pageTitle: 'Casos por asignar'
 				},
@@ -513,7 +512,7 @@ MetronicApp.config([
 								name        : 'MetronicApp',
 								insertBefore: '#ng_load_plugins_ng',
 								files       : [
-									'scripts/controllers/casos/casosporasignar.js'
+									'scripts/controllers/ejecutivo/casos/casosporasignar.js'
 								]
 							});
 						}
@@ -523,7 +522,7 @@ MetronicApp.config([
 			.state('caso', {
 				url        : '/caso/:idcaso',
 				parent     : 'tmpl',
-				templateUrl: 'views/casos/gestion_caso.html',
+				templateUrl: 'views/vista-ejecutivo/casos/gestion_caso.html',
 				data       : {
 					pageTitle: 'Detalles de caso'
 				},
@@ -544,7 +543,7 @@ MetronicApp.config([
 									name        : 'MetronicApp',
 									insertBefore: '#ng_load_plugins_ng',
 									files       : [
-										'scripts/controllers/casos/gestioncasos.js'
+										'scripts/controllers/ejecutivo/casos/gestioncasos.js'
 									]
 								},
 								{
@@ -569,7 +568,7 @@ MetronicApp.config([
 			.state('mis-tareas', {
 				url        : '/mis-tareas',
 				parent     : 'tmpl',
-				templateUrl: 'views/tareas/mis_tareas.html',
+				templateUrl: 'views/vista-ejecutivo/tareas/mis_tareas.html',
 				data       : {
 					pageTitle: 'Mis Tareas'
 				},
@@ -582,7 +581,7 @@ MetronicApp.config([
 									name        : 'MetronicApp',
 									insertBefore: '#ng_load_plugins_ng',
 									files       : [
-										'scripts/controllers/tareas/mistareas.js'
+										'scripts/controllers/ejecutivo/tareas/mistareas.js'
 									]
 								}
 							]);
@@ -593,7 +592,7 @@ MetronicApp.config([
 			.state('tareas', {
 				url        : '/tareas',
 				parent     : 'tmpl',
-				templateUrl: 'views/tareas/tareas_gestion.html',
+				templateUrl: 'views/vista-ejecutivo/tareas/tareas_gestion.html',
 				data       : {
 					pageTitle: 'Gestión de tareas'
 				},
@@ -606,7 +605,7 @@ MetronicApp.config([
 									name        : 'MetronicApp',
 									insertBefore: '#ng_load_plugins_ng',
 									files       : [
-										'scripts/controllers/tareas/gestiontareas.js'
+										'scripts/controllers/ejecutivo/tareas/gestiontareas.js'
 									]
 								}
 							]);
@@ -617,7 +616,7 @@ MetronicApp.config([
 			.state('gestion-tarea', {
 				url        : '/gestion-tarea/:idtarea',
 				parent     : 'tmpl',
-				templateUrl: 'views/tareas/tarea_gestion.html',
+				templateUrl: 'views/vista-ejecutivo/tareas/tarea_gestion.html',
 				data       : {
 					pageTitle: 'Gestión de tarea'
 				},
@@ -630,7 +629,7 @@ MetronicApp.config([
 									name        : 'MetronicApp',
 									insertBefore: '#ng_load_plugins_ng',
 									files       : [
-										'scripts/controllers/tareas/gestiontarea.js'
+										'scripts/controllers/ejecutivo/tareas/gestiontarea.js'
 									]
 								}
 							]);
@@ -647,7 +646,7 @@ MetronicApp.config([
 			.state('cotizaciones', {
 				url        : '/cotizaciones',
 				parent     : 'tmpl',
-				templateUrl: 'views/cotizaciones/cotizaciones.html',
+				templateUrl: 'views/vista-ejecutivo/cotizaciones/cotizaciones.html',
 				data       : {
 					pageTitle: 'Cotizaciones'
 				}
@@ -655,7 +654,7 @@ MetronicApp.config([
 			.state('cotizacion/nuevo', {
 				url        : '/cotizacion/nuevo',
 				parent     : 'tmpl',
-				templateUrl: 'views/cotizaciones/nueva_cotizacion.html',
+				templateUrl: 'views/vista-ejecutivo/cotizaciones/nueva_cotizacion.html',
 				data       : {
 					pageTitle: 'Nueva Cotización'
 				},
@@ -676,7 +675,7 @@ MetronicApp.config([
 									name        : 'MetronicApp',
 									insertBefore: '#ng_load_plugins_ng',
 									files       : [
-										'scripts/controllers/cotizacion/nuevacotizacion.js'
+										'scripts/controllers/ejecutivo/cotizacion/nuevacotizacion.js'
 									]
 								}
 							]);
@@ -687,7 +686,7 @@ MetronicApp.config([
 			.state('cotizaciones/pagos-revisar', {
 				url        : '/cotizaciones/pagos-revisar',
 				parent     : 'tmpl',
-				templateUrl: 'views/cotizaciones/pagos_revisar.html',
+				templateUrl: 'views/vista-ejecutivo/cotizaciones/pagos_revisar.html',
 				data       : {
 					pageTitle: 'Pagos por revisar'
 				},
@@ -699,7 +698,7 @@ MetronicApp.config([
 								name        : 'MetronicApp',
 								insertBefore: '#ng_load_plugins_ng',
 								files       : [
-									'scripts/controllers/cotizacion/revisionpagos.js'
+									'scripts/controllers/ejecutivo/cotizacion/revisionpagos.js'
 								]
 							});
 						}
@@ -710,7 +709,7 @@ MetronicApp.config([
 			.state('ejecutivos', {
 				url        : '/ejecutivos',
 				parent     : 'tmpl',
-				templateUrl: 'views/ejecutivos/ejecutivos.html',
+				templateUrl: 'views/vista-ejecutivo/ejecutivos/ejecutivos.html',
 				data       : {
 					pageTitle: 'Ejecutivos'
 				},
@@ -722,7 +721,7 @@ MetronicApp.config([
 								name        : 'EjecutivosNG',
 								insertBefore: '#ng_load_plugins_ng',
 								files       : [
-									'scripts/controllers/ejecutivos.js'
+									'scripts/controllers/ejecutivo/ejecutivos.js'
 								],
 								serie       : true
 							});
@@ -733,16 +732,20 @@ MetronicApp.config([
 			.state('ejecutivo/nuevo', {
 				url        : '/ejecutivo/nuevo',
 				parent     : 'tmpl',
-				templateUrl: 'views/ejecutivos/nuevo_ejecutivo.html',
+				templateUrl: 'views/vista-ejecutivo/ejecutivos/nuevo_ejecutivo.html',
 				data       : {
-					pageTitle: 'Nuevo ejecutivo'
+					pageTitle: 'Nuevo ejecutivo',
+					permissions: {
+						only: 'ADMIN',
+						redirectTo: 'dashboard'
+					}
 				}
 			})
 			// Eventos
 			.state('eventos', {
 				url        : '/eventos',
 				parent     : 'tmpl',
-				templateUrl: 'views/eventos/gestion_eventos.html',
+				templateUrl: 'views/vista-ejecutivo/eventos/gestion_eventos.html',
 				data       : {
 					pageTitle: 'Eventos'
 				}
@@ -750,7 +753,7 @@ MetronicApp.config([
 			.state('evento/nuevo', {
 				url        : '/evento/nuevo',
 				parent     : 'tmpl',
-				templateUrl: 'views/eventos/nuevo_evento.html',
+				templateUrl: 'views/vista-ejecutivo/eventos/nuevo_evento.html',
 				data       : {
 					pageTitle: 'Nuevo evento'
 				}
@@ -759,7 +762,7 @@ MetronicApp.config([
 			.state('productos', {
 				url        : '/productos',
 				parent     : 'tmpl',
-				templateUrl: 'views/productos/gestion_productos.html',
+				templateUrl: 'views/vista-ejecutivo/productos/gestion_productos.html',
 				data       : {
 					pageTitle: 'Productos'
 				},
@@ -772,7 +775,7 @@ MetronicApp.config([
 									name        : 'ProductosNG',
 									insertBefore: '#ng_load_plugins_ng',
 									files       : [
-										'scripts/controllers/productos/gestionproductos.js'
+										'scripts/controllers/ejecutivo/productos/gestionproductos.js'
 									]
 								}
 							]);
@@ -784,7 +787,7 @@ MetronicApp.config([
 			.state('oficinas', {
 				url        : '/gestion/oficinas',
 				parent     : 'tmpl',
-				templateUrl: 'views/gestor_general/oficinas.html',
+				templateUrl: 'views/vista-ejecutivo/gestor_general/oficinas.html',
 				data       : {
 					pageTitle: 'Oficinas'
 				},
@@ -797,7 +800,7 @@ MetronicApp.config([
 									name        : 'OficinasNG',
 									insertBefore: '#ng_load_plugins_ng',
 									files       : [
-										'scripts/controllers/gestor_general/oficinas.js'
+										'scripts/controllers/ejecutivo/gestor_general/oficinas.js'
 									]
 								}
 							]);
@@ -808,7 +811,7 @@ MetronicApp.config([
 			.state('departamentos', {
 				url        : '/gestion/departamentos',
 				parent     : 'tmpl',
-				templateUrl: 'views/gestor_general/departamentos.html',
+				templateUrl: 'views/vista-ejecutivo/gestor_general/departamentos.html',
 				data       : {
 					pageTitle: 'Departamentos'
 				},
@@ -821,7 +824,7 @@ MetronicApp.config([
 									name        : 'DepartamentosNG',
 									insertBefore: '#ng_load_plugins_ng',
 									files       : [
-										'scripts/controllers/gestor_general/departamentos.js',
+										'scripts/controllers/ejecutivo/gestor_general/departamentos.js',
 									],
 									serie       : true
 								}
@@ -833,7 +836,7 @@ MetronicApp.config([
 			.state('sistemas-contpaqi', {
 				url        : '/gestion/sistemas-contpaqi',
 				parent     : 'tmpl',
-				templateUrl: 'views/gestor_general/sistemas-contpaqi.html',
+				templateUrl: 'views/vista-ejecutivo/gestor_general/sistemas-contpaqi.html',
 				data       : {
 					pageTitle: 'Sistemas ContPAQi'
 				}
@@ -841,7 +844,7 @@ MetronicApp.config([
 			.state('sistemas-operativos', {
 				url        : '/gestion/sistemas-operativos',
 				parent     : 'tmpl',
-				templateUrl: 'views/gestor_general/sistemas-operativos.html',
+				templateUrl: 'views/vista-ejecutivo/gestor_general/sistemas-operativos.html',
 				data       : {
 					pageTitle: 'Sistemas Operativos'
 				}
@@ -849,7 +852,7 @@ MetronicApp.config([
 			.state('cuentas-bancarias', {
 				url        : '/gestion/cuentas-bancarias',
 				parent     : 'tmpl',
-				templateUrl: 'views/gestor_general/cuentas-bancarias.html',
+				templateUrl: 'views/vista-ejecutivo/gestor_general/cuentas-bancarias.html',
 				data       : {
 					pageTitle: 'Cuentas Bancarias'
 				}
@@ -857,7 +860,7 @@ MetronicApp.config([
 			.state('observaciones-pago', {
 				url        : '/gestion/observaciones-pago',
 				parent     : 'tmpl',
-				templateUrl: 'views/gestor_general/obervaciones-pago.html',
+				templateUrl: 'views/vista-ejecutivo/gestor_general/obervaciones-pago.html',
 				data       : {
 					pageTitle: 'Obervaciones de pago'
 				}
@@ -869,8 +872,8 @@ MetronicApp.config([
 			// Panel Cliente
 			.state('panel-cliente', {
 				url        : '/panel-cliente',
-				parent     : 'tmpl_cliente',
-				templateUrl: 'views/client_app/inicio/dashboard.html',
+				parent     : 'tmpl',
+				templateUrl: 'views/vista-cliente/inicio/dashboard.html',
 				data       : {
 					pageTitle: 'Bienvenido'
 				},
@@ -882,13 +885,13 @@ MetronicApp.config([
 								name        : 'MetronicApp',
 								insertBefore: '#ng_load_plugins_ng',
 								files       : [
-									'scripts/controllers/client-app/inicio/dashboard.js'
+									'scripts/controllers/cliente/inicio/dashboard.js'
 								]
 							});
 						}
 					]
 				}
-			})
+			});
 		
 		angular.extend(toastrConfig, {
 			allowHtml      : true,
@@ -915,8 +918,8 @@ MetronicApp.config([
 
 /* Init global settings and run the app */
 MetronicApp.run([
-	'$rootScope', 'settings', '$state', '$auth', '$location', 'authUser', 'PermissionStore', 'RoleStore', 'validator', 'defaultErrorMessageResolver', 'amMoment',
-	function ($rootScope, settings, $state, $auth, $location, authUser, PermissionStore, RoleStore, validator, defaultErrorMessageResolver, amMoment) {
+	'$rootScope', 'settings', '$state', '$auth', '$location', 'authUser', 'validator', 'defaultErrorMessageResolver', 'amMoment', 'PermPermissionStore', 'PermRoleStore',
+	function ($rootScope, settings, $state, $auth, $location, authUser, validator, defaultErrorMessageResolver, amMoment, PermPermissionStore, PermRoleStore) {
 		
 		$rootScope.$state    = $state; // state to be accessed from view
 		$rootScope.$settings = settings; // state to be accessed from view
@@ -927,6 +930,21 @@ MetronicApp.run([
 		
 		amMoment.changeLocale('es');
 		
+		var sesionData = authUser.getSessionData();
+		var permisos = [];
+		
+		if (sesionData != null) {
+			angular.forEach(sesionData.roles, function (value, key) {
+				angular.forEach(sesionData.roles[key].permisos, function (pValue, pKey) {
+					permisos[pKey] = pValue.nombre;
+					PermPermissionStore.definePermission(pValue.nombre, function () {
+						return true;
+					});
+				});
+				PermRoleStore.defineRole(value.nombre, permisos);
+			});
+		}
+				
 		$rootScope.$on('$stateChangeStart', function (event, toState) {
 			var requiredLogin = false;
 			// check if this state need login
@@ -944,11 +962,5 @@ MetronicApp.run([
 				$rootScope.vista     = {};
 			}
 		});
-		
-		PermissionStore.definePermission('seeDashboard', function () {
-			return true;
-		});
-		
-		RoleStore.defineRole('ADMIN', ['seeDashboard']);
 	}
 ]);

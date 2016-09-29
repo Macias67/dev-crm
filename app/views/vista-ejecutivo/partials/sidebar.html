@@ -8,6 +8,7 @@
 	<!-- DOC: Set data-keep-expand="true" to keep the submenues expanded -->
 	<!-- DOC: Set data-auto-speed="200" to adjust the sub menu slide up/down speed -->
 	<ul class = "page-sidebar-menu page-sidebar-menu-light page-sidebar-menu-compact page-sidebar-menu-hover-submenu"
+	    permission permission-only = "'vistaEjecutivo'"
 	    data-keep-expanded = "false"
 	    data-auto-scroll = "true"
 	    data-slide-speed = "200"
@@ -113,7 +114,7 @@
 			</ul>
 		</li>
 
-		<li class = "nav-item" permission permission-only = "['ADMIN']">
+		<li class = "nav-item">
 			<a href = "javascript:;" class = "nav-link nav-toggle">
 				<i class = "fa fa-user"></i>
 				<span class = "title"><b>Ejecutivos</b></span>
@@ -201,4 +202,20 @@
 		</li>
 	</ul>
 	<!-- END SIDEBAR MENU -->
+	
+	<ul class = "page-sidebar-menu page-sidebar-menu-light page-sidebar-menu-compact page-sidebar-menu-hover-submenu"
+	    permission permission-only = "'vistaCliente'"
+	    data-keep-expanded = "false"
+	    data-auto-scroll = "true"
+	    data-slide-speed = "200"
+	    ng-class = "{'page-sidebar-menu-closed': settings.layout.pageSidebarClosed}">
+		
+		<li class = "start">
+			<a href = "#/panel-cliente">
+				<i class = "icon-home"></i>
+				<span class = "title"><b>Inicio</b></span>
+				<span class = "arrow "></span>
+			</a>
+		</li>
+	</ul>
 </div>

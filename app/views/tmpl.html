@@ -1,5 +1,5 @@
 <!-- BEGIN HEADER -->
-<div data-ng-include = "'views/partials/header.html'" data-ng-controller = "HeaderController as headerCtrl" class = "page-header navbar navbar-fixed-top"></div>
+<div data-ng-include = "'views/vista-ejecutivo/partials/header.html'" data-ng-controller = "HeaderController as headerCtrl" class = "page-header navbar navbar-fixed-top"></div>
 <!-- END HEADER -->
 
 <div class = "clearfix"> </div>
@@ -8,13 +8,13 @@
 
 <div class = "page-container">
 	<!-- BEGIN SIDEBAR -->
-	<div data-ng-include = "'views/partials/sidebar.html'" data-ng-controller = "SidebarController as sidebarController" class = "page-sidebar-wrapper"> </div>
+	<div data-ng-include = "'views/vista-ejecutivo/partials/sidebar.html'" data-ng-controller = "SidebarController as sidebarController" class = "page-sidebar-wrapper"> </div>
         <!-- END SIDEBAR -->
 
 	<div class = "page-content-wrapper">
 		<div class = "page-content">
 			<!-- BEGIN STYLE CUSTOMIZER(optional) -->
-			<div data-ng-include = "'views/partials/theme-panel.html'" data-ng-controller = "ThemePanelController" class = "theme-panel hidden-xs hidden-sm"> </div>
+			<div data-ng-include = "'views/vista-ejecutivo/partials/theme-panel.html'" data-ng-controller = "ThemePanelController" class = "theme-panel hidden-xs hidden-sm"> </div>
                         <!-- END STYLE CUSTOMIZER -->
 
                         <!-- BEGIN ACTUAL CONTENT -->
@@ -26,12 +26,12 @@
 	<a href = "javascript:;" class = "page-quick-sidebar-toggler">
 		<i class = "icon-login"></i>
 	</a>
-	<div data-ng-include = "'views/partials/quick-sidebar.html'" data-ng-controller = "QuickSidebarController" class = "page-quick-sidebar-wrapper"></div>
+	<div data-ng-include = "'views/vista-ejecutivo/partials/quick-sidebar.html'" data-ng-controller = "QuickSidebarController" class = "page-quick-sidebar-wrapper"></div>
         <!-- END QUICK SIDEBAR -->
 </div>
 
 <!-- BEGIN FOOTER -->
-<div data-ng-include = "'views/partials/footer.html'" data-ng-controller = "FooterController" class = "page-footer"> </div>
+<div data-ng-include = "'views/vista-ejecutivo/partials/footer.html'" data-ng-controller = "FooterController" class = "page-footer"> </div>
 <!-- END FOOTER -->
 
 <!-- END CONTAINER -->

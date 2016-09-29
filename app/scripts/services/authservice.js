@@ -22,7 +22,8 @@ angular.module('authService', [])
 		};
 	})
 	.factory('authUser', [
-		'$rootScope', '$auth', '$state', 'sessionControl', 'NotifService', 'ngAudio', function ($rootScope, $auth, $state, sessionControl, NotifService, ngAudio) {
+		'$rootScope', '$auth', '$state', 'sessionControl', 'NotifService', 'ngAudio', 'PermPermissionStore', 'PermRoleStore',
+		function ($rootScope, $auth, $state, sessionControl, NotifService, ngAudio, PermPermissionStore, PermRoleStore) {
 			
 			var storeSession = function (data) {
 				sessionControl.set('ec_data', data);
@@ -33,6 +34,8 @@ angular.module('authService', [])
 			};
 			
 			var deleteSession = function () {
+				PermPermissionStore.clearStore();
+				PermRoleStore.clearStore();
 				sessionControl.unset('ec_data');
 			};
 			
@@ -69,25 +72,37 @@ angular.module('authService', [])
 				$auth.signup(loginForm)
 					.then(function (response) {
 						if (response != null || response != undefined) {
-							//console.log(angular.toJson(response.data.data, true));
-							$auth.setToken(response.data.data.token);
-							delete response.data.data.token;
-							storeSession(angular.toJson(response.data.data));
+							var data     = response.data.data;
+							var permisos = [];
+							
+							angular.forEach(data.roles, function (value, key) {
+								angular.forEach(data.roles[key].permisos, function (pValue, pKey) {
+									permisos[pKey] = pValue.nombre;
+									PermPermissionStore.definePermission(pValue.nombre, function () {
+										return true;
+									});
+								});
+								PermRoleStore.defineRole(value.nombre, permisos);
+							});
+							
+							$auth.setToken(data.token);
+							delete data.token;
+							storeSession(angular.toJson(data));
 							
 							setTimeout(function () {
 								App.unblockUI();
-								if (response.data.data.esCliente) {
-									$state.go('panel-cliente');
-								}
-								else {
+								if (data.ejecutivo != null) {
 									$state.go('dashboard');
+								}
+								else if (data.cliente != null) {
+									$state.go('panel-cliente');
 								}
 								ngAudio.load('sounds/intro.mp3').play();
 							}, 3000);
 						}
 					})
 					.catch(function (response) {
-// 						console.log(response);
+						console.log(response);
 // 						App.unblockUI();
 // 						deleteSession();
 // 						NotifService.error(error.data.message, 'Ups...');
