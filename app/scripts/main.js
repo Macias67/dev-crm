@@ -233,8 +233,9 @@ MetronicApp.service('interceptor', [
 				var $state = $injector.get('$state');
 				
 				if (response.status == 500) {
-					App.unblockUI('#ui-view');
+					App.unblockUI();
 					NotifService.error(response.data.message, 'Error ' + response.statusText);
+					console.error(response.data.message);
 				}
 				
 				if (response.status == 401) {
@@ -242,11 +243,6 @@ MetronicApp.service('interceptor', [
 					App.unblockUI('#ui-view');
 					App.unblockUI();
 				}
-
-// 				var toastr = $injector.get('toastr');
-// 				var $state = $injector.get('$state');
-// 				toastr.error(response.data.message, 'Error ' + response.data.status_code);
-// 				$state.go('dashboard');
 
 // 				if (response.hasOwnProperty('error') && response.error == "token_expired") {
 //
@@ -734,11 +730,7 @@ MetronicApp.config([
 				parent     : 'tmpl',
 				templateUrl: 'views/vista-ejecutivo/ejecutivos/nuevo_ejecutivo.html',
 				data       : {
-					pageTitle: 'Nuevo ejecutivo',
-					permissions: {
-						only: 'ADMIN',
-						redirectTo: 'dashboard'
-					}
+					pageTitle: 'Nuevo ejecutivo'
 				}
 			})
 			// Eventos

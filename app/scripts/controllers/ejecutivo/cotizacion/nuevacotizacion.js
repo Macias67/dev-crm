@@ -144,7 +144,7 @@ angular.module('MetronicApp')
 				openModalNuevoCliente: function (idCliente) {
 					$uibModal.open({
 						backdrop   : 'static',
-						templateUrl: 'views/clientes/modal/form_nuevo_contacto.html',
+						templateUrl: 'views/vista-ejecutivo/clientes/modal/form_nuevo_contacto.html',
 						controller : 'NuevoContactoCtrl as nuevoContactoCtrl',
 						resolve    : {
 							idCliente: idCliente
