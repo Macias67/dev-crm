@@ -9,14 +9,14 @@
  */
 angular.module('MetronicApp')
 	.controller('DashboardCtrl', [
-		'$scope', '$rootScope', 'CRM_APP', 'DTOptionsBuilder', 'DTColumnBuilder', '$compile', 'authUser',
-		function ($scope, $rootScope, CRM_APP, DTOptionsBuilder, DTColumnBuilder, $compile, authUser) {
+		'$scope', '$rootScope', 'CRM_APP', 'DTOptionsBuilder', 'DTColumnBuilder', '$compile', 'authUser', '$uibModal',
+		function ($scope, $rootScope, CRM_APP, DTOptionsBuilder, DTColumnBuilder, $compile, authUser, $uibModal) {
 			var vm = this;
 			
 			vm.tableCotizaciones = {
 				dtInstance: {},
 				dtOptions : DTOptionsBuilder.fromSource(CRM_APP.url + 'cotizaciones?estatus=1')
-						.withFnServerData(function (sSource, aoData, fnCallback, oSettings) {
+					.withFnServerData(function (sSource, aoData, fnCallback, oSettings) {
 						oSettings.jqXHR = $.ajax({
 							'dataType'  : 'json',
 							'type'      : 'GET',
@@ -30,16 +30,16 @@ angular.module('MetronicApp')
 							}
 						});
 					})
-						.withLanguageSource('//cdn.datatables.net/plug-ins/1.10.11/i18n/Spanish.json')
-						.withDataProp('data')
-						.withOption('createdRow', function (row, data, dataIndex) {
+					.withLanguageSource('//cdn.datatables.net/plug-ins/1.10.11/i18n/Spanish.json')
+					.withDataProp('data')
+					.withOption('createdRow', function (row, data, dataIndex) {
 						// Recompiling so we can bind Angular directive to the DT
 						$compile(angular.element(row).contents())($scope);
 					})
-						.withOption('fnRowCallback', function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-						})
-						.withPaginationType('bootstrap_full_number')
-						.withBootstrap(),
+					.withOption('fnRowCallback', function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+					})
+					.withPaginationType('bootstrap_full_number')
+					.withBootstrap(),
 				
 				dtColumns        : [
 					DTColumnBuilder.newColumn('id').withTitle('Folio').withOption('sWidth', '10%'),
@@ -73,7 +73,7 @@ angular.module('MetronicApp')
 						overlayColor: App.getBrandColor('grey')
 					});
 					
-					vm.tablePagos.dtInstance.reloadData();
+					vm.tableCotizaciones.dtInstance.reloadData();
 					
 					setTimeout(function () {
 						App.unblockUI('#tablePagos');

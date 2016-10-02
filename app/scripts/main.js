@@ -129,8 +129,7 @@ MetronicApp.factory('settings', [
 /* Setup App Main Controller */
 MetronicApp.controller('AppController', [
 	'$scope', '$rootScope', 'CotizacionFB', function ($scope, $rootScope, CotizacionFB) {
-		CotizacionFB.notifCasoPorAsignar();
-		
+		//CotizacionFB.notifCasoPorAsignar();
 		
 		$scope.$on('$viewContentLoaded', function () {
 			App.initComponents(); // init core components
@@ -234,14 +233,17 @@ MetronicApp.service('interceptor', [
 				
 				if (response.status == 500) {
 					App.unblockUI();
+					App.unblockUI('#ui-view');
+					
 					NotifService.error(response.data.message, 'Error ' + response.statusText);
 					console.error(response.data.message);
 				}
 				
 				if (response.status == 401) {
-					NotifService.error(response.data.message, 'Error ' + response.data.status_code);
-					App.unblockUI('#ui-view');
 					App.unblockUI();
+					App.unblockUI('#ui-view');
+					
+					NotifService.error(response.data.message, 'Error ' + response.data.status_code);
 				}
 
 // 				if (response.hasOwnProperty('error') && response.error == "token_expired") {
