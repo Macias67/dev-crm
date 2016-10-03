@@ -229,7 +229,7 @@ MetronicApp.service('interceptor', [
 			
 			responseError: function (response) {
 				var NotifService = $injector.get('NotifService');
-				var $state = $injector.get('$state');
+				var $state       = $injector.get('$state');
 				
 				if (response.status == 500) {
 					App.unblockUI();
@@ -269,7 +269,7 @@ MetronicApp.config([
 		$httpProvider.defaults.useXDomain = true;
 		
 		//$authProvider.loginUrl    = 'http://api.crm/api/auth';
-		$authProvider.signupUrl       = 'http://api.crm/api/auth';
+		$authProvider.signupUrl       = CRM_APP.url + 'auth';
 		$authProvider.tokenName       = 'token';
 		$authProvider.tokenPrefix     = 'crm';
 		$authProvider.httpInterceptor = function () {
@@ -284,7 +284,7 @@ MetronicApp.config([
 		});
 		
 		$stateProvider
-			// Login
+		// Login
 			.state('login', {
 				url        : '/login',
 				templateUrl: 'views/login.html',
@@ -347,7 +347,7 @@ MetronicApp.config([
 				},
 				abstract   : true
 			})
-						
+			
 			/**
 			 * Vistas del CRM
 			 */
@@ -925,7 +925,7 @@ MetronicApp.run([
 		amMoment.changeLocale('es');
 		
 		var sesionData = authUser.getSessionData();
-		var permisos = [];
+		var permisos   = [];
 		
 		if (sesionData != null) {
 			angular.forEach(sesionData.roles, function (value, key) {
@@ -938,7 +938,7 @@ MetronicApp.run([
 				PermRoleStore.defineRole(value.nombre, permisos);
 			});
 		}
-				
+		
 		$rootScope.$on('$stateChangeStart', function (event, toState) {
 			var requiredLogin = false;
 			// check if this state need login

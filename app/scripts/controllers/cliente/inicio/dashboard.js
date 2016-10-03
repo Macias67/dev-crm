@@ -15,12 +15,12 @@ angular.module('MetronicApp')
 			
 			vm.tableCotizaciones = {
 				dtInstance: {},
-				dtOptions : DTOptionsBuilder.fromSource(CRM_APP.url + 'cotizaciones?estatus=1')
+				dtOptions : DTOptionsBuilder.fromSource(CRM_APP.url + 'cotizaciones?estatus=2&cliente=1')
 					.withFnServerData(function (sSource, aoData, fnCallback, oSettings) {
 						oSettings.jqXHR = $.ajax({
 							'dataType'  : 'json',
 							'type'      : 'GET',
-							'url'       : CRM_APP.url + 'cotizaciones?estatus=1',
+							'url'       : CRM_APP.url + 'cotizaciones?estatus=2&cliente=1',
 							'data'      : aoData,
 							'success'   : fnCallback,
 							'beforeSend': function (xhr) {
@@ -68,15 +68,16 @@ angular.module('MetronicApp')
 				reloadTable      : function () {
 					
 					App.blockUI({
-						target      : '#tablePagos',
+						target      : '#tableCotizaciones',
 						animate     : true,
 						overlayColor: App.getBrandColor('grey')
 					});
 					
+					
 					vm.tableCotizaciones.dtInstance.reloadData();
 					
 					setTimeout(function () {
-						App.unblockUI('#tablePagos');
+						App.unblockUI('#tableCotizaciones');
 					}, 1500);
 				},
 				openModalInfoPago: function (id) {
