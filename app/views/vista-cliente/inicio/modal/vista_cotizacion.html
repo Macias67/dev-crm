@@ -1,0 +1,200 @@
+<div class = "modal-header">
+	<button type = "button" class = "close" aria-hidden = "true" ng-click = "revisaCotizacionCtrl.cancel()"></button>
+	<h4 class = "modal-title font-green-sharp"><i class = "fa file-pdf-o"></i> Cotización #{{revisaCotizacionCtrl.cotizacion.id}} </h4>
+</div>
+<div class = "modal-body">
+	<h4 class = "page-title"> {{revisaCotizacionCtrl.cotizacion.cliente.razonsocial}}
+		<span class = "badge bg-yellow-casablanca bg-font-yellow-casablanca badge-roundless" ng-if = "revisaCotizacionCtrl.cotizacion.cliente.distribuidor"><b>Distribuidor</b></span>
+	</h4>
+	
+	<div class = "row">
+		<div class = "col-lg-6 col-md-6 col-sm-6 col-xs-12">
+			<a class = "dashboard-stat red" href = "#">
+				<div class = "visual">
+					<i class = "fa fa-dollar"></i>
+				</div>
+				<div class = "details">
+					<div class = "number">
+						<span data-counter = "counterup" data-value = "1349">$ {{revisaCotizacionCtrl.cotizacion.total | number:2}}</span>
+					</div>
+					<div class = "desc"> Total Cotización </div>
+				</div>
+			</a>
+		</div>
+		<div class = "col-lg-6 col-md-6 col-sm-6 col-xs-12">
+			<a class = "dashboard-stat green" href = "#">
+				<div class = "visual">
+					<i class = "fa fa-history"></i>
+				</div>
+				<div class = "details">
+					<div class = "number">
+						<span data-counter = "counterup" data-value = "549">0</span>
+					</div>
+					<div class = "desc"> Pagos</div>
+				</div>
+			</a>
+		</div>
+	</div>
+	
+	<div class = "row" ng-if = "revisaCotizacionCtrl.cotizacion.cxc">
+		<div class = "col-md-12">
+			<div class = "alert alert-danger">
+                              Esta cotización es una <strong>Cuenta por Cobrar</strong>.
+			</div>
+		</div>
+	</div>
+			
+	<div class = "row">
+		<div class = "col-md-5">
+			<div class = "col-md-12">
+				<h4 class = "form-section">Información de la cotización</h4>
+				<div class = "row static-info">
+					<div class = "col-md-4 name"> Ejecutivo: </div>
+					<div class = "col-md-8 value"> {{revisaCotizacionCtrl.cotizacion.ejecutivo.nombre}} </div>
+                                </div>
+				<div class = "row static-info">
+					<div class = "col-md-4 name"> Fecha: </div>
+					<div class = "col-md-8 value">{{revisaCotizacionCtrl.cotizacion.fecha | amFromUnix | amDateFormat:'dddd, DD [de] MMMM [del] YYYY'}} </div>
+                                </div>
+				<div class = "row static-info">
+					<div class = "col-md-4 name"> Hora: </div>
+					<div class = "col-md-8 value">{{revisaCotizacionCtrl.cotizacion.fecha | amFromUnix | amDateFormat:'[A las] h:mm:ss A'}} </div>
+                                </div>
+				<div class = "row static-info">
+					<div class = "col-md-4 name"> Vencimiento: </div>
+					<div class = "col-md-8 value" am-time-ago = "revisaCotizacionCtrl.cotizacion.vencimiento | amFromUnix"></div>
+                                </div>
+				
+				<hr>
+				
+				<h4 class = "form-section"> Contacto  </h4>
+				<div class = "row static-info">
+					<div class = "col-md-4 name"> Nombre: </div>
+					<div class = "col-md-8 value">  {{revisaCotizacionCtrl.cotizacion.contacto.nombre}} </div>
+                                </div>
+				<div class = "row static-info">
+					<div class = "col-md-4 name"> Teléfono: </div>
+					<div class = "col-md-8 value">  {{revisaCotizacionCtrl.cotizacion.contacto.telefono | telefono}} </div>
+                                </div>
+				<div class = "row static-info">
+					<div class = "col-md-4 name"> Email: </div>
+					<div class = "col-md-8 value">  {{revisaCotizacionCtrl.cotizacion.contacto.email}} </div>
+                                </div>
+				<div class = "row static-info">
+					<div class = "col-md-4 name"> Estatus: </div>
+					<div class = "col-md-8 value">
+						<span class = "badge bg-green-jungle bg-font-green-jungle badge-roundless" ng-if = "revisaCotizacionCtrl.cotizacion.contacto.online">
+							<b>Activo</b>
+						</span>
+						<span class = "badge bg-red-mint bg-font-red-mint badge-roundless" ng-if = "!revisaCotizacionCtrl.cotizacion.contacto.online">
+							<b>Inactivo</b>
+						</span>
+					</div>
+                                </div>
+				
+				<hr>
+				
+				<h4 class = "form-section"> Oficina  </h4>
+				<div class = "row static-info">
+					<div class = "col-md-4 name"> Teléfono: </div>
+					<div class = "col-md-8 value">  {{revisaCotizacionCtrl.cotizacion.oficina.telefonos | telefono}} </div>
+                                </div>
+				<div class = "row static-info">
+					<div class = "col-md-4 name"> Ciudad: </div>
+					<div class = "col-md-8 value">  {{revisaCotizacionCtrl.cotizacion.oficina.ciudad}} </div>
+                                </div>
+				<div class = "row static-info">
+					<div class = "col-md-4 name"> Estado: </div>
+					<div class = "col-md-8 value">  {{revisaCotizacionCtrl.cotizacion.oficina.estado}} </div>
+                                </div>
+			</div>
+		</div>
+		<div class = "col-md-7">
+			<div class = "col-md-12">
+				<button class = "btn blue btn-block btn-outline">
+					<i class = "fa fa-file-pdf-o"></i> Descargar PDF
+				</button>
+			</div>
+			<hr>
+			<div class = "col-md-12">
+				<h4 class = "form-section">Detalle cotización</h4>
+				<div class = "table-scrollable table-scrollable-borderless">
+					<table class = "table table-hover table-light">
+						<thead>
+							<tr>
+								<th> Código </th>
+								<th> Producto </th>
+								<th> Subtotal </th>
+								<th> I.V.A. </th>
+								<th> Total </th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat = "producto in revisaCotizacionCtrl.cotizacion.productos">
+								<td> {{producto.codigo}} </td>
+								<td> {{producto.nombre}} </td>
+								<td> $ {{producto.subtotal | number:2}} </td>
+								<td> $ {{producto.iva | number:2}} </td>
+								<td>
+									<b>$ {{producto.total | number:2}} </b>
+								</td>
+							</tr>
+						</tbody>
+						<tfoot>
+							<tr>
+								<td><b>TOTAL: </b></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td>
+									<span class = "label label-sm label-danger"> <b>$ {{revisaCotizacionCtrl.cotizacion.total | number:2}} </b></span>
+								</td>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+			</div>
+			<div class = "col-md-12">
+				<h4 class = "form-section">Subir comprobante de pago</h4>
+				<div class = "portlet-body form">
+					<form name = "subepago">
+						<div class = "form-group">
+							<div class = "alert alert-danger" ng-show = "subepago.file.$error.maxSize">
+								<strong>Error</strong> Archivo demsiado grande {{errorFile.size / 1000000|number:1}}MB: max 2M
+							</div>
+							<input type = "file" ngf-select
+							       ng-model = "revisaCotizacionCtrl.formArchivos.archivo"
+							       ngf-model-invalid = "errorFile"
+							       ngf-accept = "'application/pdf, image/*'"
+							       ngf-pattern = "'.pdf,image/*'"
+							       name = "file"
+							       ngf-max-size = "2MB"
+							       required>
+							<p class = "help-block"> Solo imagenes y archivos PDF, menores a 2MB. </p>
+						</div>
+						<div class = "form-group">
+							<label>Comentarios</label>
+							<textarea class = "form-control" rows = "2" ng-model = "revisaCotizacionCtrl.formArchivos.comentarios"></textarea>
+						</div>
+						<div class = "progress progress-striped active" ng-show = "revisaCotizacionCtrl.formArchivos.archivo != null">
+							<div class = "progress-bar progress-bar-info" role = "progressbar" aria-valuenow = "{{revisaCotizacionCtrl.progress}}" aria-valuemin = "0" aria-valuemax = "100" ng-style = "{width: revisaCotizacionCtrl.progress+'%'}">
+								<span class = "sr-only"> {{revisaCotizacionCtrl.progress}}% Complete (success) </span>
+							</div>
+						</div>
+						<div class = "form-group">
+							<button class = "btn green-jungle btn-sm" ladda = "revisaCotizacionCtrl.uploading" data-style = "expand-right"
+							        ng-disabled = "!subepago.$valid"
+							        ng-click = "revisaCotizacionCtrl.uploadFiles()">
+								<b><i class = "fa fa-save"></i>  Añade comprobante</b>
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--{{revisaCotizacionCtrl.cotizacion | json}}-->
+</div>
+<div class = "modal-footer">
+	<button class = "btn grey-mint btn-outline" ng-click = "revisaCotizacionCtrl.cancel()">Cerrar</button>
+</div>

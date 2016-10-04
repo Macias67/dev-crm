@@ -9,8 +9,8 @@
  */
 angular.module('MetronicApp')
 	.controller('DashboardCtrl', [
-		'$scope', '$rootScope', 'CRM_APP', 'DTOptionsBuilder', 'DTColumnBuilder', '$compile', 'authUser', '$uibModal',
-		function ($scope, $rootScope, CRM_APP, DTOptionsBuilder, DTColumnBuilder, $compile, authUser, $uibModal) {
+		'$scope', '$rootScope', 'CRM_APP', 'DTOptionsBuilder', 'DTColumnBuilder', '$compile', 'authUser', '$uibModal', 'Cotizacion',
+		function ($scope, $rootScope, CRM_APP, DTOptionsBuilder, DTColumnBuilder, $compile, authUser, $uibModal, Cotizacion) {
 			var vm = this;
 			
 			vm.tableCotizaciones = {
@@ -52,16 +52,14 @@ angular.module('MetronicApp')
 						}
 					}),
 					DTColumnBuilder.newColumn('null').withTitle('Se cotizó').renderWith(function (data, type, full) {
-						var fecha = moment(full.fecha);
-						return '<span am-time-ago="' + fecha + ' "></span>';
+						return '<span am-time-ago="' + full.fecha + '  | amFromUnix"></span>';
 					}),
 					DTColumnBuilder.newColumn('null').withTitle('Vencimiento').renderWith(function (data, type, full) {
-						var fecha = moment(full.vencimiento);
-						return '<span am-time-ago="' + fecha + ' " class="bold"></span>';
+						return '<span am-time-ago="' + full.vencimiento + ' | amFromUnix" class="bold"></span>';
 					}),
 					DTColumnBuilder.newColumn(null).notSortable().renderWith(function (data, type, full, meta) {
 						return '<button ng-click="dashboardCtrl.tableCotizaciones.openModalInfoPago(' + data.id + ')" class="btn btn-xs yellow-casablanca" type="button">' +
-							'<i class="fa fa-check"></i>&nbsp;Revisar' +
+							'<i class="fa fa-search"></i>&nbsp;Revisar' +
 							'</button>';
 					}).withOption('sWidth', '14%')
 				],
@@ -94,8 +92,8 @@ angular.module('MetronicApp')
 						App.unblockUI('#ui-view');
 						$uibModal.open({
 							backdrop   : 'static',
-							templateUrl: 'modalRevision.html',
-							controller : 'ModalRevisaCtrl as modalRevisaCtrl',
+							templateUrl: 'views/vista-cliente/inicio/modal/vista_cotizacion.html',
+							controller : 'RevisaCotizacionCtrl as revisaCotizacionCtrl',
 							size       : 'lg',
 							resolve    : {
 								dtCotizacion: cotizacion.data
@@ -120,5 +118,57 @@ angular.module('MetronicApp')
 			$rootScope.settings.layout.pageContentWhite  = false;
 			$rootScope.settings.layout.pageBodySolid     = false;
 			$rootScope.settings.layout.pageSidebarClosed = true;
+		}
+	])
+	.controller('RevisaCotizacionCtrl', [
+		'$scope', '$rootScope', '$uibModalInstance', 'dtCotizacion', '$filter', function ($scope, $rootScope, $uibModalInstance, dtCotizacion, $filter) {
+			var vm        = this;
+			vm.cotizacion = dtCotizacion;
+			vm.uploading  = false;
+			vm.progress   = 0;
+			
+			vm.formArchivos = {
+				archivo    : null,
+				comentarios: ''
+			};
+			
+			vm.uploadFiles = function () {
+				console.log(vm.formArchivos);
+				
+				var metadata = {
+					customMetadata: {
+						'cotizacion_id': vm.cotizacion.id
+					}
+				};
+				
+				var storageRef = firebase.storage().ref('comprobantes');
+				var uploadTask = storageRef.child(vm.formArchivos.archivo.name).put(vm.formArchivos.archivo, metadata);
+				vm.uploading   = true;
+				uploadTask.on('state_changed', function (snapshot) {
+					// Observe state change events such as progress, pause, and resume
+					// See below for more detail
+					var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+					$scope.$apply(function () {
+						vm.progress = $filter('number')(progress, 0);
+					});
+				}, function (error) {
+					// Handle unsuccessful uploads
+					$scope.$apply(function () {
+						vm.uploading = false;
+					});
+				}, function () {
+					// Handle successful uploads on complete
+					// For instance, get the download URL: https://firebasestorage.googleapis.com/...
+					var downloadURL = uploadTask.snapshot.downloadURL;
+					console.log(downloadURL);
+					$scope.$apply(function () {
+						vm.uploading = false;
+					});
+				});
+			};
+			
+			vm.cancel = function () {
+				$uibModalInstance.dismiss('cancel');
+			};
 		}
 	]);
