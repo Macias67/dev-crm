@@ -37,13 +37,15 @@ angular.module('MetronicApp')
 						}
 					}),
 					DTColumnBuilder.newColumn('null').withTitle('Se cotizó').renderWith(function (data, type, full) {
-						var fecha = moment(full.fecha);
-						return '<span am-time-ago="' + fecha + ' "></span>';
+						return '<span am-time-ago="' + full.fecha + '  | amFromUnix"></span>';
 					}),
 					DTColumnBuilder.newColumn('null').withTitle('Se comprobó').renderWith(function (data, type, full) {
-						return '<span am-time-ago="' + moment(full.pagos[0].fecha) + ' "></span>';
+						return '<span am-time-ago="' + full.pagos[0].fecha + '  | amFromUnix"></span>';
 					}),
-					DTColumnBuilder.newColumn(null).withTitle('Total archivos').renderWith(totalArchivos).withOption('sWidth', '20%'),
+					DTColumnBuilder.newColumn(null).withTitle('Total archivos').renderWith(totalArchivos),
+					DTColumnBuilder.newColumn('null').withTitle('Estatus').renderWith(function (data, type, full) {
+						return full.estatus.estatus;
+					}).withOption('sWidth', '20%'),
 					DTColumnBuilder.newColumn(null).notSortable().renderWith(actionsHtml).withOption('sWidth', '14%'),
 				]
 			};
@@ -178,11 +180,12 @@ angular.module('MetronicApp')
 					zIndex      : 99999
 				});
 				
-				Pago.valida({idCotizacion: vm.cotizacion.id, id: idPago}, {valido: true}, function (response) {
+				var pago = new Pago({valido: true});
+				pago.$valida({idCotizacion: vm.cotizacion.id, id: idPago}).then(function (response) {
 					if (response.hasOwnProperty('errors')) {
 						for (var key in response.errors) {
 							if (response.errors.hasOwnProperty(key)) {
-								NotifService.error(response.errors[key][0], 'Hay errores con la cotización.');
+								NotifService.error(response.errors[key][0], 'Hay errores con los datos.');
 							}
 						}
 						App.unblockUI('#ui-view');
@@ -191,30 +194,34 @@ angular.module('MetronicApp')
 						vm.cotizacion.pagos[index].valido = true;
 						App.unblockUI('#ui-view');
 						App.scrollTop();
-						NotifService.info('Se ha registrado correctamente el pago.', 'Se ha validado el pago.');
+						
+						NotifService.info('Se ha validado correctamente el pago.', 'Pago validado con éxito.');
 						$rootScope.$broadcast('reloadTable');
 					}
 					else {
 						setTimeout(function () {
 							$uibModalInstance.dismiss('cancel');
 							App.unblockUI('#ui-view');
+							App.scrollTop();
+							$rootScope.$broadcast('reloadTable');
 							
-							//referencia nueva
-							var cotizacion = CotizacionFB.toObject(CotizacionFB.refObject(response.data.id));
-							cotizacion.cliente = {
-								id: response.data.cliente.id,
-								razonsocial: response.data.cliente.razonsocial,
-								email: response.data.cliente.email
-							};
+							var msj = '';
+							// Abonada
+							if (response.data.cotizacion.estatus.id == 5) {
+								msj = 'La cotización se encuentra <b>abonada</b> y se ha abierto el caso en espera de líder.'
+							}
+							else if (response.data.cotizacion.estatus.id == 4) {
+								// Pagada
+								msj = 'La cotización se encuentra <b>pagada</b> y se ha abierto el caso en espera de líder.'
+							}
+							NotifService.success(msj, 'Pago validado con éxito.');
 							
-							// Guarda actualiza
-							cotizacion.$save().then(function (ref) {
-								$uibModalInstance.close();
-								$rootScope.$broadcast('reloadTable');
-								NotifService.success('La cotización se encuentra pagada y se ha abierto el caso en espera de líder.', 'Pago validado con éxito.');
-							});
 						}, 1000);
 					}
+				}, function (response) {
+					$uibModalInstance.close();
+					NotifService.error(response.data.message, 'ERROR ' + response.status);
+					console.error(response.data.message, response.statusText, response.status);
 				});
 			};
 			

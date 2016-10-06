@@ -157,7 +157,7 @@
 			<div class = "col-md-12">
 				<h4 class = "form-section">Subir comprobante de pago</h4>
 				<div class = "portlet-body form">
-					<form name = "subepago">
+					<form name = "subepago" id="subeform">
 						<div class = "form-group">
 							<div class = "alert alert-danger" ng-show = "subepago.file.$error.maxSize">
 								<strong>Error</strong> Archivo demsiado grande {{errorFile.size / 1000000|number:1}}MB: max 2M
@@ -171,6 +171,20 @@
 							       ngf-max-size = "2MB"
 							       required>
 							<p class = "help-block"> Solo imagenes y archivos PDF, menores a 2MB. </p>
+						</div>
+						<div class="form-group">
+							<label>Tipo de Pago</label>
+							<select class="form-control input-sm" ng-model="revisaCotizacionCtrl.formArchivos.pago" ng-change="revisaCotizacionCtrl.total()">
+								<option value="abono">Abono</option>
+								<option value="total">Pago total</option>
+							</select>
+						</div>
+						<div class="form-group" ng-show="revisaCotizacionCtrl.formArchivos.pago == 'abono'">
+							<label>Cantidad a abonar</label>
+							<div class="input-icon input-icon-lg">
+								<i class="fa fa-dollar"></i>
+								<input type="text" class="form-control input-lg" ng-model="revisaCotizacionCtrl.formArchivos.cantidad" mask="9?9?9?9?9?9?.99" restrict="reject" validate="false">
+							</div>
 						</div>
 						<div class = "form-group">
 							<label>Comentarios</label>

@@ -15,12 +15,12 @@ angular.module('MetronicApp')
 			
 			vm.tableCotizaciones = {
 				dtInstance: {},
-				dtOptions : DTOptionsBuilder.fromSource(CRM_APP.url + 'cotizaciones?estatus=2&cliente=1')
+				dtOptions : DTOptionsBuilder.fromSource(CRM_APP.url + 'cotizaciones?estatus=1&cliente=1')
 					.withFnServerData(function (sSource, aoData, fnCallback, oSettings) {
 						oSettings.jqXHR = $.ajax({
 							'dataType'  : 'json',
 							'type'      : 'GET',
-							'url'       : CRM_APP.url + 'cotizaciones?estatus=2&cliente=1',
+							'url'       : CRM_APP.url + 'cotizaciones?estatus=1&cliente=1',
 							'data'      : aoData,
 							'success'   : fnCallback,
 							'beforeSend': function (xhr) {
@@ -57,6 +57,9 @@ angular.module('MetronicApp')
 					DTColumnBuilder.newColumn('null').withTitle('Vencimiento').renderWith(function (data, type, full) {
 						return '<span am-time-ago="' + full.vencimiento + ' | amFromUnix" class="bold"></span>';
 					}),
+					DTColumnBuilder.newColumn('null').withTitle('Estatus').renderWith(function (data, type, full) {
+						return full.estatus.estatus;
+					}),
 					DTColumnBuilder.newColumn(null).notSortable().renderWith(function (data, type, full, meta) {
 						return '<button ng-click="dashboardCtrl.tableCotizaciones.openModalInfoPago(' + data.id + ')" class="btn btn-xs yellow-casablanca" type="button">' +
 							'<i class="fa fa-search"></i>&nbsp;Revisar' +
@@ -64,16 +67,12 @@ angular.module('MetronicApp')
 					}).withOption('sWidth', '14%')
 				],
 				reloadTable      : function () {
-					
 					App.blockUI({
 						target      : '#tableCotizaciones',
 						animate     : true,
 						overlayColor: App.getBrandColor('grey')
 					});
-					
-					
 					vm.tableCotizaciones.dtInstance.reloadData();
-					
 					setTimeout(function () {
 						App.unblockUI('#tableCotizaciones');
 					}, 1500);
@@ -87,7 +86,6 @@ angular.module('MetronicApp')
 						overlayColor: App.getBrandColor('grey'),
 						zIndex      : 99999
 					});
-					
 					var cotizacion = Cotizacion.get({id: id}, function () {
 						App.unblockUI('#ui-view');
 						$uibModal.open({
@@ -108,6 +106,10 @@ angular.module('MetronicApp')
 				App.initAjax();
 			});
 			
+			$scope.$on('reloadTable', function () {
+				vm.tableCotizaciones.reloadTable();
+			});
+			
 			//Nombres
 			$rootScope.vista = {
 				titulo   : 'Bienvenido',
@@ -121,7 +123,15 @@ angular.module('MetronicApp')
 		}
 	])
 	.controller('RevisaCotizacionCtrl', [
-		'$scope', '$rootScope', '$uibModalInstance', 'dtCotizacion', '$filter', function ($scope, $rootScope, $uibModalInstance, dtCotizacion, $filter) {
+		'$scope',
+		'$rootScope',
+		'$uibModalInstance',
+		'dtCotizacion',
+		'$filter',
+		'Pago',
+		'authUser',
+		'NotifService',
+		function ($scope, $rootScope, $uibModalInstance, dtCotizacion, $filter, Pago, authUser, NotifService) {
 			var vm        = this;
 			vm.cotizacion = dtCotizacion;
 			vm.uploading  = false;
@@ -129,21 +139,32 @@ angular.module('MetronicApp')
 			
 			vm.formArchivos = {
 				archivo    : null,
+				pago       : 'total',
+				cantidad   : 0,
 				comentarios: ''
 			};
 			
+			vm.total = function () {
+				if (vm.formArchivos.pago == 'total') {
+					vm.formArchivos.cantidad = vm.cotizacion.total;
+				}
+			};
+			
 			vm.uploadFiles = function () {
-				console.log(vm.formArchivos);
-				
 				var metadata = {
 					customMetadata: {
 						'cotizacion_id': vm.cotizacion.id
 					}
 				};
 				
-				var storageRef = firebase.storage().ref('comprobantes');
+				var storageRef = firebase.storage().ref('comprobantes/' + vm.cotizacion.id);
 				var uploadTask = storageRef.child(vm.formArchivos.archivo.name).put(vm.formArchivos.archivo, metadata);
 				vm.uploading   = true;
+				App.blockUI({
+					target : '#subeform',
+					animate: true,
+					zIndex : 99999
+				});
 				uploadTask.on('state_changed', function (snapshot) {
 					// Observe state change events such as progress, pause, and resume
 					// See below for more detail
@@ -159,10 +180,67 @@ angular.module('MetronicApp')
 				}, function () {
 					// Handle successful uploads on complete
 					// For instance, get the download URL: https://firebasestorage.googleapis.com/...
-					var downloadURL = uploadTask.snapshot.downloadURL;
-					console.log(downloadURL);
-					$scope.$apply(function () {
-						vm.uploading = false;
+					
+					var pagoData = {
+						cotizacion_id: vm.cotizacion.id,
+						contacto_id  : authUser.getSessionData().id,
+						cantidad     : vm.formArchivos.cantidad,
+						tipo         : vm.formArchivos.pago,
+						comentario   : vm.formArchivos.comentarios,
+						archivo      : {
+							url        : uploadTask.snapshot.downloadURL,
+							contentType: uploadTask.snapshot.metadata.contentType,
+							fullPath   : uploadTask.snapshot.metadata.fullPath,
+							hash       : uploadTask.snapshot.metadata.md5Hash,
+							name       : uploadTask.snapshot.metadata.name,
+							size       : uploadTask.snapshot.metadata.size
+						}
+					};
+					var pago     = new Pago(pagoData);
+					pago.$save({idCotizacion: vm.cotizacion.id}).then(function (response) {
+						if (response.hasOwnProperty('errors')) {
+							for (var key in response.errors) {
+								if (response.errors.hasOwnProperty(key)) {
+									NotifService.error(response.errors[key][0], 'Error con el formulario.');
+								}
+							}
+							App.unblockUI('#subeform');
+						}
+						else {
+							if (response.$resolved) {
+								$uibModalInstance.close();
+								setTimeout(function () {
+									App.unblockUI('#subeform');
+									$scope.$apply(function () {
+										vm.uploading = false;
+									});
+									$rootScope.$broadcast('reloadTable');
+									NotifService.success('El pago se ha subido con éxito para su verficación.', 'Pago subido con éxito');
+								}, 1000);
+							}
+							else {
+								console.log(response);
+								console.log(response.data);
+								console.log(response.status);
+								console.log(response.headers);
+								console.log(response.config);
+								console.log(response.statusText);
+							}
+						}
+					}, function (response) {
+						App.unblockUI('#subeform');
+						// Create a reference to the file to delete
+						var desertRef = storageRef.child(uploadTask.snapshot.metadata.name);
+						// Delete the file
+						desertRef.delete().then(function() {
+							// File deleted successfully
+						}).catch(function(error) {
+							// Uh-oh, an error occurred!
+						});
+						
+						$uibModalInstance.close();
+						NotifService.error(response.data.message, 'ERROR ' + response.status);
+						console.error(response.data.message, response.statusText, response.status);
 					});
 				});
 			};

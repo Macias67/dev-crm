@@ -161,15 +161,15 @@
 	                                </div>
 					<div class = "row static-info">
 						<div class = "col-md-4 name"> Fecha: </div>
-						<div class = "col-md-8 value">{{modalRevisaCtrl.cotizacion.fecha | amUtc | amDateFormat:'dddd, DD [de] MMMM [del] YYYY'}} </div>
+						<div class = "col-md-8 value">{{modalRevisaCtrl.cotizacion.fecha | amFromUnix | amDateFormat:'dddd, DD [de] MMMM [del] YYYY'}} </div>
 	                                </div>
 					<div class = "row static-info">
 						<div class = "col-md-4 name"> Hora: </div>
-						<div class = "col-md-8 value">{{modalRevisaCtrl.cotizacion.fecha | amUtc | amDateFormat:'[A las] h:mm:ss A'}} </div>
+						<div class = "col-md-8 value">{{modalRevisaCtrl.cotizacion.fecha | amFromUnix | amDateFormat:'[A las] h:mm A'}} </div>
 	                                </div>
 					<div class = "row static-info">
 						<div class = "col-md-4 name"> Vencimiento: </div>
-						<div class = "col-md-8 value" am-time-ago = "modalRevisaCtrl.cotizacion.vencimiento"></div>
+						<div class = "col-md-8 value" am-time-ago = "modalRevisaCtrl.cotizacion.vencimiento | amFromUnix"></div>
 	                                </div>
 					
 					<hr>
@@ -259,17 +259,21 @@
 				</div>
 				<div class = "col-md-12">
 					<h4 class = "form-section">Pagos a validar</h4>
-					<div class="portlet-body">
+					<div class = "portlet-body">
 						<div class = "note note-info" ng-repeat = "pago in modalRevisaCtrl.cotizacion.pagos" ng-show = "!pago.valido">
-							<h4 class = "block">Subido por: {{pago.contacto}}</h4>
-							<b>{{pago.fecha | amUtc | amDateFormat:'dddd, DD [de] MMMM [del] YYYY [a las] h:mm:ss A'}}</b> | <b am-time-ago = "pago.fecha"></b>
+							<h4 class = "block">Pago por ${{pago.cantidad | number:2}} | <span class="label bold" ng-class="{'label-success' : pago.tipo == 'total', 'label-danger' : pago.tipo == 'abono'}"> {{pago.tipo}} </span></h4>
+							<h6>Subido por: {{pago.contacto}}</h6>
+							<b>{{pago.fecha  | amFromUnix | amDateFormat:'dddd, DD [de] MMMM [del] YYYY [a las] h:mm A'}}</b> | <b am-time-ago = "pago.fecha  | amFromUnix"></b>
 							<p ng-if = "pago.comentario == ''"> <i>Sin comentarios</i> </p>
 							<p ng-if = "pago.comentario != ''"> {{pago.comentario}} </p>
 							<hr>
+							<p>Archivos ligados: </p>
 							<p ng-repeat = "comprobante  in pago.comprobantes">
 								<a
-									href = "https://www.baustroonline.com/appint/websiteimcba/recursos/pago_06.jpg"
-									target = "_blank">{{comprobante.archivo}}
+									href = "{{comprobante.download_url}}"
+									target = "_blank">
+									<i class="fa" ng-class="{'fa-file-pdf-o' : comprobante.content_type == 'application/pdf', 'fa-file-image-o' : comprobante.content_type == 'image/jpeg'}"></i>
+									 {{comprobante.name}} | {{comprobante.size/1000 | number:2}} KB
 								</a>
 							</p>
 							<hr>

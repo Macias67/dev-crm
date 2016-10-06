@@ -23,6 +23,7 @@ var MetronicApp = angular.module('MetronicApp', [
 	'datatables',
 	'datatables.bootstrap',
 	'ui.mask',
+	'ngMask',
 	'ngMap',
 	'toastr',
 	'jcs-autoValidate',
@@ -218,44 +219,44 @@ MetronicApp.service('interceptor', [
 				config.headers['Content-Type'] = 'application/json; charset=utf-8';
 				return config;
 			},
-			
+
 			requestError: function (config) {
 				return config;
 			},
-			
+
 			response: function (res) {
 				return res;
 			},
-			
-			responseError: function (response) {
-				var NotifService = $injector.get('NotifService');
-				var $state       = $injector.get('$state');
-				
-				if (response.status == 500) {
-					App.unblockUI();
-					App.unblockUI('#ui-view');
-					
-					NotifService.error(response.data.message, 'Error ' + response.statusText);
-					console.error(response.data.message);
-				}
-				
-				if (response.status == 401) {
-					App.unblockUI();
-					App.unblockUI('#ui-view');
-					
-					NotifService.error(response.data.message, 'Error ' + response.data.status_code);
-				}
 
-// 				if (response.hasOwnProperty('error') && response.error == "token_expired") {
+// 			responseError: function (response) {
+// 				var NotifService = $injector.get('NotifService');
+// 				var $state       = $injector.get('$state');
 //
+// 				if (response.status == 500) {
+// 					App.unblockUI();
+// 					App.unblockUI('#ui-view');
 //
-// 					console.log('Entro a la validación de token_expired');
-//
-// 					toastr.error('El token de sesión ha expirado, inicia de nuevo sesión.', 'La sesión ha expirado.');
-// 					$state.go('login');
+// 					NotifService.error(response.data.message, 'Error ' + response.statusText);
+// 					console.error(response.data.message);
 // 				}
-// 				return response;
-			}
+//
+// 				if (response.status == 401) {
+// 					App.unblockUI();
+// 					App.unblockUI('#ui-view');
+//
+// 					NotifService.error(response.data.message, 'Error ' + response.data.status_code);
+// 				}
+//
+// // 				if (response.hasOwnProperty('error') && response.error == "token_expired") {
+// //
+// //
+// // 					console.log('Entro a la validación de token_expired');
+// //
+// // 					toastr.error('El token de sesión ha expirado, inicia de nuevo sesión.', 'La sesión ha expirado.');
+// // 					$state.go('login');
+// // 				}
+// // 				return response;
+// 			}
 		}
 	}
 ]);
