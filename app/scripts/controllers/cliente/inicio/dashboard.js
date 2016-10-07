@@ -15,7 +15,7 @@ angular.module('MetronicApp')
 			
 			vm.tableCotizaciones = {
 				dtInstance: {},
-				dtOptions : DTOptionsBuilder.fromSource(CRM_APP.url + 'cotizaciones?estatus=1&cliente=1')
+				dtOptions : DTOptionsBuilder.fromSource(CRM_APP.url + 'cotizaciones')
 					.withFnServerData(function (sSource, aoData, fnCallback, oSettings) {
 						oSettings.jqXHR = $.ajax({
 							'dataType'  : 'json',
@@ -39,6 +39,7 @@ angular.module('MetronicApp')
 					.withOption('fnRowCallback', function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 					})
 					.withPaginationType('bootstrap_full_number')
+					//.withOption('aaSorting', [3, 'asc'])
 					.withBootstrap(),
 				
 				dtColumns        : [
@@ -58,7 +59,7 @@ angular.module('MetronicApp')
 						return '<span am-time-ago="' + full.vencimiento + ' | amFromUnix" class="bold"></span>';
 					}),
 					DTColumnBuilder.newColumn('null').withTitle('Estatus').renderWith(function (data, type, full) {
-						return full.estatus.estatus;
+						return '<span class="badge bold bg-' + full.estatus.class + ' bg-font-' + full.estatus.class + '"> ' + full.estatus.estatus + ' </span>';
 					}),
 					DTColumnBuilder.newColumn(null).notSortable().renderWith(function (data, type, full, meta) {
 						return '<button ng-click="dashboardCtrl.tableCotizaciones.openModalInfoPago(' + data.id + ')" class="btn btn-xs yellow-casablanca" type="button">' +
@@ -139,7 +140,7 @@ angular.module('MetronicApp')
 			
 			vm.formArchivos = {
 				archivo    : null,
-				pago       : 'total',
+				pago       : '',
 				cantidad   : 0,
 				comentarios: ''
 			};
@@ -232,9 +233,9 @@ angular.module('MetronicApp')
 						// Create a reference to the file to delete
 						var desertRef = storageRef.child(uploadTask.snapshot.metadata.name);
 						// Delete the file
-						desertRef.delete().then(function() {
+						desertRef.delete().then(function () {
 							// File deleted successfully
-						}).catch(function(error) {
+						}).catch(function (error) {
 							// Uh-oh, an error occurred!
 						});
 						

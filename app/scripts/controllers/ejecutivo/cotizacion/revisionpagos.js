@@ -14,9 +14,7 @@ angular.module('MetronicApp')
 			var vm = this;
 			
 			vm.tablePagos = {
-				message   : '',
 				dtInstance: {},
-				
 				dtOptions: DTOptionsBuilder.fromSource(CRM_APP.url + 'cotizaciones?estatus=2')
 					.withFnServerData(serverData)
 					.withLanguageSource('//cdn.datatables.net/plug-ins/1.10.11/i18n/Spanish.json')
@@ -42,9 +40,8 @@ angular.module('MetronicApp')
 					DTColumnBuilder.newColumn('null').withTitle('Se comprobó').renderWith(function (data, type, full) {
 						return '<span am-time-ago="' + full.pagos[0].fecha + '  | amFromUnix"></span>';
 					}),
-					DTColumnBuilder.newColumn(null).withTitle('Total archivos').renderWith(totalArchivos),
 					DTColumnBuilder.newColumn('null').withTitle('Estatus').renderWith(function (data, type, full) {
-						return full.estatus.estatus;
+						return '<span class="badge bold bg-' + full.estatus.class + ' bg-font-' + full.estatus.class + '"> ' + full.estatus.estatus + ' </span>';
 					}).withOption('sWidth', '20%'),
 					DTColumnBuilder.newColumn(null).notSortable().renderWith(actionsHtml).withOption('sWidth', '14%'),
 				]
@@ -117,17 +114,6 @@ angular.module('MetronicApp')
 				return '<button ng-click="revisionPagosCtrl.openModalInfoPago(' + data.id + ')" class="btn btn-xs yellow-casablanca" type="button">' +
 					'<i class="fa fa-check"></i>&nbsp;Revisar' +
 					'</button>';
-			};
-			
-			function totalArchivos(data, type, full, meta) {
-				var total = 0;
-				data.pagos.forEach(function (item, index) {
-					if (!item.valido) {
-						total += item.comprobantes.length;
-					}
-				});
-				
-				return total;
 			};
 			
 			$scope.$on('$viewContentLoaded', function () {

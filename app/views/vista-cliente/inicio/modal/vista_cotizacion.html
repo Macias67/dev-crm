@@ -8,7 +8,7 @@
 	</h4>
 	
 	<div class = "row">
-		<div class = "col-lg-6 col-md-6 col-sm-6 col-xs-12">
+		<div class = "col-lg-4 col-md-4 col-sm-4 col-xs-12">
 			<a class = "dashboard-stat red" href = "#">
 				<div class = "visual">
 					<i class = "fa fa-dollar"></i>
@@ -21,14 +21,27 @@
 				</div>
 			</a>
 		</div>
-		<div class = "col-lg-6 col-md-6 col-sm-6 col-xs-12">
+		<div class = "col-lg-4 col-md-4 col-sm-4 col-xs-12">
+			<a class = "dashboard-stat {{revisaCotizacionCtrl.cotizacion.estatus.class}}" href = "#">
+				<div class = "visual">
+					<i class = "fa fa-history"></i>
+				</div>
+				<div class = "details">
+					<div class = "number">
+						<span>{{revisaCotizacionCtrl.cotizacion.estatus.estatus}}</span>
+					</div>
+					<div class = "desc"> Estatus</div>
+				</div>
+			</a>
+		</div>
+		<div class = "col-lg-4 col-md-4 col-sm-4 col-xs-12">
 			<a class = "dashboard-stat green" href = "#">
 				<div class = "visual">
 					<i class = "fa fa-history"></i>
 				</div>
 				<div class = "details">
 					<div class = "number">
-						<span data-counter = "counterup" data-value = "549">0</span>
+						<span>{{revisaCotizacionCtrl.cotizacion.pagos.length}}</span>
 					</div>
 					<div class = "desc"> Pagos</div>
 				</div>
@@ -122,7 +135,6 @@
 					<table class = "table table-hover table-light">
 						<thead>
 							<tr>
-								<th> Código </th>
 								<th> Producto </th>
 								<th> Subtotal </th>
 								<th> I.V.A. </th>
@@ -131,7 +143,6 @@
 						</thead>
 						<tbody>
 							<tr ng-repeat = "producto in revisaCotizacionCtrl.cotizacion.productos">
-								<td> {{producto.codigo}} </td>
 								<td> {{producto.nombre}} </td>
 								<td> $ {{producto.subtotal | number:2}} </td>
 								<td> $ {{producto.iva | number:2}} </td>
@@ -145,7 +156,6 @@
 								<td><b>TOTAL: </b></td>
 								<td></td>
 								<td></td>
-								<td></td>
 								<td>
 									<span class = "label label-sm label-danger"> <b>$ {{revisaCotizacionCtrl.cotizacion.total | number:2}} </b></span>
 								</td>
@@ -157,7 +167,7 @@
 			<div class = "col-md-12">
 				<h4 class = "form-section">Subir comprobante de pago</h4>
 				<div class = "portlet-body form">
-					<form name = "subepago" id="subeform">
+					<form name = "subepago" id = "subeform">
 						<div class = "form-group">
 							<div class = "alert alert-danger" ng-show = "subepago.file.$error.maxSize">
 								<strong>Error</strong> Archivo demsiado grande {{errorFile.size / 1000000|number:1}}MB: max 2M
@@ -172,18 +182,18 @@
 							       required>
 							<p class = "help-block"> Solo imagenes y archivos PDF, menores a 2MB. </p>
 						</div>
-						<div class="form-group">
+						<div class = "form-group">
 							<label>Tipo de Pago</label>
-							<select class="form-control input-sm" ng-model="revisaCotizacionCtrl.formArchivos.pago" ng-change="revisaCotizacionCtrl.total()">
-								<option value="abono">Abono</option>
-								<option value="total">Pago total</option>
+							<select class = "form-control input-sm" ng-model = "revisaCotizacionCtrl.formArchivos.pago" ng-change = "revisaCotizacionCtrl.total()">
+								<option value = "abono">Abono</option>
+								<option value = "total">Pago total</option>
 							</select>
 						</div>
-						<div class="form-group" ng-show="revisaCotizacionCtrl.formArchivos.pago == 'abono'">
+						<div class = "form-group" ng-show = "revisaCotizacionCtrl.formArchivos.pago == 'abono'">
 							<label>Cantidad a abonar</label>
-							<div class="input-icon input-icon-lg">
-								<i class="fa fa-dollar"></i>
-								<input type="text" class="form-control input-lg" ng-model="revisaCotizacionCtrl.formArchivos.cantidad" mask="9?9?9?9?9?9?.99" restrict="reject" validate="false">
+							<div class = "input-icon input-icon-lg">
+								<i class = "fa fa-dollar"></i>
+								<input type = "text" class = "form-control input-lg" ng-model = "revisaCotizacionCtrl.formArchivos.cantidad" mask = "9?9?9?9?9?9?.99" restrict = "reject" validate = "false">
 							</div>
 						</div>
 						<div class = "form-group">
@@ -207,7 +217,6 @@
 			</div>
 		</div>
 	</div>
-	<!--{{revisaCotizacionCtrl.cotizacion | json}}-->
 </div>
 <div class = "modal-footer">
 	<button class = "btn grey-mint btn-outline" ng-click = "revisaCotizacionCtrl.cancel()">Cerrar</button>
