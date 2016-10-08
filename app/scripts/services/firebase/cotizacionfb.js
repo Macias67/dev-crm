@@ -20,14 +20,27 @@ angular.module('MetronicApp')
 				return firebase.database().ref('cotizacion');
 			};
 			
-			var notifCasoPorAsignar = function () {
+			var notificacion = function () {
 				var solonuevas = false;
-				refArray().on('child_added', function (snapshot) {
+				
+				
+				refArray().on('child_added', function (snapshotCotizacion) {
+					var cotizacion, cliente;
 					if (!solonuevas) {
 						return;
 					}
-					// @Todo solo asginador de casos verá esto
-					NotifService.info('Se ha abierto un nuevo caso para el cliente <b>' + snapshot.val().cliente.razonsocial + '</b> en espera de asignación de líder.', 'Caso #' + snapshot.key + ' en espera de líder.');
+					
+					cotizacion = snapshotCotizacion.val();
+					firebase.database().ref('clientes/' + cotizacion.cliente_id).once('value', function (snapshotCliente) {
+						console.log(snapshotCliente.val());
+						cliente = snapshotCliente.val();
+						if (cotizacion.estatus_id == 1) {
+							// @Todo solo cliente correspondiente
+							NotifService.info('Se ha abierto un nuevo caso para el cliente <b>' + cliente.razonsocial + '</b> en espera de asignación de líder.', 'Caso en espera de líder.');
+						}
+					});
+					
+					
 				});
 				
 				refArray().on('value', function (snapshot) {
@@ -56,7 +69,7 @@ angular.module('MetronicApp')
 				toObject             : function (refObject) {
 					return $firebaseObject(refObject);
 				},
-				notifCasoPorAsignar  : notifCasoPorAsignar,
+				notificacion  : notificacion,
 				lengthCasosPorAsignar: lengthCasosPorAsignar
 			}
 		}

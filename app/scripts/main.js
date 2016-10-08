@@ -130,7 +130,7 @@ MetronicApp.factory('settings', [
 /* Setup App Main Controller */
 MetronicApp.controller('AppController', [
 	'$scope', '$rootScope', 'CotizacionFB', function ($scope, $rootScope, CotizacionFB) {
-		//CotizacionFB.notifCasoPorAsignar();
+		CotizacionFB.notificacion();
 		
 		$scope.$on('$viewContentLoaded', function () {
 			App.initComponents(); // init core components
