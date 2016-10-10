@@ -39,8 +39,6 @@ angular.module('MetronicApp')
 							NotifService.info('Se ha abierto un nuevo caso para el cliente <b>' + cliente.razonsocial + '</b> en espera de asignación de líder.', 'Caso en espera de líder.');
 						}
 					});
-					
-					
 				});
 				
 				refArray().on('value', function (snapshot) {
