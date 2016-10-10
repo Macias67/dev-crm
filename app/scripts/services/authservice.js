@@ -37,11 +37,10 @@ angular.module('authService', [])
 				PermPermissionStore.clearStore();
 				PermRoleStore.clearStore();
 				sessionControl.unset('ec_data');
+				$auth.logout();
 			};
 			
 			var logout = function () {
-				
-				$auth.logout();
 				deleteSession();
 				
 				App.blockUI({

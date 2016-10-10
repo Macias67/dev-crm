@@ -9,8 +9,22 @@
  */
 angular.module('MetronicApp')
 	.controller('NuevaCotizacionCtrl', [
-		'$rootScope', '$scope', '$http', 'CRM_APP', 'authUser', '$uibModal', '$filter', '$ngBootbox', '$state', 'toastr', 'Cliente', 'Contacto', 'Banco', 'Cotizacion',
-		function ($rootScope, $scope, $http, CRM_APP, authUser, $uibModal, $filter, $ngBootbox, $state, toastr, Cliente, Contacto, Banco, Cotizacion) {
+		'$rootScope',
+		'$scope',
+		'$http',
+		'CRM_APP',
+		'authUser',
+		'$uibModal',
+		'$filter',
+		'$ngBootbox',
+		'$state',
+		'toastr',
+		'Cliente',
+		'Contacto',
+		'Banco',
+		'Cotizacion',
+		'NotifService',
+		function ($rootScope, $scope, $http, CRM_APP, authUser, $uibModal, $filter, $ngBootbox, $state, toastr, Cliente, Contacto, Banco, Cotizacion, NotifService) {
 			var vm = this;
 			
 			vm.cotizacion = {
@@ -248,7 +262,7 @@ angular.module('MetronicApp')
 					});
 					
 					var cotizacion = new Cotizacion(vm.porletRevision.cotizacion);
-					cotizacion.$save(function (response) {
+					cotizacion.$save().then(function (response) {
 						if (response.hasOwnProperty('errors')) {
 							for (var key in response.errors) {
 								if (response.errors.hasOwnProperty(key)) {
@@ -283,6 +297,10 @@ angular.module('MetronicApp')
 							}, 1000);
 							toastr.success('Se generó nueva cotización', 'Nueva Cotización');
 						}
+					}, function (response) {
+						App.unblockUI('#ui-view');
+						NotifService.error(response.data.message, 'ERROR ' + response.status);
+						console.error(response.data.message, response.statusText, response.status);
 					});
 				}
 			};

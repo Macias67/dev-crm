@@ -22,8 +22,7 @@ angular.module('MetronicApp')
 			
 			var notificacion = function () {
 				var solonuevas = false;
-				
-				
+								
 				refArray().on('child_added', function (snapshotCotizacion) {
 					var cotizacion, cliente;
 					if (!solonuevas) {
