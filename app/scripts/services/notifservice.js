@@ -59,8 +59,6 @@ angular.module('MetronicApp')
 						}
 						
 						notifData.tipo(notifData.mensaje, notifData.titulo);
-						
-						console.log(snapshot.val());
 					});
 					notiRef.on('value', function () {
 						solonuevas = true;

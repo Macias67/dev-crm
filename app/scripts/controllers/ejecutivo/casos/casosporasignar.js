@@ -49,7 +49,7 @@ angular.module('MetronicApp')
 						}
 					}).withOption('sWidth', '40%'),
 					DTColumnBuilder.newColumn('null').withTitle('Se validó').renderWith(function (data, type, full) {
-						return '<span am-time-ago="' + moment(full.cotizacion.validacion) + ' "></span>';
+						return '<span am-time-ago="' +full.cotizacion.validacion + ' | amFromUnix "></span>';
 					}),
 					DTColumnBuilder.newColumn(null).notSortable().renderWith(actionsHtml).withOption('sWidth', '30%'),
 				]
@@ -266,7 +266,7 @@ angular.module('MetronicApp')
 						});
 						
 						var lider = new Lider({lider: vm.ejecutivoSelected.id});
-						lider.$save({idCaso: vm.caso.id}, function (response) {
+						lider.$save({idCaso: vm.caso.id}).then(function (response) {
 							App.unblockUI('#ui-view');
 							if (response.hasOwnProperty('errors')) {
 								for (var key in response.errors) {
@@ -282,8 +282,9 @@ angular.module('MetronicApp')
 									$rootScope.$broadcast('reloadTable');
 								}, 1000);
 							}
+						}, function (response) {
+							console.log(response);
 						});
-					}, function () {
 					});
 			};
 			

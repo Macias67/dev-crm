@@ -164,8 +164,21 @@ MetronicApp.controller('SidebarController', [
 	'$scope', 'CotizacionFB', function ($scope, CotizacionFB) {
 		var vm = this;
 		
-		CotizacionFB.refArray().on('value', function (snapshot) {
-			vm.totalCasosPorAsignar = snapshot.numChildren();
+		vm.casos = {
+			casosxasignar: 0
+		};
+		
+		vm.cotizacion = {
+			pagosxrevisar: 0
+		};
+		
+		firebase.database().ref('caso').orderByChild('estatus_id').equalTo(1).on('value', function (snapshot) {
+			vm.casos.casosxasignar = snapshot.numChildren();
+		});
+		
+		//Cotizaciones por revisar
+		CotizacionFB.refArray().orderByChild('estatus_id').equalTo(2).on('value', function (snapshot) {
+			vm.cotizacion.pagosxrevisar = snapshot.numChildren();
 		});
 		
 		$scope.$on('$includeContentLoaded', function () {
@@ -219,18 +232,18 @@ MetronicApp.service('interceptor', [
 				config.headers['Content-Type'] = 'application/json; charset=utf-8';
 				return config;
 			},
-
+			
 			requestError: function (config) {
 				return config;
 			},
-
-			response: function (res) {
-				return res;
+			
+			response: function (response) {
+				return response;
 			},
-
-// 			responseError: function (response) {
-// 				var NotifService = $injector.get('NotifService');
-// 				var $state       = $injector.get('$state');
+			
+			responseError: function (response) {
+				var NotifService = $injector.get('NotifService');
+				var $state       = $injector.get('$state');
 //
 // 				if (response.status == 500) {
 // 					App.unblockUI();
@@ -240,23 +253,27 @@ MetronicApp.service('interceptor', [
 // 					console.error(response.data.message);
 // 				}
 //
-// 				if (response.status == 401) {
-// 					App.unblockUI();
-// 					App.unblockUI('#ui-view');
 //
-// 					NotifService.error(response.data.message, 'Error ' + response.data.status_code);
+// 				if (response.hasOwnProperty('error') && response.error == "token_expired") {
+//
+//
+// 					console.log('Entro a la validación de token_expired');
+//
+// 					toastr.error('El token de sesión ha expirado, inicia de nuevo sesión.', 'La sesión ha expirado.');
+// 					$state.go('login');
 // 				}
-//
-// // 				if (response.hasOwnProperty('error') && response.error == "token_expired") {
-// //
-// //
-// // 					console.log('Entro a la validación de token_expired');
-// //
-// // 					toastr.error('El token de sesión ha expirado, inicia de nuevo sesión.', 'La sesión ha expirado.');
-// // 					$state.go('login');
-// // 				}
-// // 				return response;
-// 			}
+				
+				if (response.status == 401) {
+					App.unblockUI();
+					App.unblockUI('#ui-view');
+					console.log(response);
+					
+					NotifService.error(response.data.message, 'Error ' + response.status + ' (' + response.statusText + ')');
+					$state.go('login');
+					return;
+				}
+				return response;
+			}
 		}
 	}
 ]);

@@ -70,7 +70,7 @@ angular.module('authService', [])
 				
 				$auth.signup(loginForm)
 					.then(function (response) {
-						if (response != null || response != undefined) {
+						if ((response != null || response != undefined) && response.status != 401) {
 							var data     = response.data.data;
 							var permisos = [];
 							
@@ -99,6 +99,8 @@ angular.module('authService', [])
 								ngAudio.load('sounds/intro.mp3').play();
 							}, 3000);
 						}
+					}, function (response) {
+						
 					})
 					.catch(function (response) {
 						console.log(response);

@@ -53,7 +53,7 @@
 					<a href = "#/casos/por-asiginar">
 						<i class = "fa fa-exclamation-circle"></i>
 						<span class = "title">Casos por asignar</span>
-						<span class = "badge badge-danger">{{sidebarController.totalCasosPorAsignar}}</span>
+						<span class = "badge badge-danger bold">{{sidebarController.casos.casosxasignar}}</span>
 					</a>
 				</li>
 				<li>
@@ -105,7 +105,9 @@
 				</li>
 				<li>
 					<a href = "#/cotizaciones/pagos-revisar">
-					<i class = "fa fa-dollar"></i> Pagos por revisar</a>
+						<i class = "fa fa-dollar"></i> Pagos por revisar
+						<span class = "badge bg-green-sharp bg-font-green-sharp">{{sidebarController.cotizacion.pagosxrevisar}}</span>
+					</a>
 				</li>
 				<li>
 					<a href = "#/cotizaciones">
