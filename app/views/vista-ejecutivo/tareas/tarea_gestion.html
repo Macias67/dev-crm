@@ -96,13 +96,13 @@
 					</div>
 				</div>
 				<div class = "portlet-body">
-					<button class="btn green-jungle btn-block btn-lg uppercase bold">
+					<button class = "btn green-jungle btn-block btn-lg uppercase bold">
 						<i class = "fa fa-play"></i>&nbsp;&nbsp;Trabajar en la tarea
 					</button>
 					<hr>
-					<table class="table table-hover table-light">
+					<table class = "table table-hover table-light">
 						<thead>
-							<tr class="uppercase">
+							<tr class = "uppercase">
 								<th> # </th>
 								<th> Fecha </th>
 								<th> Duración </th>
@@ -122,7 +122,7 @@
 						</tbody>
 					</table>
 					<hr>
-					<h4 class="uppercase">Duración total: <b>4:30 hras</b></h4>
+					<h4 class = "uppercase">Duración total: <b>4:30 hras</b></h4>
 				</div>
 			</div>
 		</div>
@@ -237,6 +237,54 @@
 		</div>
 	</div>
 	<div class = "col-md-4">
+		<div class = "portlet light">
+			<div class = "portlet-title">
+				<div class = "caption">
+					<i class = "fa fa-calendar font-grey-gallery"></i>
+					<span class = "caption-subject bold font-grey-gallery uppercase"> Fechas programadas</span>
+				</div>
+			</div>
+			<div class = "portlet-body">
+				<div class="form-group">
+					<label>Fecha de inicio: </label>
+					<div class="input-group input-group-sm">
+						<input type="text" class="form-control"
+						       datetime-picker="dd/MM/yyyy HH:mm"
+						       ng-model="gestionTareaCtrl.fechatarea.fechainicio"
+						       is-open="gestionTareaCtrl.fechainicio.open"
+						       placeholder="Fecha de inicio" readonly/>
+						<span class="input-group-btn">
+							<button class="btn green bold" type="button" ng-click="gestionTareaCtrl.fechainicio.openCalendar()">
+								<i class="fa fa-calendar"></i>
+							</button>
+						</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label>Duración en horas: </label>
+					<div class="input-icon input-icon-sm right">
+						<i class="fa fa-clock-o"></i>
+						<input type="text" class="form-control input-sm" ng-model="gestionTareaCtrl.fechatarea.duracion" placeholder="00:00" mask = "9?9:99" restrict = "reject" validate = "false">
+					</div>
+				</div>
+				<div class="form-group">
+					<label>Fecha tentativa de cierre: </label>
+					<div class="input-group input-group-sm">
+						<input type="text" class="form-control"
+						       datetime-picker="dd/MM/yyyy"
+						       ng-model="gestionTareaCtrl.fechatarea.fechacierre"
+						       is-open="gestionTareaCtrl.fechacierre.open"
+						       placeholder="Fecha de inicio" readonly/>
+						<span class="input-group-btn">
+							<button class="btn green bold" type="button" ng-click="gestionTareaCtrl.fechacierre.openCalendar()">
+								<i class="fa fa-calendar"></i>
+							</button>
+						</span>
+					</div>
+				</div>
+				<button class = "btn blue btn-block">Fecha de inicio</button>
+			</div>
+		</div>
 		<div class = "portlet light">
 			<div class = "portlet-title">
 				<div class = "caption">

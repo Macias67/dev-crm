@@ -25,6 +25,7 @@ var MetronicApp = angular.module('MetronicApp', [
 	'ui.mask',
 	'ngMask',
 	'ngMap',
+	'nk.touchspin',
 	'toastr',
 	'jcs-autoValidate',
 	'angular.filter',

@@ -14,6 +14,26 @@ angular.module('MetronicApp')
 			var vm   = this;
 			vm.tarea = dataTarea.data;
 			
+			vm.fechainicio = {
+				open        : false,
+				openCalendar: function () {
+					vm.fechainicio.open = true;
+				}
+			};
+			
+			vm.fechacierre = {
+				open        : false,
+				openCalendar: function () {
+					vm.fechainicio.open = true;
+				}
+			};
+			
+			vm.fechatarea = {
+				fechainicio: moment(),
+				duracion   : null,
+				fechacierre: moment()
+			};
+			
 			vm.notas = {
 				formNotas: null,
 				form     : {

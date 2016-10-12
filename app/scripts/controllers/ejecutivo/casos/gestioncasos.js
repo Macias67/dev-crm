@@ -31,7 +31,7 @@ angular.module('MetronicApp')
 				App.blockUI({
 					target      : '#ui-view',
 					animate     : true,
-					overlayColor: App.getBrandColor('blue'),
+					overlayColor: App.getBrandColor('gray'),
 					zIndex      : 9999
 				});
 				$uibModal.open({
@@ -180,7 +180,8 @@ angular.module('MetronicApp')
 				var ejecutivo      = vm.tarea.ejecutivo;
 				vm.tarea.ejecutivo = vm.tarea.ejecutivo.id;
 				
-				CasoTarea.save({idcaso: idCaso}, vm.tarea, function (response) {
+				var casoTarea = new CasoTarea(vm.tarea);
+				casoTarea.$save({idcaso: idCaso}).then(function (response) {
 					if (response.hasOwnProperty('errors')) {
 						for (var key in response.errors) {
 							if (response.errors.hasOwnProperty(key)) {
@@ -197,6 +198,8 @@ angular.module('MetronicApp')
 						}, 1000);
 						toastr.success('Se generó nueva tarea para ' + ejecutivo.nombre + ' ' + ejecutivo.apellido + '.', 'Nueva tarea asignada.');
 					}
+				}, function (response) {
+					console.log(response);
 				});
 			};
 			
