@@ -245,44 +245,62 @@
 				</div>
 			</div>
 			<div class = "portlet-body">
-				<div class="form-group">
-					<label>Fecha de inicio: </label>
+				<form name="gestionTareaCtrl.fechas.formFechatarea">
+					<div class="form-group">
+					<label>Fecha y hora de inicio: </label>
 					<div class="input-group input-group-sm">
 						<input type="text" class="form-control"
 						       datetime-picker="dd/MM/yyyy HH:mm"
-						       ng-model="gestionTareaCtrl.fechatarea.fechainicio"
-						       is-open="gestionTareaCtrl.fechainicio.open"
-						       placeholder="Fecha de inicio" readonly/>
+						       ng-model="gestionTareaCtrl.fechas.fechatarea.fechainicio"
+						       is-open="gestionTareaCtrl.fechas.fechainicio.open"
+						       datepicker-options="gestionTareaCtrl.fechas.fechainicio.options"
+						       placeholder="Fecha de inicio"
+						       readonly
+						       required>
 						<span class="input-group-btn">
-							<button class="btn green bold" type="button" ng-click="gestionTareaCtrl.fechainicio.openCalendar()">
+							<button class="btn green bold" type="button" ng-click="gestionTareaCtrl.fechas.fechainicio.openCalendar()">
 								<i class="fa fa-calendar"></i>
 							</button>
 						</span>
 					</div>
 				</div>
-				<div class="form-group">
-					<label>Duración en horas: </label>
-					<div class="input-icon input-icon-sm right">
-						<i class="fa fa-clock-o"></i>
-						<input type="text" class="form-control input-sm" ng-model="gestionTareaCtrl.fechatarea.duracion" placeholder="00:00" mask = "9?9:99" restrict = "reject" validate = "false">
+					<div class="form-group">
+						<label>Duración de la tarea en horas: </label>
+						<div class="input-icon input-icon-sm right">
+							<i class="fa fa-clock-o"></i>
+							<input type="text" class="form-control input-sm"
+							       ng-model="gestionTareaCtrl.fechas.fechatarea.duracion"
+							       placeholder="00:00"
+							       mask = "9?99:59"
+							       restrict = "reject"
+							       validate = "true"
+								required>
+						</div>
 					</div>
-				</div>
-				<div class="form-group">
-					<label>Fecha tentativa de cierre: </label>
-					<div class="input-group input-group-sm">
-						<input type="text" class="form-control"
-						       datetime-picker="dd/MM/yyyy"
-						       ng-model="gestionTareaCtrl.fechatarea.fechacierre"
-						       is-open="gestionTareaCtrl.fechacierre.open"
-						       placeholder="Fecha de inicio" readonly/>
-						<span class="input-group-btn">
-							<button class="btn green bold" type="button" ng-click="gestionTareaCtrl.fechacierre.openCalendar()">
-								<i class="fa fa-calendar"></i>
-							</button>
-						</span>
+					<div class="form-group">
+						<label>Fecha y hora tentativa de cierre: </label>
+						<div class="input-group input-group-sm">
+							<input type="text" class="form-control"
+							       datetime-picker="dd/MM/yyyy H:mm"
+							       ng-model="gestionTareaCtrl.fechas.fechatarea.fechacierre"
+							       enable-time="true"
+							       is-open="gestionTareaCtrl.fechas.fechacierre.open"
+							       datepicker-options="gestionTareaCtrl.fechas.fechacierre.options"
+							       placeholder="Fecha de inicio"
+							       readonly
+							       required>
+							<span class="input-group-btn">
+								<button class="btn green bold" type="button" ng-click="gestionTareaCtrl.fechas.fechacierre.openCalendar()">
+									<i class="fa fa-calendar"></i>
+								</button>
+							</span>
+						</div>
 					</div>
-				</div>
-				<button class = "btn blue btn-block">Fecha de inicio</button>
+					<button class = "btn green-sharp btn-block bold uppercase"
+					        ng-click = "gestionTareaCtrl.fechas.guarda()"
+					        ng-disabled = "!gestionTareaCtrl.fechas.formFechatarea.$valid">Establecer fechas
+					</button>
+				</form>
 			</div>
 		</div>
 		<div class = "portlet light">
@@ -356,30 +374,71 @@
 <script type = "text/ng-template" id = "modalAsignaFechas.html">
 	<div class = "modal-header">
 		<button type = "button" class = "close" aria-hidden = "true" ng-click = "modalAsignaFechas.cancel()"></button>
-		<h4 class = "modal-title font-green-sharp"><i class = "fa fa-truck"></i> Nuevo producto </h4>
+		<h4 class = "modal-title font-green-sharp"><i class = "fa fa-calendar"></i> Fechas para la tarea </h4>
 	</div>
 	<div class = "modal-body form">
-		<div class = "col-md-6">
-			<form role = "form" name = "modalAsignaFechas.formFechas">
-				<div class = "form-body">
-					<div class = "form-group">
-						<input type = "text" class = "form-control" datetime-picker = "dd MMM yyyy HH:mm" ng-model = "myDate" is-open = "isOpen"/>
-						<span class = "input-group-btn">
-							<button type = "button" class = "btn btn-default" ng-click = "openCalendar($event, prop)"><i class = "fa fa-calendar"></i></button>
-						</span>
+		<form role = "form" name = "modalAsignaFechas.formFechas">
+			<div class = "form-body">
+				<form name="fechatarea">
+					<div class="form-group">
+						<label>Fecha y hora de inicio: </label>
+						<div class="input-group input-group-sm">
+							<input type="text" class="form-control"
+							       datetime-picker="dd/MM/yyyy HH:mm"
+							       ng-model="modalAsignaFechas.fechatarea.fechainicio"
+							       is-open="modalAsignaFechas.fechainicio.open"
+							       datepicker-options="modalAsignaFechas.fechainicio.options"
+							       placeholder="Fecha de inicio"
+							       readonly
+							       required>
+							<span class="input-group-btn">
+								<button class="btn green bold" type="button" ng-click="modalAsignaFechas.fechainicio.openCalendar()">
+									<i class="fa fa-calendar"></i>
+								</button>
+							</span>
+						</div>
 					</div>
-				</div>
-			</form>
-			{{modalAsignaFechas.form | json}}
-		</div>
-		<div class = "col-md-6"></div>
-		<div class = "clearfix"></div>
+					<div class="form-group">
+						<label>Duración de la tarea en horas: </label>
+						<div class="input-icon input-icon-sm right">
+							<i class="fa fa-clock-o"></i>
+							<input type="text" class="form-control input-sm"
+							       ng-model="modalAsignaFechas.fechatarea.duracion"
+							       placeholder="00:00"
+							       mask = "9?99:59"
+							       restrict = "reject"
+							       validate = "true"
+							       required>
+						</div>
+					</div>
+					<div class="form-group">
+						<label>Fecha y hora tentativa de cierre: </label>
+						<div class="input-group input-group-sm">
+							<input type="text" class="form-control"
+							       datetime-picker="dd/MM/yyyy H:mm"
+							       ng-model="modalAsignaFechas.fechatarea.fechacierre"
+							       enable-time="true"
+							       is-open="modalAsignaFechas.fechacierre.open"
+							       datepicker-options="modalAsignaFechas.fechacierre.options"
+							       placeholder="Fecha de inicio"
+							       readonly
+							       required>
+							<span class="input-group-btn">
+								<button class="btn green bold" type="button" ng-click="modalAsignaFechas.fechacierre.openCalendar()">
+									<i class="fa fa-calendar"></i>
+								</button>
+							</span>
+						</div>
+					</div>
+				</form>
+			</div>
+		</form>
 	</div>
 	<div class = "modal-footer">
 		<button class = "btn green-jungle btn-outline sbold uppercase"
 		        ng-click = "modalAsignaFechas.guarda()"
 		        ng-disabled = "!modalAsignaFechas.formFechas.$valid">
-			Guardar
+			Establece fechas
 		</button>
 		<button class = "btn grey-mint btn-outline" ng-click = "modalAsignaFechas.cancel()">Cancelar</button>
 	</div>

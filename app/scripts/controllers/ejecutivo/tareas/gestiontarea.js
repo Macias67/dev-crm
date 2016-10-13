@@ -14,25 +14,89 @@ angular.module('MetronicApp')
 			var vm   = this;
 			vm.tarea = dataTarea.data;
 			
-			vm.fechainicio = {
-				open        : false,
-				openCalendar: function () {
-					vm.fechainicio.open = true;
+			vm.fechas = {
+				formFechatarea: null,
+				fechainicio   : {
+					open        : false,
+					openCalendar: function () {
+						vm.fechas.fechainicio.open = true;
+					},
+					options     : {
+						minDate    : moment(),
+						showWeeks  : false,
+						startingDay: 1
+					}
+				},
+				fechacierre   : {
+					open        : false,
+					openCalendar: function () {
+						vm.fechas.fechacierre.open = true;
+					},
+					options     : {
+						showWeeks  : false,
+						startingDay: 1,
+						minDate    : moment()
+					}
+				},
+				fechatarea    : {
+					fechainicio    : null,
+					duracion       : null,
+					duracionminutos: 0,
+					fechacierre    : null
+				},
+				guarda        : function () {
+					
+					var data = {
+						fechainicio    :  moment(vm.fechas.fechatarea.fechainicio).format("YYYY-MM-DD HH:mm:ss"),
+						duracionminutos: vm.fechas.fechatarea.duracionminutos,
+						fechatentativacierre    :  moment(vm.fechas.fechatarea.fechacierre).format("YYYY-MM-DD HH:mm:ss"),
+					};
+					
+					vm.fechas.formFechatarea.$setPristine();
+					vm.fechas.formFechatarea.$setUntouched();
+					vm.fechas.formFechatarea.$dirty = false;
+					vm.fechas.fechatarea            = {
+						fechainicio    : null,
+						duracion       : null,
+						duracionminutos: 0,
+						fechacierre    : null
+					};
+					console.log(data);
+					App.blockUI({
+						target      : '#ui-view',
+						message     : '<b>Estableciendo fechas </b>',
+						boxed       : true,
+						overlayColor: App.getBrandColor('grey'),
+						zIndex      : 99999
+					});
+					
+					var tarea = new Tarea(data);
+					tarea.$update({idtarea: vm.tarea.id}).then(function (response) {
+						App.unblockUI('#ui-view');
+						console.log(response);
+						//vm.tarea = response.data;
+					}, function (response) {
+						App.unblockUI('#ui-view');
+					});
+					
 				}
 			};
 			
-			vm.fechacierre = {
-				open        : false,
-				openCalendar: function () {
-					vm.fechainicio.open = true;
+			$scope.$watch('gestionTareaCtrl.fechas.fechatarea.duracion', function () {
+				if (vm.fechas.fechatarea.duracion != undefined && vm.fechas.fechatarea.duracion.includes(":")) {
+					var tiempo                            = vm.fechas.fechatarea.duracion.split(':');
+					var horas                             = parseInt(tiempo[0]);
+					var minutos                           = parseInt(tiempo[1]);
+					var totalminutos                      = (horas * 60) + minutos;
+					//console.log(horas, minutos, totalminutos);
+					vm.fechas.fechatarea.duracionminutos  = totalminutos;
+					vm.fechas.fechacierre.options.minDate = moment(vm.fechas.fechatarea.fechainicio).add(totalminutos, 'm');
 				}
-			};
-			
-			vm.fechatarea = {
-				fechainicio: moment(),
-				duracion   : null,
-				fechacierre: moment()
-			};
+				else {
+					vm.fechas.fechatarea.duracionminutos  = 0;
+					vm.fechas.fechacierre.options.minDate = moment();
+				}
+			});
 			
 			vm.notas = {
 				formNotas: null,
@@ -104,7 +168,6 @@ angular.module('MetronicApp')
 					backdrop   : 'static',
 					templateUrl: 'modalAsignaFechas.html',
 					controller : 'ModalAsignaFechas as modalAsignaFechas',
-					size       : 'lg',
 					resolve    : {
 						dataIDTarea: vm.tarea.id
 					}
@@ -190,19 +253,52 @@ angular.module('MetronicApp')
 		function ($rootScope, $scope, $uibModalInstance, $filter, toastr, dataIDTarea) {
 			var vm = this;
 			
-			vm.formFechas = {};
-			vm.form       = {
-				fechadeinicio: ''
+			vm.fechainicio = {
+				open        : false,
+				openCalendar: function () {
+					vm.fechainicio.open = true;
+				},
+				options     : {
+					minDate    : moment(),
+					showWeeks  : false,
+					startingDay: 1
+				}
 			};
 			
-			// Disable weekend selection
-			vm.disabled    = function (calendarDate, mode) {
-				return mode === 'day' && ( calendarDate.getDay() === 0 || calendarDate.getDay() === 6 );
+			vm.fechacierre = {
+				open        : false,
+				openCalendar: function () {
+					vm.fechacierre.open = true;
+				},
+				options     : {
+					showWeeks  : false,
+					startingDay: 1,
+					minDate    : moment()
+				}
 			};
-			vm.dateOptions = {
-				showWeeks  : false,
-				startingDay: 0
+			
+			vm.fechatarea = {
+				fechainicio    : null,
+				duracion       : null,
+				duracionminutos: 0,
+				fechacierre    : null
 			};
+			
+			$scope.$watch('modalAsignaFechas.fechatarea.duracion', function () {
+				if (vm.fechatarea.duracion != undefined && vm.fechatarea.duracion.includes(":")) {
+					var tiempo                     = vm.fechatarea.duracion.split(':');
+					var horas                      = parseInt(tiempo[0]);
+					var minutos                    = parseInt(tiempo[1]);
+					var totalminutos               = (horas * 60) + minutos;
+					//console.log(horas, minutos, totalminutos);
+					vm.fechatarea.duracionminutos  = totalminutos;
+					vm.fechacierre.options.minDate = moment(vm.fechatarea.fechainicio).add(totalminutos, 'm');
+				}
+				else {
+					vm.fechatarea.duracionminutos  = 0;
+					vm.fechacierre.options.minDate = moment();
+				}
+			});
 			
 			vm.guarda = function () {
 				App.blockUI({
