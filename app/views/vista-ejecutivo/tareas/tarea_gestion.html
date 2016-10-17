@@ -77,18 +77,18 @@
 				</div>
 			</div>
 			<div class = "portlet-body">
-				<h4 class = "bold uppercase">{{gestionTareaCtrl.tarea.id+'.- '+gestionTareaCtrl.tarea.titulo}}</h4>
+				<h3 class = "bold uppercase">{{gestionTareaCtrl.tarea.id+'.- '+gestionTareaCtrl.tarea.titulo}}</h3>
 				<p class = "lead">{{gestionTareaCtrl.tarea.descripcion}}</p>
 				<hr>
 				<div class = "progress progress-striped active">
-					<div class = "progress-bar progress-bar-success" role = "progressbar" aria-valuenow = "40" aria-valuemin = "0" aria-valuemax = "100" style = "width: 40%">
-						<span class = "sr-only"> 40% Complete (success) </span>
+					<div class = "progress-bar progress-bar-success" role = "progressbar" aria-valuenow = "{{gestionTareaCtrl.tarea.avance}}" aria-valuemin = "0" aria-valuemax = "100" ng-style = "{width: gestionTareaCtrl.tarea.avance+'%'}">
+						<span class = "sr-only"> {{gestionTareaCtrl.tarea.avance}}% Complete </span>
 					</div>
 				</div>
 			</div>
 		</div>
 		<div class = "col-md-5">
-			<div class = "portlet light">
+			<div class = "portlet light" ng-hide = "gestionTareaCtrl.tarea.fecha_inicio == null || gestionTareaCtrl.tarea.fecha_tentativa_cierre == null || gestionTareaCtrl.tarea.duracion_minutos == 0">
 				<div class = "portlet-title">
 					<div class = "caption">
 					<i class = "icon-puzzle font-grey-gallery"></i>
@@ -127,7 +127,7 @@
 			</div>
 		</div>
 		<div class = "col-md-7">
-			<div class = "portlet light">
+			<div class = "portlet light" ng-hide = "gestionTareaCtrl.tarea.fecha_inicio == null || gestionTareaCtrl.tarea.fecha_tentativa_cierre == null || gestionTareaCtrl.tarea.duracion_minutos == 0">
 				<div class = "portlet-title">
 					<div class = "caption">
 					<i class = "icon-puzzle font-grey-gallery"></i>
@@ -135,7 +135,8 @@
 					</div>
 				</div>
 				<div class = "portlet-body">
-					<form role = "form" name = "gestionTareaCtrl.notas.formNotas">
+					<div ng-hide="gestionTareaCtrl.tarea.estatus.id == 4">
+						<form role = "form" name = "gestionTareaCtrl.notas.formNotas">
 						<div class = "form-body">
 							<div class = "form-group">
 								<textarea class = "form-control" rows = "3" placeholder = "Descripción de la nota" ng-model = "gestionTareaCtrl.notas.form.descripcion" required></textarea>
@@ -172,7 +173,8 @@
 							</div>
 						</div>
 					</form>
-					<hr>
+						<hr>
+					</div>
 					<ul class = "nav nav-tabs">
 						<li class = "active">
 							<a href = "#todas" target = "_self" data-toggle = "tab"> Todas </a>
@@ -190,18 +192,25 @@
 								<li class = "list-group-item" ng-repeat = "nota in gestionTareaCtrl.tarea.notas.todas">
 									<h6 class = "help-block font-green-turquoise"><i class = "fa fa-check-circle-o"></i> Visto por el cliente. </h6>
 									<p>{{nota.nota}} </p>
-									<h6 class = "bold font-grey-mint"><i class = "fa fa-calendar"></i> {{nota.creada | amFromUnix | amDateFormat:'DD [de] MMMM [del] YYYY [a las] hh:mm:ss A'}}</h6>
+									<h6 class = "bold font-grey-mint"><i class = "fa fa-calendar"></i> {{nota.creada | amFromUnix | amDateFormat:'DD [de] MMMM [del] YYYY [a las] hh:mm A'}}</h6>
 									<h6 ng-show = "nota.publico">
 										<span class = "label label-primary"><b>Pública</b></span>
 									</h6>
 									<h6 ng-show = "!nota.publico">
 										<span class = "label label-danger"> <b>Privada</b></span>
 									</h6>
-									<hr>
-									<h6>Archivos adjuntos:</h6>
-									<ul>
-										<li> Lorem ipsum dolor sit amet </li>
-									</ul>
+									<div ng-show = "nota.archivos.length > 0">
+										<hr>
+										<h6>Archivos adjuntos:</h6>
+										<ul>
+											<li ng-repeat = "archivo in nota.archivos">
+												<a ng-href = "{{archivo.downloadUrl}}" target = "_blank">
+													<i class="fa" ng-class="{'fa-file-pdf-o' : archivo.contentType == 'application/pdf', 'fa-file-image-o' : archivo.contentType == 'image/jpeg'}"></i>
+													{{archivo.nombre}} | {{archivo.tamano/1000 | number:2}} KB
+												</a>
+											</li>
+										</ul>
+									</div>
 								</li>
 							</ul>
 						</div>
@@ -212,11 +221,18 @@
 									<p>{{nota.nota}} </p>
 									<h6 class = "bold font-grey-mint"><i class = "fa fa-calendar"></i> {{nota.creada | amFromUnix | amDateFormat:'DD [de] MMMM [del] YYYY [a las] hh:mm:ss A'}}</h6>
 									<h6 ng-show = "nota.publico"><span class = "label label-primary"> <b>Pública</b> </span></h6>
-									<hr>
-									<h6>Archivos adjuntos:</h6>
-									<ul>
-										<li> Lorem ipsum dolor sit amet </li>
-									</ul>
+									<div ng-show = "nota.archivos.length > 0">
+										<hr>
+										<h6>Archivos adjuntos:</h6>
+										<ul>
+											<li ng-repeat = "archivo in nota.archivos">
+												<a ng-href = "{{archivo.downloadUrl}}" target = "_blank">
+													<i class="fa" ng-class="{'fa-file-pdf-o' : archivo.contentType == 'application/pdf', 'fa-file-image-o' : archivo.contentType == 'image/jpeg'}"></i>
+													{{archivo.nombre}} | {{archivo.tamano/1000 | number:2}} KB
+												</a>
+											</li>
+										</ul>
+									</div>
 								</li>
 							</ul>
 						</div>
@@ -227,11 +243,18 @@
 									<p>{{nota.nota}} </p>
 									<h6 class = "bold font-grey-mint"><i class = "fa fa-calendar"></i> {{nota.creada | amFromUnix | amDateFormat:'DD [de] MMMM [del] YYYY [a las] hh:mm:ss A'}}</h6>
 									<h6 ng-show = "!nota.publico"><span class = "label label-danger"> <b>Privada</b> </span></h6>
-									<hr>
-									<h6>Archivos adjuntos:</h6>
-									<ul>
-										<li> Lorem ipsum dolor sit amet </li>
-									</ul>
+									<div ng-show = "nota.archivos.length > 0">
+										<hr>
+										<h6>Archivos adjuntos:</h6>
+										<ul>
+											<li ng-repeat = "archivo in nota.archivos">
+												<a ng-href = "{{archivo.downloadUrl}}" target = "_blank">
+													<i class="fa" ng-class="{'fa-file-pdf-o' : archivo.contentType == 'application/pdf', 'fa-file-image-o' : archivo.contentType == 'image/jpeg'}"></i>
+													{{archivo.nombre}} | {{archivo.tamano/1000 | number:2}} KB
+												</a>
+											</li>
+										</ul>
+									</div>
 								</li>
 							</ul>
 						</div>
@@ -250,6 +273,7 @@
 			</div>
 			<div class = "portlet-body">
 				<h5>Otras tareas:</h5>
+				<span ng-show = "gestionTareaCtrl.caso.tareas.length == 1 && gestionTareaCtrl.caso.tareas[0].id == gestionTareaCtrl.tarea.id"><b>- Esta es única tarea.</b></span>
 				<ol>
 					<li ng-repeat = "tarea in gestionTareaCtrl.caso.tareas" ng-hide = "tarea.id == gestionTareaCtrl.tarea.id">
 						<b>{{tarea.titulo}}</b> Asignado a {{tarea.ejecutivo.nombre}}
@@ -422,7 +446,9 @@
 						<h5 class = "bold">Tareas:</h5>
 						<ul class = "list-group">
 							<li class = "list-group-item" ng-repeat = "tarea in gestionTareaCtrl.caso.tareas" ng-class = "{'bg-grey-steel bg-font-grey-steel': tarea.id == gestionTareaCtrl.tarea.id}">
-								<b>{{tarea.titulo}}</b><br>
+								<b ng-show="tarea.avance < 100">{{tarea.titulo}}</b>
+								<del ng-show="tarea.avance == 100" class="bold">{{tarea.titulo}}</del>
+								<br>
 								 <span>{{tarea.ejecutivo.nombre}}</span>
 								<span class = "badge bg-{{tarea.ejecutivo.class}}"> <b>{{(tarea.avance)}} %</b> </span>
 							</li>

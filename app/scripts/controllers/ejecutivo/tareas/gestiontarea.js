@@ -86,22 +86,6 @@ angular.module('MetronicApp')
 				}
 			};
 			
-			$scope.$watch('gestionTareaCtrl.fechas.fechatarea.duracion', function () {
-				if (vm.fechas.fechatarea.duracion != undefined && vm.fechas.fechatarea.duracion.includes(":")) {
-					var tiempo                            = vm.fechas.fechatarea.duracion.split(':');
-					var horas                             = parseInt(tiempo[0]);
-					var minutos                           = parseInt(tiempo[1]);
-					var totalminutos                      = (horas * 60) + minutos;
-					//console.log(horas, minutos, totalminutos);
-					vm.fechas.fechatarea.duracionminutos  = totalminutos;
-					vm.fechas.fechacierre.options.minDate = moment(vm.fechas.fechatarea.fechainicio).add(totalminutos, 'm');
-				}
-				else {
-					vm.fechas.fechatarea.duracionminutos  = 0;
-					vm.fechas.fechacierre.options.minDate = moment();
-				}
-			});
-			
 			vm.notas = {
 				formNotas    : null,
 				sliderOptions: {
@@ -170,17 +154,21 @@ angular.module('MetronicApp')
 				guarda       : function () {
 					vm.notas.loading = true;
 					var file         = vm.notas.form.file;
+					
 					if (file != null) {
-						var uploadTask = firebase.storage().ref().child('notas/' + vm.tarea.id + '/' + file.name).put(file);
+						var storageRef = firebase.storage().ref('notas/' + vm.tarea.id);
+						var uploadTask = storageRef.child(file.name).put(file);
 						uploadTask.on('state_changed', function (snapshot) {
 							// Observe state change events such as progress, pause, and resume
 							// See below for more detail
+							var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 							$scope.$apply(function () {
-								vm.notas.progress = $filter('number')((snapshot.bytesTransferred / snapshot.totalBytes) * 100, 0);
+								vm.notas.progress =  $filter('number')(progress, 0);
 							});
 						}, function (error) {
 							// Handle unsuccessful uploads
 							console.log('error subida', error);
+							vm.notas.loading = false;
 						}, function () {
 							// Handle successful uploads on complete
 							// For instance, get the download URL: https://firebasestorage.googleapis.com/...
@@ -214,6 +202,16 @@ angular.module('MetronicApp')
 									NotifService.success('Se añadio una nueva nota a la tarea', 'Nueva nota añadida');
 								}
 							}, function (error) {
+								
+								// Create a reference to the file to delete
+								var desertRef = storageRef.child(uploadTask.snapshot.metadata.name);
+								// Delete the file
+								desertRef.delete().then(function () {
+									// File deleted successfully
+								}).catch(function (error) {
+									// Uh-oh, an error occurred!
+								});
+								
 								console.log(error);
 								vm.notas.loading = false;
 							});
@@ -328,6 +326,22 @@ angular.module('MetronicApp')
 				dataTarea.$promise.catch(function (err) {
 					console.log(err);
 				});
+			});
+			
+			$scope.$watch('gestionTareaCtrl.fechas.fechatarea.duracion', function () {
+				if (vm.fechas.fechatarea.duracion != undefined && vm.fechas.fechatarea.duracion.includes(":")) {
+					var tiempo                            = vm.fechas.fechatarea.duracion.split(':');
+					var horas                             = parseInt(tiempo[0]);
+					var minutos                           = parseInt(tiempo[1]);
+					var totalminutos                      = (horas * 60) + minutos;
+					//console.log(horas, minutos, totalminutos);
+					vm.fechas.fechatarea.duracionminutos  = totalminutos;
+					vm.fechas.fechacierre.options.minDate = moment(vm.fechas.fechatarea.fechainicio).add(totalminutos, 'm');
+				}
+				else {
+					vm.fechas.fechatarea.duracionminutos  = 0;
+					vm.fechas.fechacierre.options.minDate = moment();
+				}
 			});
 			
 			//Nombres

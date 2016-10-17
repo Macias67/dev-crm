@@ -178,6 +178,7 @@ angular.module('MetronicApp')
 					$scope.$apply(function () {
 						vm.uploading = false;
 					});
+					console.log(error);
 				}, function () {
 					// Handle successful uploads on complete
 					// For instance, get the download URL: https://firebasestorage.googleapis.com/...
