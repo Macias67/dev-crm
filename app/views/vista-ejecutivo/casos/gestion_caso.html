@@ -191,17 +191,16 @@
 										</span>
 									</div>
 									<div class = "todo-tasklist-item-text"><i class = "fa fa-hourglass-start"></i> <b>Duración estimada:</b>
-										<!--<span>4:30 horas.</span>-->
 										<span ng-if = "tarea.duracion_minutos == 0"> <i>Sin definir por {{tarea.ejecutivo.nombre}}</i> </span>
 										<span ng-if = "tarea.duracion_minutos != 0">
 											{{ (tarea.duracion_minutos<60) ?
 												(tarea.duracion_minutos) + ' minutos' : (tarea.duracion_minutos%60==0) ?
-												(tarea.duracion_minutos-tarea.duracion_minutos%60)/60 + ':00 horas' :
-												((tarea.duracion_minutos%60)/60 + ':' + tarea.duracion_minutos%60 + ' horas')
+												'0'+(tarea.duracion_minutos-tarea.duracion_minutos%60)/60 + ':00 horas' :
+												'0'+((tarea.duracion_minutos-tarea.duracion_minutos%60)/60 + ':' + tarea.duracion_minutos%60 + ' horas')
 											}}
 										</span>
 									</div>
-									<div class = "todo-tasklist-item-text"><i class = "fa fa-clock-o"></i> <b>Tiempo:</b> 0 </div>
+									<div class = "todo-tasklist-item-text"><i class = "fa fa-hourglass-start"></i> <b>Duración real:</b> 0 </div>
 									<div class = "todo-tasklist-item-text"><i class = "fa fa-comment"></i> <b>Privados:</b> {{tarea.notas.privadas.length}} mensajes </div>
 									<div class = "todo-tasklist-item-text"><i class = "fa fa-comment-o"></i> <b>Públicos:</b> {{tarea.notas.publicas.length}} mensajes </div>
 									<hr>
@@ -239,7 +238,6 @@
 			<div class = "portlet-body">
 				
 				<h4>Estatus del caso:</h4>
-				<!--<span class = "label {{gestionCasosCtrl.caso.estatus.class}} col-md-12"> {{gestionCasosCtrl.caso.estatus.estatus}} </span>-->
 				<div class = "btn {{gestionCasosCtrl.caso.estatus.class}} btn-block" style = "cursor:default;"> <b class = "uppercase">{{gestionCasosCtrl.caso.estatus.estatus}}</b></div>
 				
 				<hr>
@@ -249,7 +247,7 @@
 				</div>
 				
 				<div class = "alert alert-info" ng-if = "gestionCasosCtrl.caso.fechatentativacierre != null">
-					<strong>En tiempo para terminar a la fecha tentativa.</strong>
+					<strong>En tiempo para terminar a la fecha tentativa.</strong> - {{gestionCasosCtrl.caso.fechatentativacierre | amFromUnix | amDateFormat:'DD [de] MMMM [a las] hh:mm A'}} (<span class="bold" am-time-ago="gestionCasosCtrl.caso.fechatentativacierre | amFromUnix"></span>)
 				</div>
 				
 				<h5 ng-if = "gestionCasosCtrl.caso.tareas.length == 0">Avance general: <b>No se han asignado tareas.</b></h5>

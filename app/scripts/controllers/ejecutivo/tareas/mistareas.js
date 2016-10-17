@@ -40,12 +40,12 @@ angular.module('MetronicApp')
 					})
 					.withPaginationType('bootstrap_full_number')
 					.withBootstrap(),
-				
 				dtColumns  : [
 					DTColumnBuilder.newColumn('id').withTitle('ID').withOption('sWidth', '3%'),
-					DTColumnBuilder.newColumn('null').withTitle('Caso No.').renderWith(function (data, type, full) {
+					DTColumnBuilder.newColumn('null').withTitle('Caso').renderWith(function (data, type, full) {
 						return full.caso.id;
-					}).withOption('sWidth', '10%'),
+					}).withOption('sWidth', '5%'),
+					DTColumnBuilder.newColumn('titulo').withTitle('Tarea').withOption('sWidth', '30%'),
 					DTColumnBuilder.newColumn('null').withTitle('Cliente').renderWith(function (data, type, full) {
 						return full.caso.cliente.razonsocial;
 					}).withOption('sWidth', '30%'),
@@ -59,7 +59,7 @@ angular.module('MetronicApp')
 							'<button ng-click="misTareasCtrl.abreDetalleTarea(' + data.id + ')" class="btn btn-xs yellow-casablanca" type="button">' +
 							'<i class="fa fa-list"></i>&nbsp;Ver detalles' +
 							'</button>';
-					}).withOption('sWidth', '20%'),
+					}).withOption('sWidth', '20%')
 				],
 				reloadTable: function () {
 					App.blockUI({
@@ -101,12 +101,12 @@ angular.module('MetronicApp')
 					})
 					.withPaginationType('bootstrap_full_number')
 					.withBootstrap(),
-				
 				dtColumns  : [
 					DTColumnBuilder.newColumn('id').withTitle('ID').withOption('sWidth', '3%'),
-					DTColumnBuilder.newColumn('null').withTitle('Caso No.').renderWith(function (data, type, full) {
+					DTColumnBuilder.newColumn('null').withTitle('Caso').renderWith(function (data, type, full) {
 						return full.caso.id;
-					}).withOption('sWidth', '10%'),
+					}).withOption('sWidth', '5%'),
+					DTColumnBuilder.newColumn('titulo').withTitle('Tarea').withOption('sWidth', '30%'),
 					DTColumnBuilder.newColumn('null').withTitle('Cliente').renderWith(function (data, type, full) {
 						return full.caso.cliente.razonsocial;
 					}).withOption('sWidth', '30%'),

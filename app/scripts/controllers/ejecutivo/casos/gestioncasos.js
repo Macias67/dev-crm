@@ -70,6 +70,10 @@ angular.module('MetronicApp')
 				});
 			};
 			
+			vm.calculoDiferenciaCierreCaso = function () {
+				
+			};
+			
 			vm.reloadTareas = function () {
 				App.scrollTop();
 				App.blockUI({
@@ -215,7 +219,6 @@ angular.module('MetronicApp')
 			App.unblockUI('#ui-view');
 			
 			vm.cancel = function () {
-				console.log(vm.ejecutivos);
 				$uibModalInstance.dismiss('cancel');
 			};
 		}

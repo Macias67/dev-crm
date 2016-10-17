@@ -9,8 +9,8 @@
  */
 angular.module('MetronicApp')
 	.controller('GestionTareaCtrl', [
-		'$rootScope', '$scope', 'dataTarea', '$uibModal', 'authUser', '$state', 'Caso', 'Tarea', 'NotifService', '$filter', 'TareaNota', 'NotaFB',
-		function ($rootScope, $scope, dataTarea, $uibModal, authUser, $state, Caso, Tarea, NotifService, $filter, TareaNota, NotaFB) {
+		'$rootScope', '$scope', 'dataTarea', '$uibModal', 'authUser', '$state', 'Caso', 'Tarea', 'NotifService', '$filter', 'TareaNota', 'NotaFB', '$timeout',
+		function ($rootScope, $scope, dataTarea, $uibModal, authUser, $state, Caso, Tarea, NotifService, $filter, TareaNota, NotaFB, $timeout) {
 			var vm   = this;
 			vm.tarea = dataTarea.data;
 			
@@ -47,9 +47,9 @@ angular.module('MetronicApp')
 				guarda        : function () {
 					
 					var data = {
-						fechainicio    :  moment(vm.fechas.fechatarea.fechainicio).format("YYYY-MM-DD HH:mm:ss"),
-						duracionminutos: vm.fechas.fechatarea.duracionminutos,
-						fechatentativacierre    :  moment(vm.fechas.fechatarea.fechacierre).format("YYYY-MM-DD HH:mm:ss"),
+						fechainicio         : moment(vm.fechas.fechatarea.fechainicio).format("YYYY-MM-DD HH:mm:ss"),
+						duracionminutos     : vm.fechas.fechatarea.duracionminutos,
+						fechatentativacierre: moment(vm.fechas.fechatarea.fechacierre).format("YYYY-MM-DD HH:mm:ss"),
 					};
 					
 					vm.fechas.formFechatarea.$setPristine();
@@ -61,7 +61,6 @@ angular.module('MetronicApp')
 						duracionminutos: 0,
 						fechacierre    : null
 					};
-					console.log(data);
 					App.blockUI({
 						target      : '#ui-view',
 						message     : '<b>Estableciendo fechas </b>',
@@ -71,12 +70,17 @@ angular.module('MetronicApp')
 					});
 					
 					var tarea = new Tarea(data);
-					tarea.$update({idtarea: vm.tarea.id}).then(function (response) {
-						App.unblockUI('#ui-view');
-						console.log(response);
-						//vm.tarea = response.data;
+					tarea.$asignafecha({idtarea: vm.tarea.id}).then(function (response) {
+						if (response.$resolved) {
+							vm.reloadCaso();
+							NotifService.success('Se ha definido la fecha de inicio de la tarea, tiempo de duración aproximada y fecha de cierre tentativo.', 'Fechas definidas de la tarea.');
+						}
+						else {
+							console.log(response);
+						}
 					}, function (response) {
 						App.unblockUI('#ui-view');
+						console.log(response);
 					});
 					
 				}
@@ -99,40 +103,75 @@ angular.module('MetronicApp')
 			});
 			
 			vm.notas = {
-				formNotas: null,
-				form     : {
+				formNotas    : null,
+				sliderOptions: {
+					minLimit            : vm.tarea.avance,
+					floor               : 0,
+					ceil                : 100,
+					step                : 1,
+					showTicks           : 5,
+					translate           : function (value, sliderId, label) {
+						switch (label) {
+							case 'model':
+								return '<b>Avance:</b> ' + value + '%';
+							default:
+								return value + '%'
+						}
+					},
+					showSelectionBar    : true,
+					getSelectionBarColor: function (value) {
+						if (value <= 30) {
+							return 'red';
+						}
+						if (value <= 60) {
+							return 'orange';
+						}
+						if (value <= 80) {
+							return 'yellow';
+						}
+						return '#2AE02A';
+					},
+					getPointerColor     : function (value) {
+						if (value <= 30) {
+							return 'red';
+						}
+						if (value <= 60) {
+							return 'orange';
+						}
+						if (value <= 80) {
+							return 'yellow';
+						}
+						return '#2AE02A';
+					},
+					getTickColor        : function (value) {
+						if (value <= 30) {
+							return 'red';
+						}
+						if (value <= 60) {
+							return 'orange';
+						}
+						if (value <= 80) {
+							return 'yellow';
+						}
+						return '#2AE02A';
+					},
+					onChange            : function () {
+						
+					},
+				},
+				form         : {
 					descripcion: '',
 					tipo       : 1,
+					avance     : vm.tarea.avance,
 					file       : null
 				},
-				loading  : false,
-				progress : 0,
-				guarda   : function () {
+				loading      : false,
+				progress     : 0,
+				guarda       : function () {
 					vm.notas.loading = true;
-					
-					var tareaNota = new TareaNota(vm.notas.form);
-					tareaNota.$save({idtarea: vm.tarea.id}, function (response) {
-						vm.tarea         = response.data;
-						var notas        = vm.tarea.notas.todas;
-						var selectedNota = notas[notas.length - 1];
-						NotaFB.refObject(selectedNota.id).set(selectedNota)
-							.then(function () {
-								console.log('Synchronization succeeded');
-							})
-							.catch(function (error) {
-								console.log('Synchronization failed');
-							});
-						
-						vm.notas.loading = false;
-					}, function (error) {
-						console.log(error);
-						vm.notas.loading = false;
-					});
-					
-					
-					var file = vm.notas.form.file;
+					var file         = vm.notas.form.file;
 					if (file != null) {
-						var uploadTask = firebase.storage().ref().child('notas/' + file.name).put(file);
+						var uploadTask = firebase.storage().ref().child('notas/' + vm.tarea.id + '/' + file.name).put(file);
 						uploadTask.on('state_changed', function (snapshot) {
 							// Observe state change events such as progress, pause, and resume
 							// See below for more detail
@@ -141,23 +180,68 @@ angular.module('MetronicApp')
 							});
 						}, function (error) {
 							// Handle unsuccessful uploads
+							console.log('error subida', error);
 						}, function () {
 							// Handle successful uploads on complete
 							// For instance, get the download URL: https://firebasestorage.googleapis.com/...
-							var downloadURL = uploadTask.snapshot.downloadURL;
-							console.log(downloadURL);
-							$scope.$apply(function () {
+							vm.notas.form.archivo = {
+								url        : uploadTask.snapshot.downloadURL,
+								contentType: uploadTask.snapshot.metadata.contentType,
+								fullPath   : uploadTask.snapshot.metadata.fullPath,
+								hash       : uploadTask.snapshot.metadata.md5Hash,
+								name       : uploadTask.snapshot.metadata.name,
+								size       : uploadTask.snapshot.metadata.size
+							};
+							delete vm.notas.form.file;
+							
+							var tareaNota = new TareaNota(vm.notas.form);
+							tareaNota.$save({idtarea: vm.tarea.id}).then(function (response) {
+								if (response.$resolved) {
+									vm.notas.formNotas.$setPristine();
+									vm.notas.formNotas.$setUntouched();
+									vm.notas.formNotas.$dirty = false;
+									
+									vm.notas.form.descripcion = '';
+									vm.notas.form.tipo        = 1;
+									vm.notas.form.avance      = response.data.avance;
+									vm.notas.form.file        = null;
+									
+									vm.notas.loading                = false;
+									vm.notas.progress               = 0;
+									vm.notas.sliderOptions.minLimit = response.data.avance;
+									vm.reloadCaso();
+									
+									NotifService.success('Se añadio una nueva nota a la tarea', 'Nueva nota añadida');
+								}
+							}, function (error) {
+								console.log(error);
+								vm.notas.loading = false;
+							});
+						});
+					}
+					else {
+						var tareaNota = new TareaNota(vm.notas.form);
+						tareaNota.$save({idtarea: vm.tarea.id}).then(function (response) {
+							if (response.$resolved) {
 								vm.notas.formNotas.$setPristine();
 								vm.notas.formNotas.$setUntouched();
 								vm.notas.formNotas.$dirty = false;
-								vm.notas.form             = {
-									descripcion: '',
-									tipo       : 1,
-									file       : null
-								};
-								vm.notas.loading          = false;
-								vm.notas.progress         = 0;
-							});
+								
+								vm.notas.form.descripcion = '';
+								vm.notas.form.tipo        = 1;
+								vm.notas.form.avance      = response.data.avance;
+								vm.notas.form.file        = null;
+								
+								vm.notas.loading                = false;
+								vm.notas.progress               = 0;
+								vm.notas.sliderOptions.minLimit = response.data.avance;
+								vm.reloadCaso();
+								
+								NotifService.success('Se añadio una nueva nota a la tarea', 'Nueva nota añadida');
+							}
+						}, function (error) {
+							console.log(error);
+							vm.notas.loading = false;
 						});
 					}
 				}
@@ -194,8 +278,14 @@ angular.module('MetronicApp')
 				});
 				
 				Tarea.get({idtarea: vm.tarea.id}, function (response) {
-					vm.tarea     = response.data;
-					cargadoTarea = true;
+					vm.tarea                        = response.data;
+					vm.notas.form.avance            = vm.tarea.avance;
+					vm.notas.sliderOptions.minLimit = vm.tarea.avance;
+					cargadoTarea                    = true;
+					
+					$timeout(function () {
+						$scope.$broadcast('rzSliderForceRender');
+					});
 					
 					if (cargadoCaso) {
 						App.unblockUI('#ui-view');
@@ -215,6 +305,10 @@ angular.module('MetronicApp')
 			};
 			
 			$scope.$on('$viewContentLoaded', function () {
+				$timeout(function () {
+					$scope.$broadcast('rzSliderForceRender');
+				});
+				
 				// initialize core components
 				App.initAjax();
 				App.scrollTop();

@@ -26,6 +26,7 @@ var MetronicApp = angular.module('MetronicApp', [
 	'ngMask',
 	'ngMap',
 	'nk.touchspin',
+	'rzModule',
 	'toastr',
 	'jcs-autoValidate',
 	'angular.filter',
@@ -269,7 +270,7 @@ MetronicApp.service('interceptor', [
 					App.unblockUI('#ui-view');
 					console.log(response);
 					
-					NotifService.error(response.data.message, 'Error ' + response.status + ' (' + response.statusText + ')');
+					NotifService.error(response.data.error, 'Error ' + response.status + ' (' + response.statusText + ')');
 					$state.go('login');
 					return;
 				}

@@ -105,7 +105,7 @@ angular.module('MetronicApp')
 				});
 				
 				var caso = Caso.query({id: id}, function () {
-					var ejecutivos = Ejecutivo.get(function () {
+					var ejecutivos = Ejecutivo.get({online: 'true'}, function () {
 						App.unblockUI('#ui-view');
 						$uibModal.open({
 							backdrop   : 'static',
