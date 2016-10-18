@@ -24,11 +24,11 @@
 		<div class = "portlet light portlet-fit portlet-datatable ">
 			<div class = "portlet-title">
 				<div class = "caption">
-					<i class = " fa fa-file-pdf-o font-green"></i>
-					<span class = "caption-subject font-green sbold uppercase"> Mis casos asignados </span>
+					<i class = " fa fa-hand-pointer-o font-green-soft"></i>
+					<span class = "caption-subject font-green-soft sbold uppercase"> Casos Asignados </span>
 				</div>
 				<div class = "actions">
-					<button type = "button" class = "btn btn-xs green" ng-click = "misCasosCtrl.reloadTableAsignados()">
+					<button type = "button" class = "btn btn-xs green-soft" ng-click = "misCasosCtrl.reloadTableAsignados()">
 						<i class = "fa fa-refresh"></i>
 					</button>
 				</div>
@@ -48,11 +48,11 @@
 		<div class = "portlet light portlet-fit portlet-datatable ">
 			<div class = "portlet-title">
 				<div class = "caption">
-					<i class = " fa fa-file-pdf-o font-green"></i>
-					<span class = "caption-subject font-green sbold uppercase"> Mis casos en proceso </span>
+					<i class = " fa fa-refresh font-green-jungle"></i>
+					<span class = "caption-subject font-green-jungle sbold uppercase"> Casos en Proceso </span>
 				</div>
 				<div class = "actions">
-					<button type = "button" class = "btn btn-xs green" ng-click = "misCasosCtrl.tableCasosProceso.reloadTable()">
+					<button type = "button" class = "btn btn-xs green-jungle" ng-click = "misCasosCtrl.tableCasosProceso.reloadTable()">
 						<i class = "fa fa-refresh"></i>
 					</button>
 				</div>
@@ -63,6 +63,30 @@
 				       dt-options = "misCasosCtrl.tableCasosProceso.dtOptions"
 				       dt-columns = "misCasosCtrl.tableCasosProceso.dtColumns"
 				       dt-instance = "misCasosCtrl.tableCasosProceso.dtInstance"
+				       class = "table table-hover table-light">
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class = "col-md-6">
+		<div class = "portlet light portlet-fit portlet-datatable">
+			<div class = "portlet-title">
+				<div class = "caption">
+					<i class = " fa fa-bullseye font-green"></i>
+					<span class = "caption-subject font-green sbold uppercase"> Casos en Precierre </span>
+				</div>
+				<div class = "actions">
+					<button type = "button" class = "btn btn-xs green" ng-click = "misCasosCtrl.tableCasosPrecierre.reloadTable()">
+						<i class = "fa fa-refresh"></i>
+					</button>
+				</div>
+			</div>
+			<div class = "portlet-body">
+				<table id = "tableCasosPrecierre"
+				       datatable = ""
+				       dt-options = "misCasosCtrl.tableCasosPrecierre.dtOptions"
+				       dt-columns = "misCasosCtrl.tableCasosPrecierre.dtColumns"
+				       dt-instance = "misCasosCtrl.tableCasosPrecierre.dtInstance"
 				       class = "table table-hover table-light">
 				</table>
 			</div>

@@ -44,6 +44,16 @@ angular.module('MetronicApp')
 					duracionminutos: 0,
 					fechacierre    : null
 				},
+				abreAgenda: function () {
+					$uibModal.open({
+						backdrop   : 'static',
+						templateUrl: 'modalVistaAgenda.html',
+						controller : 'ModalVistaAgenda as modalVistaAgenda',
+						resolve    : {
+							dataIDTarea: vm.tarea.id
+						}
+					});
+				},
 				guarda        : function () {
 					
 					var data = {
@@ -245,17 +255,6 @@ angular.module('MetronicApp')
 				}
 			};
 			
-			vm.modalAsignaFechas = function () {
-				$uibModal.open({
-					backdrop   : 'static',
-					templateUrl: 'modalAsignaFechas.html',
-					controller : 'ModalAsignaFechas as modalAsignaFechas',
-					resolve    : {
-						dataIDTarea: vm.tarea.id
-					}
-				});
-			};
-			
 			vm.reloadCaso = function () {
 				var cargadoCaso  = false;
 				var cargadoTarea = false;
@@ -356,106 +355,10 @@ angular.module('MetronicApp')
 			$rootScope.settings.layout.pageSidebarClosed = true;
 		}
 	])
-	.controller('ModalAsignaFechas', [
+	.controller('ModalVistaAgenda', [
 		'$rootScope', '$scope', '$uibModalInstance', '$filter', 'toastr', 'dataIDTarea',
 		function ($rootScope, $scope, $uibModalInstance, $filter, toastr, dataIDTarea) {
 			var vm = this;
-			
-			vm.fechainicio = {
-				open        : false,
-				openCalendar: function () {
-					vm.fechainicio.open = true;
-				},
-				options     : {
-					minDate    : moment(),
-					showWeeks  : false,
-					startingDay: 1
-				}
-			};
-			
-			vm.fechacierre = {
-				open        : false,
-				openCalendar: function () {
-					vm.fechacierre.open = true;
-				},
-				options     : {
-					showWeeks  : false,
-					startingDay: 1,
-					minDate    : moment()
-				}
-			};
-			
-			vm.fechatarea = {
-				fechainicio    : null,
-				duracion       : null,
-				duracionminutos: 0,
-				fechacierre    : null
-			};
-			
-			$scope.$watch('modalAsignaFechas.fechatarea.duracion', function () {
-				if (vm.fechatarea.duracion != undefined && vm.fechatarea.duracion.includes(":")) {
-					var tiempo                     = vm.fechatarea.duracion.split(':');
-					var horas                      = parseInt(tiempo[0]);
-					var minutos                    = parseInt(tiempo[1]);
-					var totalminutos               = (horas * 60) + minutos;
-					//console.log(horas, minutos, totalminutos);
-					vm.fechatarea.duracionminutos  = totalminutos;
-					vm.fechacierre.options.minDate = moment(vm.fechatarea.fechainicio).add(totalminutos, 'm');
-				}
-				else {
-					vm.fechatarea.duracionminutos  = 0;
-					vm.fechacierre.options.minDate = moment();
-				}
-			});
-			
-			vm.guarda = function () {
-				App.blockUI({
-					target      : '#ui-view',
-					message     : '<b> Guardando prouducto </b>',
-					boxed       : true,
-					overlayColor: App.getBrandColor('grey'),
-					zIndex      : 99999
-				});
-				
-				if (vm.formEdit) {
-					Oficina.update({id: dtOficina.data.id}, vm.form, function (response) {
-						if (response.hasOwnProperty('errors')) {
-							for (var key in response.errors) {
-								if (response.errors.hasOwnProperty(key)) {
-									toastr.error(response.errors[key][0], 'Error con el formulario.');
-								}
-							}
-						}
-						else {
-							$uibModalInstance.close();
-							$rootScope.$broadcast('reloadTable');
-							toastr.success('Se actualizó los datos de la oficina', 'Edición de oficina');
-						}
-					});
-				}
-				else {
-					var producto = new Producto(vm.form);
-					producto.$save(function (response) {
-						if (response.hasOwnProperty('errors')) {
-							for (var key in response.errors) {
-								if (response.errors.hasOwnProperty(key)) {
-									toastr.error(response.errors[key][0], 'Error con el formulario.');
-								}
-							}
-						}
-						else {
-							$uibModalInstance.close();
-							$rootScope.$broadcast('reloadTableProductos');
-							toastr.success('Se registró un nuevo Producto', 'Nuevo Producto');
-						}
-					});
-				}
-				
-				setTimeout(function () {
-					App.unblockUI('#ui-view');
-				}, 1000);
-				
-			};
 			
 			vm.cancel = function () {
 				$uibModalInstance.dismiss('cancel');
