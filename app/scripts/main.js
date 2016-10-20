@@ -7,6 +7,7 @@
 var MetronicApp = angular.module('MetronicApp', [
 	'ui.router',
 	'ui.bootstrap',
+	'ui.calendar',
 	'ui.bootstrap.datetimepicker',
 	'oc.lazyLoad',
 	'ngSanitize',

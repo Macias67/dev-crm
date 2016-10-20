@@ -9,8 +9,8 @@
  */
 angular.module('MetronicApp')
 	.controller('GestionTareaCtrl', [
-		'$rootScope', '$scope', 'dataTarea', '$uibModal', 'authUser', '$state', 'Caso', 'Tarea', 'NotifService', '$filter', 'TareaNota', 'NotaFB', '$timeout',
-		function ($rootScope, $scope, dataTarea, $uibModal, authUser, $state, Caso, Tarea, NotifService, $filter, TareaNota, NotaFB, $timeout) {
+		'$rootScope', '$scope', 'dataTarea', '$uibModal', 'authUser', '$state', 'Caso', 'Tarea', 'NotifService', '$filter', 'TareaNota', 'NotaFB', '$timeout', 'Agenda',
+		function ($rootScope, $scope, dataTarea, $uibModal, authUser, $state, Caso, Tarea, NotifService, $filter, TareaNota, NotaFB, $timeout, Agenda) {
 			var vm   = this;
 			vm.tarea = dataTarea.data;
 			
@@ -44,14 +44,15 @@ angular.module('MetronicApp')
 					duracionminutos: 0,
 					fechacierre    : null
 				},
-				abreAgenda: function () {
+				abreAgenda    : function () {
 					$uibModal.open({
 						backdrop   : 'static',
 						templateUrl: 'modalVistaAgenda.html',
 						controller : 'ModalVistaAgenda as modalVistaAgenda',
 						resolve    : {
 							dataIDTarea: vm.tarea.id
-						}
+						},
+						size       : 'lg'
 					});
 				},
 				guarda        : function () {
@@ -93,6 +94,55 @@ angular.module('MetronicApp')
 						console.log(response);
 					});
 					
+				}
+			};
+			
+			vm.agenda = {
+				formFechaAgenda: null,
+				fechaInicio    : null,
+				duracion       : null,
+				open           : false,
+				options        : {
+					minDate    : moment(),
+					showWeeks  : false,
+					startingDay: 1
+				},
+				openCalendar   : function () {
+					vm.agenda.open = true;
+				},
+				guarda         : function () {
+					
+					var tiempo       = vm.agenda.duracion.split(':');
+					var horas        = parseInt(tiempo[0]);
+					var minutos      = parseInt(tiempo[1]);
+					var totalminutos = (horas * 60) + minutos;
+					var end          = moment(vm.agenda.fechaInicio).add(totalminutos, 'm');
+					
+					var data = {
+						ejecutivo: authUser.getSessionData().id,
+						titulo     : vm.tarea.titulo,
+						descripcion: vm.tarea.descripcion,
+						start      : moment(vm.agenda.fechaInicio).format("YYYY-MM-DD HH:mm:ss"),
+						end        : moment(end).format("YYYY-MM-DD HH:mm:ss"),
+						referencia : 'tarea.' + vm.tarea.id
+					};
+					
+					App.blockUI({
+						target      : '#ui-view',
+						message     : '<b> Añadiendo evento a mi agenda. </b>',
+						boxed       : true,
+						zIndex      : 99999,
+						overlayColor: App.getBrandColor('grey')
+					});
+					
+					var agenda = new Agenda(data);
+					agenda.$save().then(function (response) {
+						App.unblockUI('#ui-view');
+						console.log(response);
+					}, function (response) {
+						App.unblockUI('#ui-view');
+						console.log(response);
+					});
 				}
 			};
 			
@@ -173,7 +223,7 @@ angular.module('MetronicApp')
 							// See below for more detail
 							var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 							$scope.$apply(function () {
-								vm.notas.progress =  $filter('number')(progress, 0);
+								vm.notas.progress = $filter('number')(progress, 0);
 							});
 						}, function (error) {
 							// Handle unsuccessful uploads
@@ -356,9 +406,152 @@ angular.module('MetronicApp')
 		}
 	])
 	.controller('ModalVistaAgenda', [
-		'$rootScope', '$scope', '$uibModalInstance', '$filter', 'toastr', 'dataIDTarea',
-		function ($rootScope, $scope, $uibModalInstance, $filter, toastr, dataIDTarea) {
+		'$rootScope', '$scope', '$uibModalInstance', '$filter', '$ngBootbox', 'dataIDTarea', '$compile', 'uiCalendarConfig',
+		function ($rootScope, $scope, $uibModalInstance, $filter, $ngBootbox, dataIDTarea, $compile, uiCalendarConfig) {
 			var vm = this;
+			
+			var date = new Date();
+			var d    = date.getDate();
+			var m    = date.getMonth();
+			var y    = date.getFullYear();
+			
+			$scope.changeTo = 'Hungarian';
+			/* event source that pulls from google.com */
+			$scope.eventSource = {
+				url            : "http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic",
+				className      : 'gcal-event',           // an option!
+				currentTimezone: 'America/Chicago' // an option!
+			};
+			/* event source that contains custom events on the scope */
+			$scope.events = [
+				{title: 'All Day Event', start: new Date(y, m, 1), backgroundColor: App.getBrandColor('yellow')},
+				{title: 'Long Event', start: new Date(y, m, d - 5), end: new Date(y, m, d - 2)},
+				{id: 999, title: 'Repeating Event', start: new Date(y, m, d - 3, 16, 0), allDay: false, backgroundColor: App.getBrandColor('yellow')},
+				{id: 999, title: 'Repeating Event', start: new Date(y, m, d + 4, 16, 0), allDay: false},
+				{title: 'Birthday Party', start: new Date(y, m, d + 1, 19, 0), end: new Date(y, m, d + 1, 22, 30), allDay: false},
+				{title: 'Click for Google', start: new Date(y, m, 28), end: new Date(y, m, 29), url: 'http://google.com/'}
+			];
+			/* event source that calls a function on every view switch */
+			$scope.eventsF = function (start, end, timezone, callback) {
+				var s      = new Date(start).getTime() / 1000;
+				var e      = new Date(end).getTime() / 1000;
+				var m      = new Date(start).getMonth();
+				var events = [{title: 'Feed Me ' + m, start: s + (50000), end: s + (100000), allDay: false, className: ['customFeed']}];
+				callback(events);
+			};
+			
+			$scope.calEventsExt = {
+				events: [
+					{
+						id    : 1,
+						title : 'Mi primer evento',
+						start : moment(1476919200, 'X').format(),
+						end   : moment(1476921600, 'X').format(),
+						allDay: false,
+						color : '#F2784B'
+					}
+				]
+			};
+			/* alert on eventClick */
+			$scope.alertOnEventClick = function (date, jsEvent, view) {
+				var options = {
+					message: 'This is a message!',
+					title  : date.title,
+					buttons: {
+						warning: {
+							label    : "Cancel",
+							className: "btn-warning",
+							callback : function () {
+							}
+						},
+						success: {
+							label    : "Ok",
+							className: "btn-success",
+							callback : function () {
+							}
+						}
+					}
+				};
+				
+				$ngBootbox.customDialog(options);
+				
+				console.log(date);
+				console.log(jsEvent);
+				console.log(view);
+			};
+			/* alert on Drop */
+			$scope.alertOnDrop = function (event, delta, revertFunc, jsEvent, ui, view) {
+				console.log('Event Droped to make dayDelta ' + delta);
+			};
+			/* alert on Resize */
+			$scope.alertOnResize = function (event, delta, revertFunc, jsEvent, ui, view) {
+				console.log('Event Resized to make dayDelta ' + delta);
+			};
+			/* add and removes an event source of choice */
+			$scope.addRemoveEventSource = function (sources, source) {
+				var canAdd = 0;
+				angular.forEach(sources, function (value, key) {
+					if (sources[key] === source) {
+						sources.splice(key, 1);
+						canAdd = 1;
+					}
+				});
+				if (canAdd === 0) {
+					sources.push(source);
+				}
+			};
+			/* add custom event*/
+			$scope.addEvent = function () {
+				$scope.events.push({
+					title    : 'Open Sesame',
+					start    : new Date(y, m, 28),
+					end      : new Date(y, m, 29),
+					className: ['openSesame']
+				});
+			};
+			/* remove event */
+			$scope.remove = function (index) {
+				$scope.events.splice(index, 1);
+			};
+			/* Change View */
+			$scope.changeView = function (view, calendar) {
+				uiCalendarConfig.calendars[calendar].fullCalendar('changeView', view);
+			};
+			/* Change View */
+			$scope.renderCalender = function (calendar) {
+				if (uiCalendarConfig.calendars[calendar]) {
+					uiCalendarConfig.calendars[calendar].fullCalendar('render');
+				}
+			};
+			/* Render Tooltip */
+			$scope.eventRender = function (event, element, view) {
+				element.attr({
+					'tooltip'               : event.title,
+					'tooltip-append-to-body': true
+				});
+				$compile(element)($scope);
+			};
+			/* config object */
+			vm.uiConfig = {
+				calendar: {
+					height     : 430,
+					editable   : false,
+					header     : {
+						left  : 'prev,next',
+						center: 'title',
+						right : 'today,month,agendaWeek,agendaDay'
+					},
+					eventClick : $scope.alertOnEventClick,
+					eventDrop  : $scope.alertOnDrop,
+					eventResize: $scope.alertOnResize,
+					eventRender: $scope.eventRender
+				}
+			};
+			
+			
+			/* event sources array*/
+			vm.eventSources  = [$scope.events, $scope.eventSource, $scope.eventsF];
+			vm.eventSources2 = [$scope.calEventsExt];
 			
 			vm.cancel = function () {
 				$uibModalInstance.dismiss('cancel');
