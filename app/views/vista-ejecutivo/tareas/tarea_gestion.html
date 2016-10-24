@@ -51,14 +51,14 @@
 
 <div class = "row">
 	<div class = "col-md-12">
-		<div class = "alert alert-danger" ng-show = "gestionTareaCtrl.tarea.fecha_inicio == null || gestionTareaCtrl.tarea.fecha_tentativa_cierre == null || gestionTareaCtrl.tarea.duracion_minutos == 0">
+		<div class = "alert alert-danger" ng-show = "gestionTareaCtrl.avisos.defineFecha()">
 			<strong>¡Faltan datos por asignar!</strong>
 			Antes de continuar, debes establecer fecha de inicio de la tarea, tiempo de duración aproximada y fecha de cierre tentativo.
 		</div>
-		<div class = "alert alert-danger">
+		<div class = "alert alert-danger" ng-show = "gestionTareaCtrl.avisos.atraso()">
 			<strong>¡Vas atrasado!</strong> La fecha tentativa de cierre del caso ya pasó, procura terminar la tarea lo más pronto posible.
 		</div>
-		<div class = "alert alert-info alert-dismissable">
+		<div class = "alert alert-info alert-dismissable" ng-show = "gestionTareaCtrl.avisos.ultimaTarea">
 			<button type = "button" class = "close" data-dismiss = "alert" aria-hidden = "true"></button>
 			<strong>Última tarea del caso. </strong> Esta es última tarea del caso por concluir, procura terminar dentro de tus fechas establecidas.
 		</div>
@@ -135,7 +135,7 @@
 					</div>
 				</div>
 				<div class = "portlet-body">
-					<div ng-hide="gestionTareaCtrl.tarea.estatus.id == 4">
+					<div ng-hide = "gestionTareaCtrl.tarea.estatus.id == 4">
 						<form role = "form" name = "gestionTareaCtrl.notas.formNotas">
 						<div class = "form-body">
 							<div class = "form-group">
@@ -205,7 +205,7 @@
 										<ul>
 											<li ng-repeat = "archivo in nota.archivos">
 												<a ng-href = "{{archivo.downloadUrl}}" target = "_blank">
-													<i class="fa" ng-class="{'fa-file-pdf-o' : archivo.contentType == 'application/pdf', 'fa-file-image-o' : archivo.contentType == 'image/jpeg'}"></i>
+													<i class = "fa" ng-class = "{'fa-file-pdf-o' : archivo.contentType == 'application/pdf', 'fa-file-image-o' : archivo.contentType == 'image/jpeg'}"></i>
 													{{archivo.nombre}} | {{archivo.tamano/1000 | number:2}} KB
 												</a>
 											</li>
@@ -227,7 +227,7 @@
 										<ul>
 											<li ng-repeat = "archivo in nota.archivos">
 												<a ng-href = "{{archivo.downloadUrl}}" target = "_blank">
-													<i class="fa" ng-class="{'fa-file-pdf-o' : archivo.contentType == 'application/pdf', 'fa-file-image-o' : archivo.contentType == 'image/jpeg'}"></i>
+													<i class = "fa" ng-class = "{'fa-file-pdf-o' : archivo.contentType == 'application/pdf', 'fa-file-image-o' : archivo.contentType == 'image/jpeg'}"></i>
 													{{archivo.nombre}} | {{archivo.tamano/1000 | number:2}} KB
 												</a>
 											</li>
@@ -249,7 +249,7 @@
 										<ul>
 											<li ng-repeat = "archivo in nota.archivos">
 												<a ng-href = "{{archivo.downloadUrl}}" target = "_blank">
-													<i class="fa" ng-class="{'fa-file-pdf-o' : archivo.contentType == 'application/pdf', 'fa-file-image-o' : archivo.contentType == 'image/jpeg'}"></i>
+													<i class = "fa" ng-class = "{'fa-file-pdf-o' : archivo.contentType == 'application/pdf', 'fa-file-image-o' : archivo.contentType == 'image/jpeg'}"></i>
 													{{archivo.nombre}} | {{archivo.tamano/1000 | number:2}} KB
 												</a>
 											</li>
@@ -361,7 +361,7 @@
 						</div>
 					</div>
 					<button class = "btn green-turquoise btn-block bold uppercase"
-					        ng-click = "gestionTareaCtrl.fechas.abreAgenda()"><i class="fa fa-calendar"></i>  Ver mi agenda
+					        ng-click = "gestionTareaCtrl.fechas.abreAgenda()"><i class = "fa fa-calendar"></i>  Ver mi agenda
 					</button>
 					<button class = "btn green-sharp btn-block bold uppercase"
 					        ng-click = "gestionTareaCtrl.fechas.guarda()"
@@ -440,10 +440,10 @@
 					</form>
 				<hr>
 				<h6>Mis recordatorios: </h6>
-				<div class="table-scrollable table-scrollable-borderless">
-					<table class="table table-hover table-light">
+				<div class = "table-scrollable table-scrollable-borderless">
+					<table class = "table table-hover table-light">
 						<thead>
-							<tr class="uppercase">
+							<tr class = "uppercase">
 								<th> Fecha y hora </th>
 								<th></th>
 							</tr>
@@ -452,8 +452,8 @@
 							<tr>
 								<td> makr124 </td>
 								<td>
-									<button class="btn btn-xs red-thunderbird">
-                                                                                <i class="fa fa-edit"></i>
+									<button class = "btn btn-xs red-thunderbird">
+                                                                                <i class = "fa fa-edit"></i>
                                                                         </button>
 								</td>
 							</tr>
@@ -518,8 +518,8 @@
 						<h5 class = "bold">Tareas:</h5>
 						<ul class = "list-group">
 							<li class = "list-group-item" ng-repeat = "tarea in gestionTareaCtrl.caso.tareas" ng-class = "{'bg-grey-steel bg-font-grey-steel': tarea.id == gestionTareaCtrl.tarea.id}">
-								<b ng-show="tarea.avance < 100">{{tarea.titulo}}</b>
-								<del ng-show="tarea.avance == 100" class="bold">{{tarea.titulo}}</del>
+								<b ng-show = "tarea.avance < 100">{{tarea.titulo}}</b>
+								<del ng-show = "tarea.avance == 100" class = "bold">{{tarea.titulo}}</del>
 								<br>
 								 <span>{{tarea.ejecutivo.nombre}}</span>
 								<span class = "badge bg-{{tarea.ejecutivo.class}}"> <b>{{(tarea.avance)}} %</b> </span>
@@ -540,9 +540,9 @@
 		<h4 class = "modal-title font-green-sharp"><i class = "fa fa-calendar"></i> Mi agenda </h4>
 	</div>
 	<div class = "modal-body">
-		<div class="row">
-			<div class="col-md-12">
-				<div ui-calendar="modalVistaAgenda.uiConfig.calendar" class="span8 calendar" ng-model="modalVistaAgenda.eventSources2"></div>
+		<div class = "row">
+			<div class = "col-md-12">
+				<div ui-calendar = "modalVistaAgenda.uiConfig.calendar" class = "span8 calendar" ng-model = "modalVistaAgenda.eventSources2"></div>
 			</div>
 		</div>
 	</div>

@@ -9,9 +9,24 @@
  */
 angular.module('MetronicApp')
 	.controller('GestionTareaCtrl', [
-		'$rootScope', '$scope', 'dataTarea', '$uibModal', 'authUser', '$state', 'Caso', 'Tarea', 'NotifService', '$filter', 'TareaNota', 'NotaFB', '$timeout', 'Agenda',
-		function ($rootScope, $scope, dataTarea, $uibModal, authUser, $state, Caso, Tarea, NotifService, $filter, TareaNota, NotaFB, $timeout, Agenda) {
-			var vm   = this;
+		'$rootScope',
+		'$scope',
+		'dataTarea',
+		'$uibModal',
+		'authUser',
+		'$state',
+		'Caso',
+		'Tarea',
+		'NotifService',
+		'$filter',
+		'TareaNota',
+		'NotaFB',
+		'$timeout',
+		'EjecutivoAgenda',
+		'$q',
+		function ($rootScope, $scope, dataTarea, $uibModal, authUser, $state, Caso, Tarea, NotifService, $filter, TareaNota, NotaFB, $timeout, EjecutivoAgenda, $q) {
+			var vm = this;
+			
 			vm.tarea = dataTarea.data;
 			
 			vm.fechas = {
@@ -119,7 +134,7 @@ angular.module('MetronicApp')
 					var end          = moment(vm.agenda.fechaInicio).add(totalminutos, 'm');
 					
 					var data = {
-						ejecutivo: authUser.getSessionData().id,
+						ejecutivo  : authUser.getSessionData().id,
 						titulo     : vm.tarea.titulo,
 						descripcion: vm.tarea.descripcion,
 						start      : moment(vm.agenda.fechaInicio).format("YYYY-MM-DD HH:mm:ss"),
@@ -135,10 +150,10 @@ angular.module('MetronicApp')
 						overlayColor: App.getBrandColor('grey')
 					});
 					
-					var agenda = new Agenda(data);
-					agenda.$save().then(function (response) {
+					var agenda = new EjecutivoAgenda(data);
+					agenda.$save({idejecutivo: vm.tarea.ejecutivo.id}).then(function (response) {
 						App.unblockUI('#ui-view');
-						console.log(response);
+						console.log(response.data);
 					}, function (response) {
 						App.unblockUI('#ui-view');
 						console.log(response);
@@ -201,7 +216,7 @@ angular.module('MetronicApp')
 					},
 					onChange            : function () {
 						
-					},
+					}
 				},
 				form         : {
 					descripcion: '',
@@ -305,6 +320,16 @@ angular.module('MetronicApp')
 				}
 			};
 			
+			vm.avisos = {
+				defineFecha: function () {
+					return vm.tarea.fecha_inicio == null || vm.tarea.fecha_tentativa_cierre == null || vm.tarea.duracion_minutos == 0;
+				},
+				atraso     : function () {
+					return vm.tarea.fecha_tentativa_cierre < moment().unix();
+				},
+				ultimaTarea: true
+			};
+			
 			vm.reloadCaso = function () {
 				var cargadoCaso  = false;
 				var cargadoTarea = false;
@@ -355,10 +380,10 @@ angular.module('MetronicApp')
 				$timeout(function () {
 					$scope.$broadcast('rzSliderForceRender');
 				});
-				
 				// initialize core components
 				App.initAjax();
 				App.scrollTop();
+				
 				App.blockUI({
 					target      : '#ui-view',
 					message     : '<b> Cargando datos de la tarea </b>',
@@ -367,8 +392,14 @@ angular.module('MetronicApp')
 					overlayColor: App.getBrandColor('grey')
 				});
 				
-				Caso.get({id: vm.tarea.caso.id}, function (response) {
-					vm.caso = response.data;
+				$q.all({
+					caso           : Caso.get({id: dataTarea.data.caso.id}).$promise,
+					ejecutivoAgenda: EjecutivoAgenda.get({idejecutivo: dataTarea.data.ejecutivo.id}).$promise
+				}).then(function (results) {
+					/* your logic here */
+					vm.caso = results.caso.data;
+					
+					console.log(results.ejecutivoAgenda.data);
 					App.unblockUI('#ui-view');
 				});
 				
