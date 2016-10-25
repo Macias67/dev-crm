@@ -34,6 +34,12 @@ angular.module('MetronicApp')
 					headers: {
 						'Authorization': 'Bearer ' + authUser.getToken()
 					}
+				},
+				delete: {
+					method : 'DELETE',
+					headers: {
+						'Authorization': 'Bearer ' + authUser.getToken()
+					}
 				}
 			});
 		}

@@ -22,9 +22,10 @@ angular.module('MetronicApp')
 		'TareaNota',
 		'NotaFB',
 		'$timeout',
+		'Agenda',
 		'EjecutivoAgenda',
 		'$q',
-		function ($rootScope, $scope, dataTarea, $uibModal, authUser, $state, Caso, Tarea, NotifService, $filter, TareaNota, NotaFB, $timeout, EjecutivoAgenda, $q) {
+		function ($rootScope, $scope, dataTarea, $uibModal, authUser, $state, Caso, Tarea, NotifService, $filter, TareaNota, NotaFB, $timeout, Agenda, EjecutivoAgenda, $q) {
 			var vm = this;
 			
 			vm.tarea = dataTarea.data;
@@ -60,12 +61,26 @@ angular.module('MetronicApp')
 					fechacierre    : null
 				},
 				abreAgenda    : function () {
+					App.scrollTop();
+					
+					App.blockUI({
+						target      : '#ui-view',
+						message     : '<b>Abriendo agenda </b>',
+						boxed       : true,
+						zIndex      : 99999,
+						overlayColor: App.getBrandColor('grey')
+					});
+					
 					$uibModal.open({
 						backdrop   : 'static',
 						templateUrl: 'modalVistaAgenda.html',
 						controller : 'ModalVistaAgenda as modalVistaAgenda',
 						resolve    : {
-							dataIDTarea: vm.tarea.id
+							dataEventos: [
+								'$stateParams', 'Agenda', function ($stateParams, Agenda) {
+									return Agenda.get({ejecutivo: authUser.getSessionData().id}).$promise;
+								}
+							]
 						},
 						size       : 'lg'
 					});
@@ -78,15 +93,6 @@ angular.module('MetronicApp')
 						fechatentativacierre: moment(vm.fechas.fechatarea.fechacierre).format("YYYY-MM-DD HH:mm:ss"),
 					};
 					
-					vm.fechas.formFechatarea.$setPristine();
-					vm.fechas.formFechatarea.$setUntouched();
-					vm.fechas.formFechatarea.$dirty = false;
-					vm.fechas.fechatarea            = {
-						fechainicio    : null,
-						duracion       : null,
-						duracionminutos: 0,
-						fechacierre    : null
-					};
 					App.blockUI({
 						target      : '#ui-view',
 						message     : '<b>Estableciendo fechas </b>',
@@ -100,6 +106,16 @@ angular.module('MetronicApp')
 						if (response.$resolved) {
 							vm.reloadCaso();
 							NotifService.success('Se ha definido la fecha de inicio de la tarea, tiempo de duración aproximada y fecha de cierre tentativo.', 'Fechas definidas de la tarea.');
+							
+							vm.fechas.formFechatarea.$setPristine();
+							vm.fechas.formFechatarea.$setUntouched();
+							vm.fechas.formFechatarea.$dirty = false;
+							vm.fechas.fechatarea            = {
+								fechainicio    : null,
+								duracion       : null,
+								duracionminutos: 0,
+								fechacierre    : null
+							};
 						}
 						else {
 							console.log(response);
@@ -125,6 +141,52 @@ angular.module('MetronicApp')
 				openCalendar   : function () {
 					vm.agenda.open = true;
 				},
+				reloadAgenda   : function () {
+					App.blockUI({
+						target      : '#miagenda',
+						message     : '<b> Actualizando recordatorios. </b>',
+						boxed       : true,
+						zIndex      : 99999,
+						overlayColor: App.getBrandColor('grey')
+					});
+					
+					Agenda.get({
+						ejecutivo : dataTarea.data.ejecutivo.id,
+						referencia: 'tarea.' + dataTarea.data.id,
+						notificado: false
+					}).$promise.then(function (response) {
+						if (response.$resolved) {
+							vm.recordatorios = response.data;
+							App.unblockUI('#miagenda');
+						}
+					});
+				},
+				abreAgenda     : function () {
+					
+					App.scrollTop();
+					
+					App.blockUI({
+						target      : '#ui-view',
+						message     : '<b>Abriendo agenda </b>',
+						boxed       : true,
+						zIndex      : 99999,
+						overlayColor: App.getBrandColor('grey')
+					});
+					
+					$uibModal.open({
+						backdrop   : 'static',
+						templateUrl: 'modalVistaAgenda.html',
+						controller : 'ModalVistaAgenda as modalVistaAgenda',
+						resolve    : {
+							dataEventos: [
+								'$stateParams', 'Agenda', function ($stateParams, Agenda) {
+									return Agenda.get({ejecutivo: authUser.getSessionData().id}).$promise;
+								}
+							]
+						},
+						size       : 'lg'
+					});
+				},
 				guarda         : function () {
 					
 					var tiempo       = vm.agenda.duracion.split(':');
@@ -135,15 +197,15 @@ angular.module('MetronicApp')
 					
 					var data = {
 						ejecutivo  : authUser.getSessionData().id,
-						titulo     : vm.tarea.titulo,
-						descripcion: vm.tarea.descripcion,
+						titulo     : 'Tarea: ' + vm.tarea.titulo,
+						descripcion: vm.tarea.descripcion + ' (Caso #' + vm.caso.id + ' | Cliente: ' + vm.caso.cliente.razonsocial + ')',
 						start      : moment(vm.agenda.fechaInicio).format("YYYY-MM-DD HH:mm:ss"),
 						end        : moment(end).format("YYYY-MM-DD HH:mm:ss"),
 						referencia : 'tarea.' + vm.tarea.id
 					};
 					
 					App.blockUI({
-						target      : '#ui-view',
+						target      : '#miagenda',
 						message     : '<b> Añadiendo evento a mi agenda. </b>',
 						boxed       : true,
 						zIndex      : 99999,
@@ -152,11 +214,44 @@ angular.module('MetronicApp')
 					
 					var agenda = new EjecutivoAgenda(data);
 					agenda.$save({idejecutivo: vm.tarea.ejecutivo.id}).then(function (response) {
-						App.unblockUI('#ui-view');
-						console.log(response.data);
+						if (response.$resolved) {
+							Agenda.get({
+								ejecutivo : dataTarea.data.ejecutivo.id,
+								referencia: 'tarea.' + dataTarea.data.id,
+								notificado: false
+							}).$promise.then(function (response) {
+								vm.recordatorios = response.data;
+								
+								vm.agenda.formFechaAgenda.$setPristine();
+								vm.agenda.formFechaAgenda.$setUntouched();
+								vm.agenda.formFechaAgenda.$dirty = false;
+								vm.agenda.fechaInicio            = null;
+								vm.agenda.duracion               = null;
+								
+								App.unblockUI('#miagenda');
+							});
+						}
 					}, function (response) {
-						App.unblockUI('#ui-view');
 						console.log(response);
+						App.unblockUI('#miagenda');
+					});
+				},
+				elimina        : function (id) {
+					App.blockUI({
+						target      : '#miagenda',
+						message     : '<b> Borrando. </b>',
+						boxed       : true,
+						zIndex      : 99999,
+						overlayColor: App.getBrandColor('grey')
+					});
+					
+					Agenda.delete({
+						id: id
+					}).$promise.then(function (response) {
+						if (response.$resolved) {
+							App.unblockUI('#miagenda');
+							vm.agenda.reloadAgenda();
+						}
 					});
 				}
 			};
@@ -377,12 +472,14 @@ angular.module('MetronicApp')
 			};
 			
 			$scope.$on('$viewContentLoaded', function () {
-				$timeout(function () {
-					$scope.$broadcast('rzSliderForceRender');
-				});
+				
 				// initialize core components
 				App.initAjax();
 				App.scrollTop();
+				
+				$timeout(function () {
+					$scope.$broadcast('rzSliderForceRender');
+				});
 				
 				App.blockUI({
 					target      : '#ui-view',
@@ -394,12 +491,11 @@ angular.module('MetronicApp')
 				
 				$q.all({
 					caso           : Caso.get({id: dataTarea.data.caso.id}).$promise,
-					ejecutivoAgenda: EjecutivoAgenda.get({idejecutivo: dataTarea.data.ejecutivo.id}).$promise
+					ejecutivoAgenda: Agenda.get({ejecutivo: dataTarea.data.ejecutivo.id, referencia: 'tarea.' + dataTarea.data.id, notificado: false}).$promise
 				}).then(function (results) {
 					/* your logic here */
-					vm.caso = results.caso.data;
-					
-					console.log(results.ejecutivoAgenda.data);
+					vm.caso          = results.caso.data;
+					vm.recordatorios = results.ejecutivoAgenda.data;
 					App.unblockUI('#ui-view');
 				});
 				
@@ -437,8 +533,10 @@ angular.module('MetronicApp')
 		}
 	])
 	.controller('ModalVistaAgenda', [
-		'$rootScope', '$scope', '$uibModalInstance', '$filter', '$ngBootbox', 'dataIDTarea', '$compile', 'uiCalendarConfig',
-		function ($rootScope, $scope, $uibModalInstance, $filter, $ngBootbox, dataIDTarea, $compile, uiCalendarConfig) {
+		'$rootScope', '$scope', '$uibModalInstance', '$filter', '$ngBootbox', 'dataEventos', '$compile', 'uiCalendarConfig',
+		function ($rootScope, $scope, $uibModalInstance, $filter, $ngBootbox, dataEventos, $compile, uiCalendarConfig) {
+			App.unblockUI('#ui-view');
+			
 			var vm = this;
 			
 			var date = new Date();
@@ -472,25 +570,30 @@ angular.module('MetronicApp')
 			};
 			
 			$scope.calEventsExt = {
-				events: [
-					{
-						id    : 1,
-						title : 'Mi primer evento',
-						start : moment(1476919200, 'X').format(),
-						end   : moment(1476921600, 'X').format(),
-						allDay: false,
-						color : '#F2784B'
-					}
-				]
+				events: []
 			};
+			
+			angular.forEach(dataEventos.data, function (evento, index) {
+				$scope.calEventsExt.events[index] = {
+					id         : evento.id,
+					title      : evento.titulo,
+					descripcion: evento.descripcion,
+					start      : moment(evento.start, 'X').format(),
+					end        : moment(evento.end, 'X').format(),
+					allDay     : evento.allDay,
+					color      : evento.ejecutivo.color
+				};
+			});
+			
 			/* alert on eventClick */
 			$scope.alertOnEventClick = function (date, jsEvent, view) {
+				
 				var options = {
-					message: 'This is a message!',
-					title  : date.title,
+					message: date.descripcion,
+					title  : date.title + ' (' + date.start.format('h:mm') + ' a ' + date.end.format('h:mm') + ')',
 					buttons: {
 						warning: {
-							label    : "Cancel",
+							label    : "Cancelar",
 							className: "btn-warning",
 							callback : function () {
 							}
@@ -578,7 +681,6 @@ angular.module('MetronicApp')
 					eventRender: $scope.eventRender
 				}
 			};
-			
 			
 			/* event sources array*/
 			vm.eventSources  = [$scope.events, $scope.eventSource, $scope.eventsF];

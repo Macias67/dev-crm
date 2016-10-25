@@ -379,6 +379,9 @@
 			</div>
 			<div class = "portlet-body">
 				<dl>
+					<dt><i class = "fa fa-clock-o"></i> Fecha inicio</dt>
+					<dd>{{gestionTareaCtrl.tarea.fecha_inicio | amFromUnix | amDateFormat:'DD [de] MMMM [del] YYYY [a las] hh:mm A'}}</dd>
+					<br>
 					<dt><i class = "fa fa-clock-o"></i> Fecha tentativa de cierre</dt>
 					<dd>{{gestionTareaCtrl.tarea.fecha_tentativa_cierre | amFromUnix | amDateFormat:'DD [de] MMMM [del] YYYY [a las] hh:mm A'}}</dd>
 					<br>
@@ -393,54 +396,60 @@
 				</dl>
 			</div>
 		</div>
-		<div class = "portlet light">
+		<div class = "portlet light" id = "miagenda">
 			<div class = "portlet-title">
 				<div class = "caption">
 					<i class = "fa fa-calendar font-grey-gallery"></i>
 					<span class = "caption-subject bold font-grey-gallery uppercase"> Añadir a mi agenda</span>
 				</div>
+				<div class = "actions">
+					<button class = "btn btn-circle btn-icon-only btn-default" ng-click = "gestionTareaCtrl.agenda.reloadAgenda()">
+						<i class = "fa fa-refresh"></i>
+					</button>
+				</div>
 			</div>
 			<div class = "portlet-body">
 				<form name = "gestionTareaCtrl.agenda.formFechaAgenda">
-						<div class = "form-group">
-							<label>Fecha y hora: </label>
-							<div class = "input-group input-group-sm">
-								<input type = "text" class = "form-control"
-								       datetime-picker = "dd/MM/yyyy HH:mm"
-								       ng-model = "gestionTareaCtrl.agenda.fechaInicio"
-								       is-open = "gestionTareaCtrl.agenda.open"
-								       datepicker-options = "gestionTareaCtrl.agenda.options"
-								       placeholder = "Fecha de inicio"
-								       readonly
-								       required>
-								<span class = "input-group-btn">
-									<button class = "btn green bold" type = "button" ng-click = "gestionTareaCtrl.agenda.openCalendar()">
-										<i class = "fa fa-calendar"></i>
-									</button>
-								</span>
-							</div>
+					<div class = "form-group">
+						<label>Fecha y hora: </label>
+						<div class = "input-group input-group-sm">
+							<input type = "text" class = "form-control"
+							       datetime-picker = "dd/MM/yyyy HH:mm"
+							       ng-model = "gestionTareaCtrl.agenda.fechaInicio"
+							       is-open = "gestionTareaCtrl.agenda.open"
+							       datepicker-options = "gestionTareaCtrl.agenda.options"
+							       placeholder = "Fecha de inicio"
+							       readonly
+							       required>
+							<span class = "input-group-btn">
+								<button class = "btn green bold" type = "button" ng-click = "gestionTareaCtrl.agenda.openCalendar()">
+									<i class = "fa fa-calendar"></i>
+								</button>
+							</span>
 						</div>
-						<div class = "form-group">
-							<label>Duración: </label>
-							<div class = "input-icon input-icon-sm right">
-								<i class = "fa fa-clock-o"></i>
-								<input type = "text" class = "form-control input-sm"
-								       ng-model = "gestionTareaCtrl.agenda.duracion"
-								       placeholder = "00:00"
-								       mask = "9?99:59"
-								       restrict = "reject"
-								       validate = "true"
-								       required>
-							</div>
+					</div>
+					<div class = "form-group">
+						<label>Duración: </label>
+						<div class = "input-icon input-icon-sm right">
+							<i class = "fa fa-clock-o"></i>
+							<input type = "text" class = "form-control input-sm"
+							       ng-model = "gestionTareaCtrl.agenda.duracion"
+							       placeholder = "00:00"
+							       mask = "9?99:59"
+							       restrict = "reject"
+							       validate = "true"
+							       required>
 						</div>
-						<button class = "btn green-sharp btn-block bold uppercase"
-						        ng-click = "gestionTareaCtrl.agenda.guarda()"
-						        ng-disabled = "!gestionTareaCtrl.agenda.formFechaAgenda.$valid"> Añadir a mi agenda
-						</button>
-					</form>
+					</div>
+					<button class = "btn green-sharp btn-block bold uppercase"
+					        ng-click = "gestionTareaCtrl.agenda.guarda()"
+					        ng-disabled = "!gestionTareaCtrl.agenda.formFechaAgenda.$valid"> Añadir a mi agenda
+					</button>
+				</form>
 				<hr>
 				<h6>Mis recordatorios: </h6>
-				<div class = "table-scrollable table-scrollable-borderless">
+				<b ng-show="gestionTareaCtrl.recordatorios.length == 0">- No hay recordatorios.</b>
+				<div class = "table-scrollable table-scrollable-borderless" ng-show="gestionTareaCtrl.recordatorios.length > 0">
 					<table class = "table table-hover table-light">
 						<thead>
 							<tr class = "uppercase">
@@ -449,17 +458,21 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td> makr124 </td>
+							<tr ng-repeat = "recordatorio in gestionTareaCtrl.recordatorios">
+								<td> {{recordatorio.start | amFromUnix | amDateFormat:'DD [de] MMM [a las] hh:mm'}}</td>
 								<td>
-									<button class = "btn btn-xs red-thunderbird">
-                                                                                <i class = "fa fa-edit"></i>
+									<button class = "btn btn-xs red-thunderbird" ng-click = "gestionTareaCtrl.agenda.elimina(recordatorio.id)">
+                                                                                <i class = "fa fa-trash-o"></i>
                                                                         </button>
 								</td>
 							</tr>
 						</tbody>
 					</table>
 				</div>
+				<hr>
+				<button class = "btn green-turquoise btn-block bold uppercase"
+				        ng-click = "gestionTareaCtrl.agenda.abreAgenda()"><i class = "fa fa-calendar"></i>  Ver mi agenda
+				</button>
 			</div>
 		</div>
 		<div class = "portlet light">
