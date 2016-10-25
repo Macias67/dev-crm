@@ -34,34 +34,35 @@ angular.module('MetronicApp')
 			
 			var fbNotificacion = function () {
 				if ($auth.isAuthenticated()) {
-					var solonuevas = false;
-					var notiRef    = firebase.database().ref('notificaciones');
-					notiRef.on('child_added', function (snapshot) {
-						if (!solonuevas) {
-							return;
-						}
-						
-						var notifData = snapshot.val();
-						
-						switch (notifData.tipo) {
+					var messaging = firebase.messaging();
+					messaging.requestPermission()
+						.then(function () {
+							return messaging.getToken();
+						})
+						.then(function (token) {
+							console.log(token)
+						})
+						.catch(function (err) {
+							console.log(err);
+						});
+					
+					messaging.onMessage(function (payload) {
+						var notificacion = null;
+						switch (payload.data.tipo) {
 							case "success":
-								notifData.tipo = success;
+								notificacion = success;
 								break;
 							case "info":
-								notifData.tipo = info;
+								notificacion = info;
 								break;
 							case "warning":
-								notifData.tipo = warning;
+								notificacion = warning;
 								break;
 							case "error":
-								notifData.tipo = error;
+								notificacion = error;
 								break;
 						}
-						
-						notifData.tipo(notifData.mensaje, notifData.titulo);
-					});
-					notiRef.on('value', function () {
-						solonuevas = true;
+						notificacion(payload.notification.body, payload.notification.title);
 					});
 				}
 			};
