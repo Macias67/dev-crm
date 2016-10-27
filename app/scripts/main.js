@@ -134,7 +134,7 @@ MetronicApp.factory('settings', [
 MetronicApp.controller('AppController', [
 	'$scope', '$rootScope', 'NotifService', function ($scope, $rootScope, NotifService) {
 		NotifService.fbNotificacion();
-				
+		
 		$scope.$on('$viewContentLoaded', function () {
 			App.initComponents(); // init core components
 			//Layout.init(); //  Init entire layout(header, footer, sidebar, etc) on page load if the partials included in server side instead of loading with ng-include directive
@@ -226,13 +226,13 @@ MetronicApp.controller('FooterController', [
 ]);
 
 /* Interceptor para las peticiones */
-MetronicApp.service('interceptor', [
-	'$injector',
-	function ($injector) {
+MetronicApp.factory('interceptor', [
+	'$injector', '$q', 'CRM_APP',
+	function ($injector, $q, CRM_APP) {
 		return {
 			request: function (config) {
-				config.headers['Accept']       = 'application/vnd.crm.v1+json';
-				config.headers['Content-Type'] = 'application/json; charset=utf-8';
+				config.headers['Accept']       = CRM_APP.accept;
+				config.headers['Content-Type'] = CRM_APP.contentType;
 				return config;
 			},
 			
@@ -245,37 +245,25 @@ MetronicApp.service('interceptor', [
 			},
 			
 			responseError: function (response) {
-				var NotifService = $injector.get('NotifService');
-				var $state       = $injector.get('$state');
-//
-// 				if (response.status == 500) {
-// 					App.unblockUI();
-// 					App.unblockUI('#ui-view');
-//
-// 					NotifService.error(response.data.message, 'Error ' + response.statusText);
-// 					console.error(response.data.message);
-// 				}
-//
-//
-// 				if (response.hasOwnProperty('error') && response.error == "token_expired") {
-//
-//
-// 					console.log('Entro a la validación de token_expired');
-//
-// 					toastr.error('El token de sesión ha expirado, inicia de nuevo sesión.', 'La sesión ha expirado.');
-// 					$state.go('login');
-// 				}
+				var $state = $injector.get('$state');
+				var Logger = $injector.get('Logger');
+				
+				console.error(response.data.message);
+				
+				if (response.status != 401) {
+					Logger.save({
+						message   : response.data.message,
+						statusText: response.statusText,
+						status    : response.status,
+						tipo      : 'error'
+					});
+				}
 				
 				if (response.status == 401) {
-					App.unblockUI();
-					App.unblockUI('#ui-view');
-					console.log(response);
-					
-					NotifService.error(response.data.error, 'Error ' + response.status + ' (' + response.statusText + ')');
 					$state.go('login');
 					return;
 				}
-				return response;
+				return $q.reject(response);
 			}
 		}
 	}

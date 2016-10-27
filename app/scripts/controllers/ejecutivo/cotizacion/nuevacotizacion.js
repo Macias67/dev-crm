@@ -262,46 +262,46 @@ angular.module('MetronicApp')
 					});
 					
 					var cotizacion = new Cotizacion(vm.porletRevision.cotizacion);
-					cotizacion.$save().then(function (response) {
-						if (response.hasOwnProperty('errors')) {
-							for (var key in response.errors) {
-								if (response.errors.hasOwnProperty(key)) {
-									toastr.error(response.errors[key][0], 'Hay errores con la cotización.');
-								}
-							}
-							App.unblockUI('#ui-view');
-						}
-						else {
-							resetAll();
-							setTimeout(function () {
-								App.unblockUI('#ui-view');
-								
-								$ngBootbox.customDialog({
-									message: '¿Deseas hacer una nueva cotización?',
-									buttons: {
-										success: {
-											label    : "Nueva Cotización",
-											className: "btn-success",
-											callback : function () {
-											}
-										},
-										warning: {
-											label    : "Salir",
-											className: "btn-default",
-											callback : function () {
-												$state.go('dashboard');
-											}
-										},
+					cotizacion.$save()
+						.then(function (response) {
+							if (response.hasOwnProperty('errors')) {
+								for (var key in response.errors) {
+									if (response.errors.hasOwnProperty(key)) {
+										toastr.error(response.errors[key][0], 'Hay errores con la cotización.');
 									}
-								});
-							}, 1000);
-							toastr.success('Se generó nueva cotización', 'Nueva Cotización');
-						}
-					}, function (response) {
-						App.unblockUI('#ui-view');
-						NotifService.error(response.data.message, 'ERROR ' + response.status);
-						console.error(response.data.message, response.statusText, response.status);
-					});
+								}
+								App.unblockUI('#ui-view');
+							}
+							else {
+								resetAll();
+								setTimeout(function () {
+									App.unblockUI('#ui-view');
+									
+									$ngBootbox.customDialog({
+										message: '¿Deseas hacer una nueva cotización?',
+										buttons: {
+											success: {
+												label    : "Nueva Cotización",
+												className: "btn-success",
+												callback : function () {
+												}
+											},
+											warning: {
+												label    : "Salir",
+												className: "btn-default",
+												callback : function () {
+													$state.go('dashboard');
+												}
+											},
+										}
+									});
+								}, 1000);
+								toastr.success('Se generó nueva cotización', 'Nueva Cotización');
+							}
+						}, function (response) {
+							App.unblockUI('#ui-view');
+							NotifService.error('Ocurrio un error en el servidor, ponte contacto con departamento de desarrollo.', response.statusText + ' (' + response.status + ').');
+						});
 				}
 			};
 			
