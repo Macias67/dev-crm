@@ -167,8 +167,6 @@ angular.module('MetronicApp')
 					zIndex : 99999
 				});
 				uploadTask.on('state_changed', function (snapshot) {
-					// Observe state change events such as progress, pause, and resume
-					// See below for more detail
 					var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 					$scope.$apply(function () {
 						vm.progress = $filter('number')(progress, 0);
@@ -178,11 +176,9 @@ angular.module('MetronicApp')
 					$scope.$apply(function () {
 						vm.uploading = false;
 					});
+					App.unblockUI('#subeform');
 					console.log(error);
 				}, function () {
-					// Handle successful uploads on complete
-					// For instance, get the download URL: https://firebasestorage.googleapis.com/...
-					
 					var pagoData = {
 						cotizacion_id: vm.cotizacion.id,
 						contacto_id  : authUser.getSessionData().id,
@@ -199,51 +195,43 @@ angular.module('MetronicApp')
 						}
 					};
 					var pago     = new Pago(pagoData);
-					pago.$save({idCotizacion: vm.cotizacion.id}).then(function (response) {
-						if (response.hasOwnProperty('errors')) {
-							for (var key in response.errors) {
-								if (response.errors.hasOwnProperty(key)) {
-									NotifService.error(response.errors[key][0], 'Error con el formulario.');
+					pago.$save({idCotizacion: vm.cotizacion.id})
+						.then(function (response) {
+							if (response.hasOwnProperty('errors')) {
+								for (var key in response.errors) {
+									if (response.errors.hasOwnProperty(key)) {
+										NotifService.error(response.errors[key][0], 'Error con el formulario.');
+									}
 								}
-							}
-							App.unblockUI('#subeform');
-						}
-						else {
-							if (response.$resolved) {
-								$uibModalInstance.close();
-								setTimeout(function () {
-									App.unblockUI('#subeform');
-									$scope.$apply(function () {
-										vm.uploading = false;
-									});
-									$rootScope.$broadcast('reloadTable');
-									NotifService.success('El pago se ha subido con éxito para su verficación.', 'Pago subido con éxito');
-								}, 1000);
+								App.unblockUI('#subeform');
 							}
 							else {
-								console.log(response);
-								console.log(response.data);
-								console.log(response.status);
-								console.log(response.headers);
-								console.log(response.config);
-								console.log(response.statusText);
+								if (response.$resolved) {
+									$uibModalInstance.close();
+									setTimeout(function () {
+										App.unblockUI('#subeform');
+										$scope.$apply(function () {
+											vm.uploading = false;
+										});
+										$rootScope.$broadcast('reloadTable');
+										NotifService.success('El pago se ha subido con éxito para su verficación.', 'Pago subido con éxito');
+									}, 1000);
+								}
 							}
-						}
-					}, function (response) {
-						App.unblockUI('#subeform');
-						// Create a reference to the file to delete
-						var desertRef = storageRef.child(uploadTask.snapshot.metadata.name);
-						// Delete the file
-						desertRef.delete().then(function () {
-							// File deleted successfully
-						}).catch(function (error) {
-							// Uh-oh, an error occurred!
+						}, function (response) {
+							App.unblockUI('#subeform');
+							// Create a reference to the file to delete
+							var desertRef = storageRef.child(uploadTask.snapshot.metadata.name);
+							// Delete the file
+							desertRef.delete().then(function () {
+								// File deleted successfully
+							}).catch(function (error) {
+								// Uh-oh, an error occurred!
+							});
+							
+							$uibModalInstance.close();
+							NotifService.error(response.data.message, 'ERROR ' + response.status);
 						});
-						
-						$uibModalInstance.close();
-						NotifService.error(response.data.message, 'ERROR ' + response.status);
-						console.error(response.data.message, response.statusText, response.status);
-					});
 				});
 			};
 			

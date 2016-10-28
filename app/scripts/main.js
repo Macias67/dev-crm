@@ -164,7 +164,7 @@ MetronicApp.controller('HeaderController', [
 
 /* Setup Layout Part - Sidebar */
 MetronicApp.controller('SidebarController', [
-	'$scope', 'CotizacionFB', function ($scope, CotizacionFB) {
+	'$scope', 'CotizacionFB', 'authUser', function ($scope, CotizacionFB, authUser) {
 		var vm = this;
 		
 		vm.casos = {
@@ -175,12 +175,18 @@ MetronicApp.controller('SidebarController', [
 			pagosxrevisar: 0
 		};
 		
-		firebase.database().ref('caso').orderByChild('estatus_id').equalTo(1).on('value', function (snapshot) {
+		//Casos por asignar
+		firebase.database().ref('caso').orderByChild('estatus').equalTo('porasignar').on('value', function (snapshot) {
 			vm.casos.casosxasignar = snapshot.numChildren();
 		});
 		
+		//Mis Casos
+		firebase.database().ref('caso').orderByChild('idLider').equalTo(authUser.getSessionData().id).on('value', function (snapshot) {
+			vm.casos.miscasos = snapshot.numChildren();
+		});
+		
 		//Cotizaciones por revisar
-		firebase.database().ref('cotizacion').child('revision').on('value', function (snapshot) {
+		firebase.database().ref('cotizacion').orderByChild('estatus').equalTo('revision').on('value', function (snapshot) {
 			vm.cotizacion.pagosxrevisar = snapshot.numChildren();
 		});
 		
@@ -260,6 +266,7 @@ MetronicApp.factory('interceptor', [
 				}
 				
 				if (response.status == 401) {
+					console.error(response);
 					$state.go('login');
 					return;
 				}

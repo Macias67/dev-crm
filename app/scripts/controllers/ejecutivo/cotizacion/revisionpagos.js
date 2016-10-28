@@ -205,9 +205,9 @@ angular.module('MetronicApp')
 						}, 1000);
 					}
 				}, function (response) {
+					App.unblockUI('#ui-view');
 					$uibModalInstance.close();
 					NotifService.error(response.data.message, 'ERROR ' + response.status);
-					console.error(response.data.message, response.statusText, response.status);
 				});
 			};
 			
