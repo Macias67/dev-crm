@@ -180,7 +180,7 @@ MetronicApp.controller('SidebarController', [
 		});
 		
 		//Cotizaciones por revisar
-		CotizacionFB.refArray().orderByChild('estatus_id').equalTo(2).on('value', function (snapshot) {
+		firebase.database().ref('cotizacion').child('revision').on('value', function (snapshot) {
 			vm.cotizacion.pagosxrevisar = snapshot.numChildren();
 		});
 		
