@@ -81,7 +81,7 @@
 			<li class = "dropdown dropdown-extended dropdown-notification dropdown-task" id = "header_notification_task_bar">
 				<a href = "#" class = "dropdown-toggle" dropdown-menu-hover data-toggle = "dropdown" data-close-others = "true">
 					<i class = "fa fa-tasks"></i>
-					<span class = "badge badge-default"> {{headerCtrl.tareasEnMarcha.length}} </span>
+					<span class = "badge badge-default" ng-hide="headerCtrl.tareasEnMarcha.length == 0"> {{headerCtrl.tareasEnMarcha.length}} </span>
 				</a>
 				<ul class = "dropdown-menu" style = "max-width: 300px; width: 300px">
 					<li class = "external">

@@ -26,7 +26,8 @@ angular.module('MetronicApp')
 		'EjecutivoAgenda',
 		'$q',
 		'$firebaseArray',
-		function ($rootScope, $scope, dataTarea, $uibModal, authUser, $state, Caso, Tarea, NotifService, $filter, TareaNota, NotaFB, $timeout, Agenda, EjecutivoAgenda, $q, $firebaseArray) {
+		'$firebaseObject',
+		function ($rootScope, $scope, dataTarea, $uibModal, authUser, $state, Caso, Tarea, NotifService, $filter, TareaNota, NotaFB, $timeout, Agenda, EjecutivoAgenda, $q, $firebaseArray, $firebaseObject) {
 			var vm = this;
 			
 			vm.tarea = dataTarea.data;
@@ -430,28 +431,32 @@ angular.module('MetronicApp')
 				estaTrabajando: false,
 				trabajar      : function () {
 					vm.trabajaTarea.estaTrabajando = true;
+					var query = firebase.database().ref('tarea-enproceso').orderByChild('idTarea').equalTo(vm.tarea.id);
+					var tarea = $firebaseArray(query);
 					
-					var ref    = firebase.database().ref('tarea-enproceso');
-					var objeto = $firebaseArray(ref);
-					var data   = {
-						idTarea    : vm.tarea.id,
-						idEjecutivo: vm.tarea.ejecutivo.id,
-						titulo     : vm.tarea.titulo,
-						descripcion: vm.tarea.descripcion,
-						inicio     : moment().unix(),
-						tiempo     : {
-							segundos: 0,
-							minutos : 0,
-							horas   : 0
-						},
-						estaTrabajando: true
-					};
+					console.log(tarea.$id);
 					
-					objeto.$add(data).then(function (ref) {
-						console.log(ref);
-					}, function (err) {
-						console.log(err);
-					});
+// 					var ref    = firebase.database().ref('tarea-enproceso');
+// 					var objeto = $firebaseArray(ref);
+// 					var data   = {
+// 						idTarea    : vm.tarea.id,
+// 						idEjecutivo: vm.tarea.ejecutivo.id,
+// 						titulo     : vm.tarea.titulo,
+// 						descripcion: vm.tarea.descripcion,
+// 						inicio     : moment().unix(),
+// 						tiempo     : {
+// 							segundos: 0,
+// 							minutos : 0,
+// 							horas   : 0
+// 						},
+// 						estaTrabajando: true
+// 					};
+//
+// 					objeto.$add(data).then(function (ref) {
+// 						console.log(ref);
+// 					}, function (err) {
+// 						console.log(err);
+// 					});
 					
 				},
 				detener       : function () {
