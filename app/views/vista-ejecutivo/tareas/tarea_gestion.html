@@ -96,9 +96,14 @@
 					</div>
 				</div>
 				<div class = "portlet-body">
-					<button class = "btn green-jungle btn-block btn-lg uppercase bold">
+					<button class = "btn green-jungle btn-block btn-lg uppercase bold" ng-show="!gestionTareaCtrl.trabajaTarea.estaTrabajando"  ng-click = "gestionTareaCtrl.trabajaTarea.trabajar()">
 						<i class = "fa fa-play"></i>&nbsp;&nbsp;Trabajar en la tarea
 					</button>
+					<button class = "btn red-thunderbird btn-block btn-lg uppercase bold" ng-show="gestionTareaCtrl.trabajaTarea.estaTrabajando"  ng-click = "gestionTareaCtrl.trabajaTarea.detener()">
+						<i class = "fa fa-stop"></i>&nbsp;&nbsp;Detener avance
+					</button>
+					<hr>
+					<h2 class="text-center">00:00:00</h2>
 					<hr>
 					<table class = "table table-hover table-light">
 						<thead>
@@ -448,8 +453,8 @@
 				</form>
 				<hr>
 				<h6>Mis recordatorios: </h6>
-				<b ng-show="gestionTareaCtrl.recordatorios.length == 0">- No hay recordatorios.</b>
-				<div class = "table-scrollable table-scrollable-borderless" ng-show="gestionTareaCtrl.recordatorios.length > 0">
+				<b ng-show = "gestionTareaCtrl.recordatorios.length == 0">- No hay recordatorios.</b>
+				<div class = "table-scrollable table-scrollable-borderless" ng-show = "gestionTareaCtrl.recordatorios.length > 0">
 					<table class = "table table-hover table-light">
 						<thead>
 							<tr class = "uppercase">

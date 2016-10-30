@@ -132,8 +132,7 @@ MetronicApp.factory('settings', [
 
 /* Setup App Main Controller */
 MetronicApp.controller('AppController', [
-	'$scope', '$rootScope', 'NotifService', function ($scope, $rootScope, NotifService) {
-		NotifService.fbNotificacion();
+	'$scope', '$rootScope', function ($scope, $rootScope) {
 		
 		$scope.$on('$viewContentLoaded', function () {
 			App.initComponents(); // init core components
@@ -150,8 +149,14 @@ MetronicApp.controller('AppController', [
 
 /* Setup Layout Part - Header */
 MetronicApp.controller('HeaderController', [
-	'$scope', 'authUser', function ($scope, authUser) {
+	'$scope', 'authUser', 'NotifService', '$uibModal', '$firebaseArray', function ($scope, authUser, NotifService, $uibModal, $firebaseArray) {
 		var vm = this;
+		
+		var query = firebase.database().ref('tarea-enproceso').orderByChild('idEjecutivo').equalTo(authUser.getSessionData().id);
+		vm.tareasEnMarcha = $firebaseArray(query);
+		
+		NotifService.fbNotificacion();
+		
 		$scope.$on('$includeContentLoaded', function () {
 			Layout.initHeader(); // init header
 		});
@@ -255,8 +260,8 @@ MetronicApp.factory('interceptor', [
 				var Logger = $injector.get('Logger');
 				
 				console.error(response.data.message);
-				
-				if (response.status != 401) {
+								
+				if (response.status != 401 && response.status != 422) {
 					Logger.save({
 						message   : response.data.message,
 						statusText: response.statusText,
@@ -266,10 +271,9 @@ MetronicApp.factory('interceptor', [
 				}
 				
 				if (response.status == 401) {
-					console.error(response);
 					$state.go('login');
-					return;
 				}
+				
 				return $q.reject(response);
 			}
 		}
@@ -928,8 +932,8 @@ MetronicApp.config([
 
 /* Init global settings and run the app */
 MetronicApp.run([
-	'$rootScope', 'settings', '$state', '$auth', '$location', 'authUser', 'validator', 'defaultErrorMessageResolver', 'amMoment', 'PermPermissionStore', 'PermRoleStore',
-	function ($rootScope, settings, $state, $auth, $location, authUser, validator, defaultErrorMessageResolver, amMoment, PermPermissionStore, PermRoleStore) {
+	'$rootScope', 'settings', '$state', '$auth', '$location', 'authUser', 'validator', 'defaultErrorMessageResolver', 'amMoment', 'PermPermissionStore', 'PermRoleStore', 'NotifService',
+	function ($rootScope, settings, $state, $auth, $location, authUser, validator, defaultErrorMessageResolver, amMoment, PermPermissionStore, PermRoleStore, NotifService) {
 		
 		$rootScope.$state    = $state; // state to be accessed from view
 		$rootScope.$settings = settings; // state to be accessed from view

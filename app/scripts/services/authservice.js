@@ -22,8 +22,8 @@ angular.module('authService', [])
 		};
 	})
 	.factory('authUser', [
-		'$rootScope', '$auth', '$state', 'sessionControl', 'NotifService', 'ngAudio', 'PermPermissionStore', 'PermRoleStore',
-		function ($rootScope, $auth, $state, sessionControl, NotifService, ngAudio, PermPermissionStore, PermRoleStore) {
+		'$rootScope', '$auth', '$state', 'sessionControl', 'ngAudio', 'PermPermissionStore', 'PermRoleStore', 'toastr',
+		function ($rootScope, $auth, $state, sessionControl, ngAudio, PermPermissionStore, PermRoleStore, toastr) {
 			
 			var storeSession = function (data) {
 				sessionControl.set('ec_data', data);
@@ -100,13 +100,16 @@ angular.module('authService', [])
 							}, 3000);
 						}
 					}, function (response) {
-						
-					})
-					.catch(function (response) {
-						console.log(response);
-// 						App.unblockUI();
-// 						deleteSession();
-// 						NotifService.error(error.data.message, 'Ups...');
+						if (response.data.hasOwnProperty('errors')) {
+							for (var key in response.data.errors) {
+								if (response.data.errors.hasOwnProperty(key)) {
+									toastr.error(response.data.errors[key][0], 'Error con el formulario.');
+								}
+							}
+						} else {
+							toastr.error(response.data.message, 'Error con el formulario.');
+						}
+						App.unblockUI();
 					});
 			};
 			

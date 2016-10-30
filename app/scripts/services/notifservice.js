@@ -9,8 +9,8 @@
  */
 angular.module('MetronicApp')
 	.factory('NotifService', [
-		'toastr', 'ngAudio', '$auth',
-		function (toastr, ngAudio, $auth) {
+		'toastr', 'ngAudio', 'authUser', 'Token',
+		function (toastr, ngAudio, authUser, Token) {
 			
 			var success = function (mensaje, titulo) {
 				ngAudio.load('sounds/chord.mp3').play();
@@ -33,17 +33,30 @@ angular.module('MetronicApp')
 			};
 			
 			var fbNotificacion = function () {
-				if ($auth.isAuthenticated()) {
+				if (authUser.isAuthenticated()) {
 					var messaging = firebase.messaging();
 					messaging.requestPermission()
 						.then(function () {
 							return messaging.getToken();
 						})
 						.then(function (token) {
-							console.log(token)
+							var deviceToken = localStorage.getItem('deviceToken');
+							var idToken     = localStorage.getItem('idToken');
+							if ((deviceToken == null || deviceToken == undefined || deviceToken == "undefined") || (idToken == null || idToken == undefined || idToken == "undefined")) {
+								Token.save({
+									id_usuario: authUser.getSessionData().id,
+									token     : token
+								}).$promise.then(function (response) {
+									localStorage.setItem('deviceToken', response.data.token);
+									localStorage.setItem('idToken', response.data.id);
+									info('Token guardado correctamente.', 'Ahora pordrás recibir notificaciones.');
+								}, function (response) {
+									error('Error al guardar el token.', response.statusText + ' (' + response.status + ')');
+								});
+							}
 						})
 						.catch(function (err) {
-							console.log(err);
+							warning('Este navegador aún no es compatible para recibir notificaciones, te sugerimos usar Chrome.', 'Navegador incompatible.');
 						});
 					
 					messaging.onMessage(function (payload) {
@@ -64,6 +77,35 @@ angular.module('MetronicApp')
 						}
 						notificacion(payload.notification.body, payload.notification.title);
 					});
+					
+					messaging.onTokenRefresh(function () {
+						messaging.getToken()
+							.then(function (refreshedToken) {
+								var deviceToken = localStorage.getItem('deviceToken');
+								var idToken     = localStorage.getItem('idToken');
+								
+								Token.update({
+									id_token  : idToken,
+									id_usuario: authUser.getSessionData().id,
+									token     : refreshedToken
+								}).$promise.then(function (response) {
+									localStorage.setItem('deviceToken', response.data.token);
+									localStorage.setItem('idToken', response.data.id);
+									info('Token guardado correctamente.', 'Ahora pordrás recibir notificaciones.');
+								}, function (response) {
+									error('Error al guardar el token.', response.statusText + ' (' + response.status + ')')
+								});
+								
+								info('Se ha actualizado correctamente el token.', 'Token actualizado.');
+							})
+							.catch(function (err) {
+								console.log('Unable to retrieve refreshed token ', err);
+								showToken('Unable to retrieve refreshed token ', err);
+							});
+					});
+					
+				} else {
+					console.log('aok');
 				}
 			};
 			
