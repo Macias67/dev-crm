@@ -35,6 +35,7 @@ var MetronicApp = angular.module('MetronicApp', [
 	'checklist-model',
 	'angular-ladda',
 	'firebase',
+	'timer',
 	//Servicios
 	'authService'
 ]);
@@ -149,13 +150,87 @@ MetronicApp.controller('AppController', [
 
 /* Setup Layout Part - Header */
 MetronicApp.controller('HeaderController', [
-	'$scope', 'authUser', 'NotifService', '$uibModal', '$firebaseArray', function ($scope, authUser, NotifService, $uibModal, $firebaseArray) {
-		var vm = this;
-		
-		var query = firebase.database().ref('tarea-enproceso').orderByChild('idEjecutivo').equalTo(authUser.getSessionData().id);
-		vm.tareasEnMarcha = $firebaseArray(query);
-		
+	'$scope',
+	'authUser',
+	'NotifService',
+	'Cronometro',
+	'$uibModal',
+	'$firebaseArray',
+	'$timeout',
+	function ($scope, authUser, NotifService, Cronometro, $uibModal, $firebaseArray, $timeout) {
 		NotifService.fbNotificacion();
+		
+		var vm            = this;
+		vm.tareasEnMarcha = [];
+		
+		firebase.database().ref('tarea-enproceso').orderByChild('idEjecutivo').equalTo(authUser.getSessionData().id).once('value', function (snapshot) {
+			$timeout(function () {
+				vm.tareasEnMarcha = [];
+				snapshot.forEach(function (childSnapshot) {
+					var tarea = childSnapshot.val();
+					if (tarea.estaTrabajando) {
+						tarea.fbID = childSnapshot.key;
+						//tarea.inicio = moment().valueOf() - childSnapshot.val().duracionMilis;
+						vm.tareasEnMarcha.push(tarea);
+					}
+				});
+			});
+		});
+		
+		$scope.$on('recarga-tareas', function () {
+			firebase.database().ref('tarea-enproceso').orderByChild('idEjecutivo').equalTo(authUser.getSessionData().id).once('value', function (snapshot) {
+				$timeout(function () {
+					vm.tareasEnMarcha = [];
+					snapshot.forEach(function (childSnapshot) {
+						var tarea = childSnapshot.val();
+						if (tarea.estaTrabajando) {
+							tarea.fbID = childSnapshot.key;
+							//tarea.inicio = moment().valueOf() - childSnapshot.val().duracionMilis;
+							vm.tareasEnMarcha.push(tarea);
+						}
+					});
+				});
+			});
+		});
+		
+		
+		$scope.$on('timer-tick', function (event, args) {
+			$timeout(function () {
+				var fbID = angular.element(args.timerElement).attr('fbid');
+				
+				if (fbID != undefined || fbID != null) {
+					firebase.database().ref('tarea-enproceso/' + fbID).update({
+						duracionMilis: Math.floor(args.millis / 1000) * 1000
+					});
+				}
+			});
+		});
+		
+		vm.abreModalTarea = function (fbID) {
+			App.blockUI({
+				target      : '#ui-view',
+				message     : '<b>Abriendo datos de la tarea </b>',
+				boxed       : true,
+				zIndex      : 99999,
+				overlayColor: App.getBrandColor('grey')
+			});
+			
+			firebase.database().ref('tarea-enproceso/' + fbID).once('value', function (snapshot) {
+				$uibModal.open({
+					backdrop   : 'static',
+					templateUrl: 'views/vista-ejecutivo/partials/modal/modalTareaProceso.html',
+					controller : 'ModalTareaProcesoController as modalTareaProcesoController',
+					resolve    : {
+						dataTarea: [
+							'$stateParams', 'Tarea', function ($stateParams, Tarea) {
+								return Tarea.get({idtarea: snapshot.val().idTarea}).$promise;
+							}
+						]
+					},
+					size       : 'lg'
+				});
+			});
+		};
 		
 		$scope.$on('$includeContentLoaded', function () {
 			Layout.initHeader(); // init header
@@ -164,6 +239,236 @@ MetronicApp.controller('HeaderController', [
 		vm.logout = function () {
 			authUser.logout();
 		};
+	}
+]);
+
+MetronicApp.controller('ModalTareaProcesoController', [
+	'$rootScope',
+	'$scope',
+	'$uibModalInstance',
+	'dataTarea',
+	'$timeout',
+	'TareaNota',
+	'Tarea',
+	'NotifService',
+	function ($rootScope, $scope, $uibModalInstance, dataTarea, $timeout, TareaNota, Tarea, NotifService) {
+		App.unblockUI('#ui-view');
+		var vm   = this;
+		vm.tarea = dataTarea.data;
+		
+		firebase.database().ref('tarea-enproceso').orderByChild('idTarea').equalTo(vm.tarea.id).on('value', function (snapshot) {
+			$timeout(function () {
+				snapshot.forEach(function (childSnapshot) {
+					vm.snapshot     = childSnapshot.val();
+					vm.snapshot.key = childSnapshot.key;
+				});
+			});
+		});
+		
+		vm.trabajaTarea = {
+			trabajar: function () {
+				firebase.database().ref('tarea-enproceso/' + vm.snapshot.key).update({
+					estaTrabajando: true
+				});
+			},
+			detener : function () {
+				firebase.database().ref('tarea-enproceso/' + vm.snapshot.key).update({
+					estaTrabajando: false,
+					//duracionMilis : moment().valueOf() - (moment().valueOf() - vm.snapshot.duracionMilis)
+				});
+			}
+		};
+		
+		vm.notas = {
+			formNotas    : null,
+			sliderOptions: {
+				minLimit            : vm.tarea.avance,
+				floor               : 0,
+				ceil                : 100,
+				step                : 1,
+				showTicks           : 5,
+				translate           : function (value, sliderId, label) {
+					switch (label) {
+						case 'model':
+							return '<b>Avance:</b> ' + value + '%';
+						default:
+							return value + '%'
+					}
+				},
+				showSelectionBar    : true,
+				getSelectionBarColor: function (value) {
+					if (value <= 30) {
+						return 'red';
+					}
+					if (value <= 60) {
+						return 'orange';
+					}
+					if (value <= 80) {
+						return 'yellow';
+					}
+					return '#2AE02A';
+				},
+				getPointerColor     : function (value) {
+					if (value <= 30) {
+						return 'red';
+					}
+					if (value <= 60) {
+						return 'orange';
+					}
+					if (value <= 80) {
+						return 'yellow';
+					}
+					return '#2AE02A';
+				},
+				getTickColor        : function (value) {
+					if (value <= 30) {
+						return 'red';
+					}
+					if (value <= 60) {
+						return 'orange';
+					}
+					if (value <= 80) {
+						return 'yellow';
+					}
+					return '#2AE02A';
+				},
+				onChange            : function () {
+					
+				}
+			},
+			form         : {
+				descripcion: '',
+				tipo       : 1,
+				avance     : vm.tarea.avance,
+				file       : null
+			},
+			loading      : false,
+			progress     : 0,
+			guarda       : function () {
+				vm.notas.loading = true;
+				var file         = vm.notas.form.file;
+				
+				if (file != null) {
+					var storageRef = firebase.storage().ref('notas/' + vm.tarea.id);
+					var uploadTask = storageRef.child(file.name).put(file);
+					uploadTask.on('state_changed', function (snapshot) {
+						// Observe state change events such as progress, pause, and resume
+						// See below for more detail
+						var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+						$scope.$apply(function () {
+							vm.notas.progress = $filter('number')(progress, 0);
+						});
+					}, function (error) {
+						// Handle unsuccessful uploads
+						console.log('error subida', error);
+						vm.notas.loading = false;
+					}, function () {
+						// Handle successful uploads on complete
+						// For instance, get the download URL: https://firebasestorage.googleapis.com/...
+						vm.notas.form.archivo = {
+							url        : uploadTask.snapshot.downloadURL,
+							contentType: uploadTask.snapshot.metadata.contentType,
+							fullPath   : uploadTask.snapshot.metadata.fullPath,
+							hash       : uploadTask.snapshot.metadata.md5Hash,
+							name       : uploadTask.snapshot.metadata.name,
+							size       : uploadTask.snapshot.metadata.size
+						};
+						delete vm.notas.form.file;
+						
+						var tareaNota = new TareaNota(vm.notas.form);
+						tareaNota.$save({idtarea: vm.tarea.id}).then(function (response) {
+							if (response.$resolved) {
+								vm.notas.formNotas.$setPristine();
+								vm.notas.formNotas.$setUntouched();
+								vm.notas.formNotas.$dirty = false;
+								
+								vm.notas.form.descripcion = '';
+								vm.notas.form.tipo        = 1;
+								vm.notas.form.avance      = response.data.avance;
+								vm.notas.form.file        = null;
+								
+								vm.notas.loading                = false;
+								vm.notas.progress               = 0;
+								vm.notas.sliderOptions.minLimit = response.data.avance;
+								vm.reloadCaso();
+								
+								NotifService.success('Se añadio una nueva nota a la tarea', 'Nueva nota añadida');
+							}
+						}, function (error) {
+							
+							// Create a reference to the file to delete
+							var desertRef = storageRef.child(uploadTask.snapshot.metadata.name);
+							// Delete the file
+							desertRef.delete().then(function () {
+								// File deleted successfully
+							}).catch(function (error) {
+								// Uh-oh, an error occurred!
+							});
+							
+							console.log(error);
+							vm.notas.loading = false;
+						});
+					});
+				}
+				else {
+					var tareaNota = new TareaNota(vm.notas.form);
+					tareaNota.$save({idtarea: vm.tarea.id}).then(function (response) {
+						if (response.$resolved) {
+							vm.notas.formNotas.$setPristine();
+							vm.notas.formNotas.$setUntouched();
+							vm.notas.formNotas.$dirty = false;
+							
+							vm.notas.form.descripcion = '';
+							vm.notas.form.tipo        = 1;
+							vm.notas.form.avance      = response.data.avance;
+							vm.notas.form.file        = null;
+							
+							vm.notas.loading                = false;
+							vm.notas.progress               = 0;
+							vm.notas.sliderOptions.minLimit = response.data.avance;
+							vm.reloadCaso();
+							
+							NotifService.success('Se añadio una nueva nota a la tarea', 'Nueva nota añadida');
+						}
+					}, function (error) {
+						console.log(error);
+						vm.notas.loading = false;
+						App.unblockUI('#ui-view');
+					});
+				}
+			}
+		};
+		
+		vm.cancel = function () {
+			$uibModalInstance.dismiss('cancel');
+		};
+		
+		vm.reloadCaso = function () {
+			
+			App.blockUI({
+				target      : '#ui-view',
+				animate     : true,
+				overlayColor: App.getBrandColor('grey')
+			});
+			
+			Tarea.get({idtarea: vm.tarea.id}).$promise.then(function (response) {
+				if (response.$resolved) {
+					vm.tarea = response.data;
+					vm.notas.form.avance            = vm.tarea.avance;
+					vm.notas.sliderOptions.minLimit = vm.tarea.avance;
+					
+					$timeout(function () {
+						$scope.$broadcast('rzSliderForceRender');
+					});
+					
+					App.unblockUI('#ui-view');
+				}
+			});
+		};
+		
+		$timeout(function () {
+			$scope.$broadcast('rzSliderForceRender');
+		});
 	}
 ]);
 
@@ -260,7 +565,7 @@ MetronicApp.factory('interceptor', [
 				var Logger = $injector.get('Logger');
 				
 				console.error(response.data.message);
-								
+				
 				if (response.status != 401 && response.status != 422) {
 					Logger.save({
 						message   : response.data.message,
@@ -271,7 +576,7 @@ MetronicApp.factory('interceptor', [
 				}
 				
 				if (response.status == 401) {
-					$state.go('login');
+					alert('Token expirado, reinicia sesión.');
 				}
 				
 				return $q.reject(response);
@@ -932,7 +1237,18 @@ MetronicApp.config([
 
 /* Init global settings and run the app */
 MetronicApp.run([
-	'$rootScope', 'settings', '$state', '$auth', '$location', 'authUser', 'validator', 'defaultErrorMessageResolver', 'amMoment', 'PermPermissionStore', 'PermRoleStore', 'NotifService',
+	'$rootScope',
+	'settings',
+	'$state',
+	'$auth',
+	'$location',
+	'authUser',
+	'validator',
+	'defaultErrorMessageResolver',
+	'amMoment',
+	'PermPermissionStore',
+	'PermRoleStore',
+	'NotifService',
 	function ($rootScope, settings, $state, $auth, $location, authUser, validator, defaultErrorMessageResolver, amMoment, PermPermissionStore, PermRoleStore, NotifService) {
 		
 		$rootScope.$state    = $state; // state to be accessed from view

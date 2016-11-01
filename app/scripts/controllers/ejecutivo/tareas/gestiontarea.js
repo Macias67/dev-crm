@@ -27,7 +27,8 @@ angular.module('MetronicApp')
 		'$q',
 		'$firebaseArray',
 		'$firebaseObject',
-		function ($rootScope, $scope, dataTarea, $uibModal, authUser, $state, Caso, Tarea, NotifService, $filter, TareaNota, NotaFB, $timeout, Agenda, EjecutivoAgenda, $q, $firebaseArray, $firebaseObject) {
+		'TareaTiempos',
+		function ($rootScope, $scope, dataTarea, $uibModal, authUser, $state, Caso, Tarea, NotifService, $filter, TareaNota, NotaFB, $timeout, Agenda, EjecutivoAgenda, $q, $firebaseArray, $firebaseObject, TareaTiempos) {
 			var vm = this;
 			
 			vm.tarea = dataTarea.data;
@@ -57,10 +58,10 @@ angular.module('MetronicApp')
 					}
 				},
 				fechatarea    : {
-					fechainicio    : null,
-					duracion       : null,
-					duracionminutos: 0,
-					fechacierre    : null
+					fechainicio     : null,
+					duracion        : null,
+					duracionsegundos: 0,
+					fechacierre     : null
 				},
 				abreAgenda    : function () {
 					App.scrollTop();
@@ -90,9 +91,9 @@ angular.module('MetronicApp')
 				guarda        : function () {
 					
 					var data = {
-						fechainicio         : moment(vm.fechas.fechatarea.fechainicio).format("YYYY-MM-DD HH:mm:ss"),
-						duracionminutos     : vm.fechas.fechatarea.duracionminutos,
-						fechatentativacierre: moment(vm.fechas.fechatarea.fechacierre).format("YYYY-MM-DD HH:mm:ss"),
+						fechainicio              : moment(vm.fechas.fechatarea.fechainicio).format("YYYY-MM-DD HH:mm:ss"),
+						duraciontentativasegundos: vm.fechas.fechatarea.duracionsegundos,
+						fechatentativacierre     : moment(vm.fechas.fechatarea.fechacierre).format("YYYY-MM-DD HH:mm:ss"),
 					};
 					
 					App.blockUI({
@@ -113,10 +114,10 @@ angular.module('MetronicApp')
 							vm.fechas.formFechatarea.$setUntouched();
 							vm.fechas.formFechatarea.$dirty = false;
 							vm.fechas.fechatarea            = {
-								fechainicio    : null,
-								duracion       : null,
-								duracionminutos: 0,
-								fechacierre    : null
+								fechainicio     : null,
+								duracion        : null,
+								duracionsegundos: 0,
+								fechacierre     : null
 							};
 						}
 						else {
@@ -124,7 +125,7 @@ angular.module('MetronicApp')
 						}
 					}, function (response) {
 						App.unblockUI('#ui-view');
-						console.log(response);
+						NotifService.error('Ocurrio un error en el servidor, ponte contacto con departamento de desarrollo.', response.statusText + ' (' + response.status + ').');
 					});
 					
 				}
@@ -428,41 +429,91 @@ angular.module('MetronicApp')
 			};
 			
 			vm.trabajaTarea = {
-				estaTrabajando: false,
-				trabajar      : function () {
-					vm.trabajaTarea.estaTrabajando = true;
-					var query = firebase.database().ref('tarea-enproceso').orderByChild('idTarea').equalTo(vm.tarea.id);
-					var tarea = $firebaseArray(query);
-					
-					console.log(tarea.$id);
-					
-// 					var ref    = firebase.database().ref('tarea-enproceso');
-// 					var objeto = $firebaseArray(ref);
-// 					var data   = {
-// 						idTarea    : vm.tarea.id,
-// 						idEjecutivo: vm.tarea.ejecutivo.id,
-// 						titulo     : vm.tarea.titulo,
-// 						descripcion: vm.tarea.descripcion,
-// 						inicio     : moment().unix(),
-// 						tiempo     : {
-// 							segundos: 0,
-// 							minutos : 0,
-// 							horas   : 0
-// 						},
-// 						estaTrabajando: true
-// 					};
-//
-// 					objeto.$add(data).then(function (ref) {
-// 						console.log(ref);
-// 					}, function (err) {
-// 						console.log(err);
-// 					});
-					
+				tarea   : null,
+				trabajar: function () {
+					if (vm.trabajaTarea.tarea == null) {
+						var ref               = firebase.database().ref('tarea-enproceso');
+						var objeto            = $firebaseArray(ref);
+						vm.trabajaTarea.tarea = {
+							idTarea       : vm.tarea.id,
+							idEjecutivo   : vm.tarea.ejecutivo.id,
+							titulo        : vm.tarea.titulo,
+							descripcion   : vm.tarea.descripcion,
+							inicio        : moment().valueOf(),
+							duracionMilis : 0,
+							estaTrabajando: true
+						};
+						objeto.$add(vm.trabajaTarea.tarea).then(function () {
+							$rootScope.$broadcast('recarga-tareas');
+						}, function (err) {
+							console.log(err);
+						});
+					}
+					else {
+						firebase.database().ref('tarea-enproceso/' + vm.trabajaTarea.tarea.idFirebase).update({
+							estaTrabajando: true
+						}, function () {
+							$rootScope.$broadcast('recarga-tareas');
+						});
+					}
 				},
-				detener       : function () {
-					vm.trabajaTarea.estaTrabajando = false;
+				detener : function () {
+					App.scrollTop();
+					App.blockUI({
+						target      : '#ui-view',
+						message     : '<b>Añadiendo tiempos</b>',
+						boxed       : true,
+						zIndex      : 99999,
+						overlayColor: App.getBrandColor('grey')
+					});
+					
+					firebase.database().ref('tarea-enproceso/' + vm.trabajaTarea.tarea.idFirebase).once('value').then(function (snapshot) {
+						$timeout(function () {
+							if (snapshot.val() != null) {
+								var tarea = snapshot.val();
+								var data  = {
+									inicio  : moment(tarea.inicio).format('YYYY-MM-DD H:mm:ss'),
+									fin     : moment().format('YYYY-MM-DD H:mm:ss'),
+									duracion: tarea.duracionMilis / 1000
+								};
+								
+								TareaTiempos.save({idtarea: vm.tarea.id}, data).$promise.then(function (response) {
+									if (response.$resolved) {
+										vm.tarea = response.data;
+										firebase.database().ref('tarea-enproceso/' + vm.trabajaTarea.tarea.idFirebase).update({estaTrabajando: false});
+										firebase.database().ref('tarea-enproceso/' + vm.trabajaTarea.tarea.idFirebase).remove().then(function () {
+											$timeout(function () {
+												vm.trabajaTarea.tarea = null;
+												$rootScope.$broadcast('recarga-tareas');
+												App.unblockUI('#ui-view');
+											});
+										}, function (error) {
+											console.log("Remove failed: " + error.message);
+										});
+									}
+								}, function (response) {
+									App.unblockUI('#ui-view');
+									NotifService.error('Ocurrio un error en el servidor, ponte contacto con departamento de desarrollo.', response.statusText + ' (' + response.status + ').');
+								});
+							}
+						});
+					}, function (s) {
+						
+					});
+					
 				}
 			};
+			
+			firebase.database().ref('tarea-enproceso').orderByChild('idTarea').equalTo(vm.tarea.id).on('value', function (snapshot) {
+				$timeout(function () {
+					if (snapshot.val() != null) {
+						snapshot.forEach(function (childSnapshot) {
+							vm.trabajaTarea.tarea            = childSnapshot.val();
+							vm.trabajaTarea.tarea.idFirebase = childSnapshot.key;
+						});
+					}
+				});
+			});
 			
 			vm.reloadCaso = function () {
 				var cargadoCaso  = false;
@@ -497,8 +548,6 @@ angular.module('MetronicApp')
 						App.unblockUI('#ui-view');
 					}
 				});
-				
-				
 			};
 			
 			vm.vistaCaso = function () {
@@ -549,12 +598,11 @@ angular.module('MetronicApp')
 					var horas                             = parseInt(tiempo[0]);
 					var minutos                           = parseInt(tiempo[1]);
 					var totalminutos                      = (horas * 60) + minutos;
-					//console.log(horas, minutos, totalminutos);
-					vm.fechas.fechatarea.duracionminutos  = totalminutos;
+					vm.fechas.fechatarea.duracionsegundos = totalminutos * 60;
 					vm.fechas.fechacierre.options.minDate = moment(vm.fechas.fechatarea.fechainicio).add(totalminutos, 'm');
 				}
 				else {
-					vm.fechas.fechatarea.duracionminutos  = 0;
+					vm.fechas.fechatarea.duracionsegundos = 0;
 					vm.fechas.fechacierre.options.minDate = moment();
 				}
 			});

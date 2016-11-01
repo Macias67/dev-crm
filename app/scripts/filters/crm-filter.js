@@ -54,5 +54,36 @@ angular.module('MetronicApp')
 			
 			return (country + " (" + city + ") " + number).trim();
 		};
+	})
+	.filter('duracion', function () {
+		return function (input, format, unidades) {
+			if (!input) {
+				return '00:00:00';
+			}
+
+// 			var d = Number(input);
+// 			var h = Math.floor(d / 3600);
+// 			var m = Math.floor(d % 3600 / 60);
+// 			var s = Math.floor(d % 3600 % 60);
+//
+// 			return ((h < 10 ? "0" + h + ":" : h + ":") + (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s);
+			
+			var unidad = '';
+			switch (unidades) {
+				case 's':
+					unidad = 'X';
+					break;
+				case 'ms':
+					unidad = 'x';
+					break;
+				
+			}
+			
+			var now  = moment().format(unidad);
+			var then = moment().format(unidad) - input;
+			
+			return moment.utc(moment(now, unidad).diff(moment(then, unidad))).format(format);
+			
+		};
 	});
 

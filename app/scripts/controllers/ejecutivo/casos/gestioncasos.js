@@ -156,8 +156,8 @@ angular.module('MetronicApp')
 		'dataEjecutivos',
 		'idCaso',
 		'CasoTarea',
-		'toastr',
-		function ($rootScope, $scope, $uibModalInstance, dataEjecutivos, idCaso, CasoTarea, toastr) {
+		'NotifService',
+		function ($rootScope, $scope, $uibModalInstance, dataEjecutivos, idCaso, CasoTarea, NotifService) {
 			App.unblockUI('#ui-view');
 			
 			var vm        = this;
@@ -189,7 +189,7 @@ angular.module('MetronicApp')
 					if (response.hasOwnProperty('errors')) {
 						for (var key in response.errors) {
 							if (response.errors.hasOwnProperty(key)) {
-								toastr.error(response.errors[key][0], 'Hay errores con la tarea.');
+								NotifService.error(response.errors[key][0], 'Hay errores con la tarea.');
 							}
 						}
 						App.unblockUI('#ui-view');
@@ -200,10 +200,11 @@ angular.module('MetronicApp')
 						setTimeout(function () {
 							App.unblockUI('#ui-view');
 						}, 1000);
-						toastr.success('Se generó nueva tarea para ' + ejecutivo.nombre + ' ' + ejecutivo.apellido + '.', 'Nueva tarea asignada.');
+						NotifService.success('Se generó nueva tarea para ' + ejecutivo.nombre + ' ' + ejecutivo.apellido + '.', 'Nueva tarea asignada.');
 					}
 				}, function (response) {
-					console.log(response);
+					App.unblockUI('#ui-view');
+					NotifService.error('Ocurrio un error en el servidor, ponte contacto con departamento de desarrollo.', response.statusText + ' (' + response.status + ').');
 				});
 			};
 			

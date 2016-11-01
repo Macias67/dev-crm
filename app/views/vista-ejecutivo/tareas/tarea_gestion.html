@@ -96,16 +96,30 @@
 					</div>
 				</div>
 				<div class = "portlet-body">
-					<button class = "btn green-jungle btn-block btn-lg uppercase bold" ng-show="!gestionTareaCtrl.trabajaTarea.estaTrabajando"  ng-click = "gestionTareaCtrl.trabajaTarea.trabajar()">
+					<button class = "btn green-jungle btn-block btn-lg uppercase bold" ng-show = "!gestionTareaCtrl.trabajaTarea.tarea.estaTrabajando" ng-click = "gestionTareaCtrl.trabajaTarea.trabajar()">
 						<i class = "fa fa-play"></i>&nbsp;&nbsp;Trabajar en la tarea
 					</button>
-					<button class = "btn red-thunderbird btn-block btn-lg uppercase bold" ng-show="gestionTareaCtrl.trabajaTarea.estaTrabajando"  ng-click = "gestionTareaCtrl.trabajaTarea.detener()">
+					<button class = "btn red-thunderbird btn-block btn-lg uppercase bold" ng-show = "gestionTareaCtrl.trabajaTarea.tarea.estaTrabajando" ng-click = "gestionTareaCtrl.trabajaTarea.detener()">
 						<i class = "fa fa-stop"></i>&nbsp;&nbsp;Detener avance
 					</button>
 					<hr>
-					<h2 class="text-center">00:00:00</h2>
+					<span class = "text-center uppercase">
+						<h5>Sesión actual:</h5>
+						<h1 class = "bold">
+							{{gestionTareaCtrl.trabajaTarea.tarea.duracionMilis | duracion:'HH:mm:ss':'ms'}}
+						</h1>
+					</span>
 					<hr>
-					<table class = "table table-hover table-light">
+					<h3 class = "uppercase text-center">Duración total: <b>{{gestionTareaCtrl.tarea.duracion_real_segundos | duracion:'HH:mm:ss':'s'}}</b></h3>
+					<h5 class="text-center" ng-show="gestionTareaCtrl.tarea.duracion_real_segundos > gestionTareaCtrl.tarea.duracion_tentativa_segundos">
+						<p class = "font-red-thunderbird uppercase bold">
+							<i class="fa fa-warning"></i>
+							Te has exedido con el tiempo que estimaste para la tarea.
+						</p>
+					</h5>
+					<hr>
+					<h5 ng-show = "gestionTareaCtrl.tarea.tiempos.length == 0" class = "bold text-center">Aún no hay sesiones registradas.</h5>
+					<table class = "table table-hover table-light" ng-show = "gestionTareaCtrl.tarea.tiempos.length > 0">
 						<thead>
 							<tr class = "uppercase">
 								<th> # </th>
@@ -114,20 +128,15 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td> 1 </td>
-								<td> 23 de sept. 2016  a las 4:58 pm</td>
-								<td> 3:00 hras</td>
-							</tr>
-							<tr>
-								<td> 2 </td>
-								<td> 24 de sept. 2016  a las 2:08 pm</td>
-								<td> 1:30 hras</td>
+							<tr ng-repeat = "sesion in gestionTareaCtrl.tarea.tiempos">
+								<td> {{$index +1}} </td>
+								<td> <span>{{sesion.fechaInicio | amFromUnix | amDateFormat:'DD/MMMM/YY [a las] H:mm a'}}</span></td>
+								<td>
+									<span class = "label bg-green-turquoise bg-font-green-turquoise bold">{{sesion.duracionSegundos | duracion:'HH:mm:ss':'s' }}</span>
+								</td>
 							</tr>
 						</tbody>
 					</table>
-					<hr>
-					<h4 class = "uppercase">Duración total: <b>4:30 hras</b></h4>
 				</div>
 			</div>
 		</div>
@@ -299,14 +308,10 @@
 							</li>
 							<li>
 								Duración estimada
-								<span ng-if = "tarea.duracion_minutos == 0"> <i>Sin definir por {{tarea.ejecutivo.nombre}}</i> </span>
-								<span ng-if = "tarea.duracion_minutos != 0">
+								<span ng-if = "tarea.duracion_tentativa_segundos == 0"> <i>Sin definir por {{tarea.ejecutivo.nombre}}</i> </span>
+								<span ng-if = "tarea.duracion_tentativa_segundos != 0">
 									<i>
-										{{ (tarea.duracion_minutos<60) ?
-											(tarea.duracion_minutos) + ' minutos' : (tarea.duracion_minutos%60==0) ?
-											'0'+(tarea.duracion_minutos-tarea.duracion_minutos%60)/60 + ':00 horas' :
-											'0'+((tarea.duracion_minutos-tarea.duracion_minutos%60)/60 + ':' + tarea.duracion_minutos%60 + ' horas')
-										}}
+										{{tarea.duracion_tentativa_segundos | duracion:'HH:mm':'s'}} horas
 									</i>
 								</span>
 							</li>
@@ -392,11 +397,7 @@
 					<br>
 					<dt><i class = "fa fa-hourglass-start"></i> Tiempo dedicado a la tarea</dt>
 					<dd>
-						{{ (gestionTareaCtrl.tarea.duracion_minutos<60) ?
-							(gestionTareaCtrl.tarea.duracion_minutos) + ' minutos' : (gestionTareaCtrl.tarea.duracion_minutos%60==0) ?
-							'0'+(gestionTareaCtrl.tarea.duracion_minutos-gestionTareaCtrl.tarea.duracion_minutos%60)/60 + ':00 horas' :
-							'0'+((gestionTareaCtrl.tarea.duracion_minutos-gestionTareaCtrl.tarea.duracion_minutos%60)/60 + ':' + gestionTareaCtrl.tarea.duracion_minutos%60 + ' horas')
-						}}
+						{{gestionTareaCtrl.tarea.duracion_tentativa_segundos | duracion:'HH:mm':'s'}} horas
 					</dd>
 				</dl>
 			</div>
@@ -464,7 +465,7 @@
 						</thead>
 						<tbody>
 							<tr ng-repeat = "recordatorio in gestionTareaCtrl.recordatorios">
-								<td> {{recordatorio.start | amFromUnix | amDateFormat:'DD [de] MMM [a las] hh:mm'}}</td>
+								<td> {{recordatorio.start | amFromUnix | amDateFormat:'DD [de] MMM [a las] h:mm a'}}</td>
 								<td>
 									<button class = "btn btn-xs red-thunderbird" ng-click = "gestionTareaCtrl.agenda.elimina(recordatorio.id)">
                                                                                 <i class = "fa fa-trash-o"></i>
