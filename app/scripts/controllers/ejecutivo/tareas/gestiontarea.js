@@ -22,13 +22,14 @@ angular.module('MetronicApp')
 		'TareaNota',
 		'NotaFB',
 		'$timeout',
-		'Agenda',
+		'TareaAgenda',
 		'EjecutivoAgenda',
 		'$q',
 		'$firebaseArray',
 		'$firebaseObject',
 		'TareaTiempos',
-		function ($rootScope, $scope, dataTarea, $uibModal, authUser, $state, Caso, Tarea, NotifService, $filter, TareaNota, NotaFB, $timeout, Agenda, EjecutivoAgenda, $q, $firebaseArray, $firebaseObject, TareaTiempos) {
+		'$ngBootbox',
+		function ($rootScope, $scope, dataTarea, $uibModal, authUser, $state, Caso, Tarea, NotifService, $filter, TareaNota, NotaFB, $timeout, TareaAgenda, EjecutivoAgenda, $q, $firebaseArray, $firebaseObject, TareaTiempos, $ngBootbox) {
 			var vm = this;
 			
 			vm.tarea = dataTarea.data;
@@ -127,7 +128,6 @@ angular.module('MetronicApp')
 						App.unblockUI('#ui-view');
 						NotifService.error('Ocurrio un error en el servidor, ponte contacto con departamento de desarrollo.', response.statusText + ' (' + response.status + ').');
 					});
-					
 				}
 			};
 			
@@ -153,21 +153,18 @@ angular.module('MetronicApp')
 						overlayColor: App.getBrandColor('grey')
 					});
 					
-					Agenda.get({
-						ejecutivo : dataTarea.data.ejecutivo.id,
-						referencia: 'tarea.' + dataTarea.data.id,
-						notificado: false
-					}).$promise.then(function (response) {
+					TareaAgenda.get({idtarea: dataTarea.data.id, notificado: false}).$promise.then(function (response) {
 						if (response.$resolved) {
 							vm.recordatorios = response.data;
 							App.unblockUI('#miagenda');
 						}
+					}, function (response) {
+						App.unblockUI('#miagenda');
+						NotifService.error('Ocurrio un error en el servidor, ponte contacto con departamento de desarrollo.', response.statusText + ' (' + response.status + ').');
 					});
 				},
 				abreAgenda     : function () {
-					
 					App.scrollTop();
-					
 					App.blockUI({
 						target      : '#ui-view',
 						message     : '<b>Abriendo agenda </b>',
@@ -182,8 +179,8 @@ angular.module('MetronicApp')
 						controller : 'ModalVistaAgenda as modalVistaAgenda',
 						resolve    : {
 							dataEventos: [
-								'$stateParams', 'Agenda', function ($stateParams, Agenda) {
-									return Agenda.get({ejecutivo: authUser.getSessionData().id}).$promise;
+								'TareaAgenda', function (TareaAgenda) {
+									return TareaAgenda.get({idtarea: dataTarea.data.id}).$promise
 								}
 							]
 						},
@@ -191,20 +188,11 @@ angular.module('MetronicApp')
 					});
 				},
 				guarda         : function () {
-					
-					var tiempo       = vm.agenda.duracion.split(':');
-					var horas        = parseInt(tiempo[0]);
-					var minutos      = parseInt(tiempo[1]);
-					var totalminutos = (horas * 60) + minutos;
-					var end          = moment(vm.agenda.fechaInicio).add(totalminutos, 'm');
-					
-					var data = {
-						ejecutivo  : authUser.getSessionData().id,
-						titulo     : 'Tarea: ' + vm.tarea.titulo,
-						descripcion: vm.tarea.descripcion + ' (Caso #' + vm.caso.id + ' | Cliente: ' + vm.caso.cliente.razonsocial + ')',
-						start      : moment(vm.agenda.fechaInicio).format("YYYY-MM-DD HH:mm:ss"),
-						end        : moment(end).format("YYYY-MM-DD HH:mm:ss"),
-						referencia : 'tarea.' + vm.tarea.id
+					var duracion = moment.duration(vm.agenda.duracion, 'HH:mm').asSeconds();
+					var data     = {
+						start           : moment(vm.agenda.fechaInicio).format("YYYY-MM-DD HH:mm:ss"),
+						end             : moment(moment(vm.agenda.fechaInicio).add(duracion, 's')).format("YYYY-MM-DD HH:mm:ss"),
+						duracionSegundos: duracion
 					};
 					
 					App.blockUI({
@@ -215,27 +203,19 @@ angular.module('MetronicApp')
 						overlayColor: App.getBrandColor('grey')
 					});
 					
-					var agenda = new EjecutivoAgenda(data);
-					agenda.$save({idejecutivo: vm.tarea.ejecutivo.id}).then(function (response) {
+					var tareaAgenda = new TareaAgenda(data);
+					tareaAgenda.$save({idtarea: vm.tarea.id}).then(function (response) {
 						if (response.$resolved) {
-							Agenda.get({
-								ejecutivo : dataTarea.data.ejecutivo.id,
-								referencia: 'tarea.' + dataTarea.data.id,
-								notificado: false
-							}).$promise.then(function (response) {
-								vm.recordatorios = response.data;
-								
-								vm.agenda.formFechaAgenda.$setPristine();
-								vm.agenda.formFechaAgenda.$setUntouched();
-								vm.agenda.formFechaAgenda.$dirty = false;
-								vm.agenda.fechaInicio            = null;
-								vm.agenda.duracion               = null;
-								
-								App.unblockUI('#miagenda');
-							});
+							App.unblockUI('#miagenda');
+							vm.agenda.reloadAgenda();
+							vm.agenda.formFechaAgenda.$setPristine();
+							vm.agenda.formFechaAgenda.$setUntouched();
+							vm.agenda.formFechaAgenda.$dirty = false;
+							vm.agenda.fechaInicio            = null;
+							vm.agenda.duracion               = null;
 						}
 					}, function (response) {
-						console.log(response);
+						NotifService.error('Error al actualizar agenda, comunica esto al departamento de desarrollo.', response.statusText + ' (' + response.status + ')');
 						App.unblockUI('#miagenda');
 					});
 				},
@@ -248,13 +228,17 @@ angular.module('MetronicApp')
 						overlayColor: App.getBrandColor('grey')
 					});
 					
-					Agenda.delete({
-						id: id
+					TareaAgenda.delete({
+						idtarea : vm.tarea.id,
+						idagenda: id
 					}).$promise.then(function (response) {
 						if (response.$resolved) {
 							App.unblockUI('#miagenda');
 							vm.agenda.reloadAgenda();
 						}
+					}, function (response) {
+						App.unblockUI('#miagenda');
+						NotifService.error('Error al eliminar evento, comunica esto al departamento de desarrollo.', response.statusText + ' (' + response.status + ')');
 					});
 				}
 			};
@@ -324,6 +308,9 @@ angular.module('MetronicApp')
 				},
 				loading      : false,
 				progress     : 0,
+				lista        : vm.tarea.notas.todas,
+				tipo         : 'todos',
+				titulo       : 'Todos',
 				guarda       : function () {
 					vm.notas.loading = true;
 					var file         = vm.notas.form.file;
@@ -410,11 +397,80 @@ angular.module('MetronicApp')
 								
 								NotifService.success('Se añadio una nueva nota a la tarea', 'Nueva nota añadida');
 							}
-						}, function (error) {
-							console.log(error);
+						}, function (response) {
+							NotifService.error('Error al eliminar evento, comunica esto al departamento de desarrollo.', response.statusText + ' (' + response.status + ')');
 							vm.notas.loading = false;
 						});
 					}
+				},
+				filtro       : function (tipo) {
+					
+					App.blockUI({
+						target      : '#lista-comentarios',
+						animate     : true,
+						overlayColor: App.getBrandColor('grey')
+					});
+					
+					switch (tipo) {
+						case 'todos':
+							vm.notas.lista  = vm.tarea.notas.todas;
+							vm.notas.titulo = 'Todos';
+							break;
+						case 'publicos':
+							vm.notas.lista  = vm.tarea.notas.publicas;
+							vm.notas.titulo = 'Públicos';
+							break;
+						case 'privados':
+							vm.notas.lista  = vm.tarea.notas.privadas;
+							vm.notas.titulo = 'Privados';
+							break;
+					}
+					
+					vm.notas.tipo = tipo;
+					
+					App.unblockUI('#lista-comentarios');
+				},
+				elimina      : function (id) {
+					$ngBootbox.confirm('¿Seguro de eliminar esta nota?')
+						.then(function () {
+							App.blockUI({
+								target      : '#nota' + id,
+								message     : '<b> Borrando. </b>',
+								boxed       : true,
+								zIndex      : 99999,
+								overlayColor: App.getBrandColor('grey')
+							});
+							
+							TareaNota.delete({
+								idtarea: vm.tarea.id,
+								idnota : id
+							}).$promise.then(function (response) {
+								if (response.$resolved) {
+									App.unblockUI('#nota' + id);
+									vm.reloadCaso();
+									vm.notas.filtro('todos');
+								}
+							}, function (response) {
+								App.unblockUI('#nota' + id);
+								NotifService.error('Error al eliminar nota, comunica esto al departamento de desarrollo.', response.statusText + ' (' + response.status + ')');
+							});
+						});
+				},
+				edita        : function (nota) {
+					$ngBootbox.prompt('Edita la nota', nota)
+						.then(function (result) {
+							
+						}, function () {
+							
+						});
+				},
+				cambia       : function () {
+					$ngBootbox.confirm('¿Seguro de cambiar la privacidad de esta nota?')
+						.then(function () {
+							console.log('Confirmed!');
+						}, function () {
+							console.log('Confirm dismissed!');
+						});
 				}
 			};
 			
@@ -516,37 +572,30 @@ angular.module('MetronicApp')
 			});
 			
 			vm.reloadCaso = function () {
-				var cargadoCaso  = false;
-				var cargadoTarea = false;
-				App.scrollTop();
 				App.blockUI({
 					target      : '#ui-view',
 					animate     : true,
 					overlayColor: App.getBrandColor('grey')
 				});
 				
-				Caso.get({id: vm.tarea.caso.id}, function (response) {
-					vm.caso     = response.data;
-					cargadoCaso = true;
-					
-					if (cargadoTarea) {
-						App.unblockUI('#ui-view');
-					}
-				});
-				
-				Tarea.get({idtarea: vm.tarea.id}, function (response) {
-					vm.tarea                        = response.data;
+				$q.all({
+					caso           : Caso.get({id: vm.tarea.caso.id}).$promise,
+					tarea          : Tarea.get({idtarea: vm.tarea.id}).$promise,
+					ejecutivoAgenda: TareaAgenda.get({idtarea: dataTarea.data.id, notificado: false}).$promise
+				}).then(function (results) {
+					vm.caso                         = results.caso.data;
+					vm.tarea                        = results.tarea.data;
 					vm.notas.form.avance            = vm.tarea.avance;
 					vm.notas.sliderOptions.minLimit = vm.tarea.avance;
-					cargadoTarea                    = true;
+					vm.recordatorios                = results.ejecutivoAgenda.data;
 					
 					$timeout(function () {
 						$scope.$broadcast('rzSliderForceRender');
 					});
-					
-					if (cargadoCaso) {
-						App.unblockUI('#ui-view');
-					}
+					App.unblockUI('#ui-view');
+				}, function (results) {
+					NotifService.error('Error al cargar algunos datos, comunica esto al departamento de desarrollo.', results.statusText + '(' + results.status + ')');
+					App.unblockUI('#ui-view');
 				});
 			};
 			
@@ -579,11 +628,13 @@ angular.module('MetronicApp')
 				
 				$q.all({
 					caso           : Caso.get({id: dataTarea.data.caso.id}).$promise,
-					ejecutivoAgenda: Agenda.get({ejecutivo: dataTarea.data.ejecutivo.id, referencia: 'tarea.' + dataTarea.data.id, notificado: false}).$promise
+					ejecutivoAgenda: TareaAgenda.get({idtarea: dataTarea.data.id, notificado: false}).$promise
 				}).then(function (results) {
-					/* your logic here */
 					vm.caso          = results.caso.data;
 					vm.recordatorios = results.ejecutivoAgenda.data;
+					App.unblockUI('#ui-view');
+				}, function (results) {
+					NotifService.error('Error al cargar algunos datos, comunica esto al departamento de desarrollo.', results.statusText + '(' + results.status + ')');
 					App.unblockUI('#ui-view');
 				});
 				
@@ -594,12 +645,9 @@ angular.module('MetronicApp')
 			
 			$scope.$watch('gestionTareaCtrl.fechas.fechatarea.duracion', function () {
 				if (vm.fechas.fechatarea.duracion != undefined && vm.fechas.fechatarea.duracion.includes(":")) {
-					var tiempo                            = vm.fechas.fechatarea.duracion.split(':');
-					var horas                             = parseInt(tiempo[0]);
-					var minutos                           = parseInt(tiempo[1]);
-					var totalminutos                      = (horas * 60) + minutos;
-					vm.fechas.fechatarea.duracionsegundos = totalminutos * 60;
-					vm.fechas.fechacierre.options.minDate = moment(vm.fechas.fechatarea.fechainicio).add(totalminutos, 'm');
+					var duracion                          = moment.duration(vm.fechas.fechatarea.duracion, 'HH:mm').asSeconds();
+					vm.fechas.fechatarea.duracionsegundos = duracion;
+					vm.fechas.fechacierre.options.minDate = moment(vm.fechas.fechatarea.fechainicio).add(duracion, 's');
 				}
 				else {
 					vm.fechas.fechatarea.duracionsegundos = 0;
@@ -663,12 +711,13 @@ angular.module('MetronicApp')
 			angular.forEach(dataEventos.data, function (evento, index) {
 				$scope.calEventsExt.events[index] = {
 					id         : evento.id,
-					title      : evento.titulo,
-					descripcion: evento.descripcion,
+					title      : evento.tarea.titulo,
+					descripcion: evento.tarea.descripcion,
 					start      : moment(evento.start, 'X').format(),
 					end        : moment(evento.end, 'X').format(),
-					allDay     : evento.allDay,
-					color      : evento.ejecutivo.color
+					allDay     : false,
+					color      : evento.ejecutivo.color,
+					evento     : evento
 				};
 			});
 			
@@ -676,15 +725,10 @@ angular.module('MetronicApp')
 			$scope.alertOnEventClick = function (date, jsEvent, view) {
 				
 				var options = {
-					message: date.descripcion,
-					title  : date.title + ' (' + date.start.format('h:mm') + ' a ' + date.end.format('h:mm') + ')',
+					message: '<h6 class="bold">Caso #' + date.evento.caso.id + ' | ' + date.evento.caso.cliente.razonsocial + '</h6>' +
+					'<p class="lead">' + date.evento.tarea.descripcion + '</p>',
+					title  : date.title + ' | ' + date.start.format('h:mm a') + ' a ' + date.end.format('h:mm a'),
 					buttons: {
-						warning: {
-							label    : "Cancelar",
-							className: "btn-warning",
-							callback : function () {
-							}
-						},
 						success: {
 							label    : "Ok",
 							className: "btn-success",
@@ -693,12 +737,8 @@ angular.module('MetronicApp')
 						}
 					}
 				};
-				
 				$ngBootbox.customDialog(options);
-				
 				console.log(date);
-				console.log(jsEvent);
-				console.log(view);
 			};
 			/* alert on Drop */
 			$scope.alertOnDrop = function (event, delta, revertFunc, jsEvent, ui, view) {

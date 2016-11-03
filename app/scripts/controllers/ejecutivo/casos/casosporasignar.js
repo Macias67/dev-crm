@@ -186,8 +186,8 @@ angular.module('MetronicApp')
 		'dtCotizacion',
 		'$ngBootbox',
 		'Pago',
-		'toastr',
-		function ($rootScope, $scope, $uibModalInstance, DTOptionsBuilder, DTColumnBuilder, CRM_APP, $compile, authUser, dtCotizacion, $ngBootbox, Pago, toastr) {
+		'NotifService',
+		function ($rootScope, $scope, $uibModalInstance, DTOptionsBuilder, DTColumnBuilder, CRM_APP, $compile, authUser, dtCotizacion, $ngBootbox, Pago, NotifService) {
 			var vm = this;
 			
 			vm.cotizacion = dtCotizacion;
@@ -206,7 +206,7 @@ angular.module('MetronicApp')
 					if (response.hasOwnProperty('errors')) {
 						for (var key in response.errors) {
 							if (response.errors.hasOwnProperty(key)) {
-								toastr.error(response.errors[key][0], 'Hay errores con la cotización.');
+								NotifService.error(response.errors[key][0], 'Hay errores con la cotización.');
 							}
 						}
 						App.unblockUI('#ui-view');
@@ -215,7 +215,7 @@ angular.module('MetronicApp')
 						setTimeout(function () {
 							$uibModalInstance.dismiss('cancel');
 							App.unblockUI('#ui-view');
-							toastr.success('Se generó nuevo caso en espera de asignar líder.', 'Nuevo caso sin líder');
+							NotifService.success('Se generó nuevo caso en espera de asignar líder.', 'Nuevo caso sin líder');
 							$rootScope.$broadcast('reloadTable');
 						}, 1000);
 					}

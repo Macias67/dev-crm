@@ -576,7 +576,11 @@ MetronicApp.factory('interceptor', [
 				}
 				
 				if (response.status == 401) {
-					alert('Token expirado, reinicia sesión.');
+					console.log(response);
+					if (response.data.hasOwnProperty('error') && response.data.error == "token_expired") {
+						alert('Token expirado, reinicia sesión.');
+						location.reload(true);
+					}
 				}
 				
 				return $q.reject(response);

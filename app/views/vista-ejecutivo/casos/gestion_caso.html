@@ -191,16 +191,12 @@
 										</span>
 									</div>
 									<div class = "todo-tasklist-item-text"><i class = "fa fa-hourglass-start"></i> <b>Duración estimada:</b>
-										<span ng-if = "tarea.duracion_minutos == 0"> <i>Sin definir por {{tarea.ejecutivo.nombre}}</i> </span>
-										<span ng-if = "tarea.duracion_minutos != 0">
-											{{ (tarea.duracion_minutos<60) ?
-												(tarea.duracion_minutos) + ' minutos' : (tarea.duracion_minutos%60==0) ?
-												'0'+(tarea.duracion_minutos-tarea.duracion_minutos%60)/60 + ':00 horas' :
-												'0'+((tarea.duracion_minutos-tarea.duracion_minutos%60)/60 + ':' + tarea.duracion_minutos%60 + ' horas')
-											}}
+										<span ng-if = "tarea.duracion_tentativa_segundos == 0"> <i>Sin definir por {{tarea.ejecutivo.nombre}}</i> </span>
+										<span ng-if = "tarea.duracion_tentativa_segundos != 0">
+											{{ tarea.duracion_tentativa_segundos | duracion:'HH:mm':'s'}} horas.
 										</span>
 									</div>
-									<div class = "todo-tasklist-item-text"><i class = "fa fa-hourglass-start"></i> <b>Duración real:</b> 0 </div>
+									<div class = "todo-tasklist-item-text"><i class = "fa fa-hourglass-start"></i> <b>Duración real:</b> {{ tarea.duracion_real_segundos | duracion:'HH:mm':'s'}} horas. </div>
 									<div class = "todo-tasklist-item-text"><i class = "fa fa-comment"></i> <b>Privados:</b> {{tarea.notas.privadas.length}} mensajes </div>
 									<div class = "todo-tasklist-item-text"><i class = "fa fa-comment-o"></i> <b>Públicos:</b> {{tarea.notas.publicas.length}} mensajes </div>
 									<hr>

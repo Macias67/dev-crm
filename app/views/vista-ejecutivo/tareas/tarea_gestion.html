@@ -88,6 +88,28 @@
 			</div>
 		</div>
 		<div class = "col-md-5">
+			<div class = "portlet light" ng-show = "gestionTareaCtrl.tarea.fecha_inicio != null && gestionTareaCtrl.tarea.fecha_tentativa_cierre != null && gestionTareaCtrl.tarea.duracion_minutos != 0">
+			<div class = "portlet-title">
+				<div class = "caption">
+					<i class = "fa fa-calendar font-grey-gallery"></i>
+					<span class = "caption-subject bold font-grey-gallery uppercase"> Fechas programadas</span>
+				</div>
+			</div>
+			<div class = "portlet-body">
+				<dl>
+					<dt><i class = "fa fa-clock-o"></i> Fecha inicio</dt>
+					<dd>{{gestionTareaCtrl.tarea.fecha_inicio | amFromUnix | amDateFormat:'DD [de] MMMM [del] YYYY [a las] hh:mm A'}}</dd>
+					<br>
+					<dt><i class = "fa fa-clock-o"></i> Fecha tentativa de cierre</dt>
+					<dd>{{gestionTareaCtrl.tarea.fecha_tentativa_cierre | amFromUnix | amDateFormat:'DD [de] MMMM [del] YYYY [a las] hh:mm A'}}</dd>
+					<br>
+					<dt><i class = "fa fa-hourglass-start"></i> Tiempo dedicado a la tarea</dt>
+					<dd>
+						{{gestionTareaCtrl.tarea.duracion_tentativa_segundos | duracion:'HH:mm':'s'}} horas
+					</dd>
+				</dl>
+			</div>
+		</div>
 			<div class = "portlet light" ng-hide = "gestionTareaCtrl.tarea.fecha_inicio == null || gestionTareaCtrl.tarea.fecha_tentativa_cierre == null || gestionTareaCtrl.tarea.duracion_minutos == 0">
 				<div class = "portlet-title">
 					<div class = "caption">
@@ -103,17 +125,17 @@
 						<i class = "fa fa-stop"></i>&nbsp;&nbsp;Detener avance
 					</button>
 					<hr>
-					<span class = "text-center uppercase">
+					<span class = "text-center uppercase" ng-show = "gestionTareaCtrl.trabajaTarea.tarea != null">
 						<h5>Sesión actual:</h5>
 						<h1 class = "bold">
-							{{gestionTareaCtrl.trabajaTarea.tarea.duracionMilis | duracion:'HH:mm:ss':'ms'}}
+							<span>{{gestionTareaCtrl.trabajaTarea.tarea.duracionMilis | duracion:'HH:mm:ss':'ms'}}</span>
 						</h1>
 					</span>
 					<hr>
 					<h3 class = "uppercase text-center">Duración total: <b>{{gestionTareaCtrl.tarea.duracion_real_segundos | duracion:'HH:mm:ss':'s'}}</b></h3>
-					<h5 class="text-center" ng-show="gestionTareaCtrl.tarea.duracion_real_segundos > gestionTareaCtrl.tarea.duracion_tentativa_segundos">
+					<h5 class = "text-center" ng-show = "gestionTareaCtrl.tarea.duracion_real_segundos > gestionTareaCtrl.tarea.duracion_tentativa_segundos">
 						<p class = "font-red-thunderbird uppercase bold">
-							<i class="fa fa-warning"></i>
+							<i class = "fa fa-warning"></i>
 							Te has exedido con el tiempo que estimaste para la tarea.
 						</p>
 					</h5>
@@ -187,87 +209,91 @@
 							</div>
 						</div>
 					</form>
-						<hr>
 					</div>
-					<ul class = "nav nav-tabs">
-						<li class = "active">
-							<a href = "#todas" target = "_self" data-toggle = "tab"> Todas </a>
-						</li>
-						<li>
-							<a href = "#publicas" target = "_self" data-toggle = "tab"> Públicas </a>
-						</li>
-						<li>
-							<a href = "#privadas" target = "_self" data-toggle = "tab"> Privadas </a>
-						</li>
-					</ul>
-					<div class = "tab-content">
-						<div class = "tab-pane fade active in" id = "todas">
-							<ul class = "list-group">
-								<li class = "list-group-item" ng-repeat = "nota in gestionTareaCtrl.tarea.notas.todas">
-									<h6 class = "help-block font-green-turquoise"><i class = "fa fa-check-circle-o"></i> Visto por el cliente. </h6>
-									<p>{{nota.nota}} </p>
-									<h6 class = "bold font-grey-mint"><i class = "fa fa-calendar"></i> {{nota.creada | amFromUnix | amDateFormat:'DD [de] MMMM [del] YYYY [a las] hh:mm A'}}</h6>
-									<h6 ng-show = "nota.publico">
-										<span class = "label label-primary"><b>Pública</b></span>
-									</h6>
-									<h6 ng-show = "!nota.publico">
-										<span class = "label label-danger"> <b>Privada</b></span>
-									</h6>
-									<div ng-show = "nota.archivos.length > 0">
-										<hr>
-										<h6>Archivos adjuntos:</h6>
-										<ul>
-											<li ng-repeat = "archivo in nota.archivos">
-												<a ng-href = "{{archivo.downloadUrl}}" target = "_blank">
-													<i class = "fa" ng-class = "{'fa-file-pdf-o' : archivo.contentType == 'application/pdf', 'fa-file-image-o' : archivo.contentType == 'image/jpeg'}"></i>
-													{{archivo.nombre}} | {{archivo.tamano/1000 | number:2}} KB
-												</a>
-											</li>
-										</ul>
+				</div>
+			</div>
+			<div class = "portlet light" ng-hide = "gestionTareaCtrl.tarea.fecha_inicio == null || gestionTareaCtrl.tarea.fecha_tentativa_cierre == null || gestionTareaCtrl.tarea.duracion_minutos == 0">
+				<div class = "portlet-title">
+					<div class = "caption">
+						<i class = "fa fa-commenting font-grey-gallery"></i>
+						<span class = "caption-subject bold font-grey-gallery uppercase"> Comentario registrados </span>
+					</div>
+				</div>
+				<div class = "portlet-body">
+					<div class = "btn-group">
+						<button type = "button" class = "btn btn-default blue" ng-click = "gestionTareaCtrl.notas.filtro('todos')">
+							<i class = "fa fa-comments-o"></i> Todos
+						</button>
+						<button type = "button" class = "btn btn-default green-jungle" ng-click = "gestionTareaCtrl.notas.filtro('publicos')">
+							<i class = "fa fa-comment-o"></i> Públicos
+						</button>
+						<button type = "button" class = "btn btn-default red-thunderbird" ng-click = "gestionTareaCtrl.notas.filtro('privados')">
+							<i class = "fa fa-comment"></i> Privados
+						</button>
+					</div>
+					<br><br>
+					<div class = "mt-element-list">
+						<div class = "mt-list-head list-default ext-1" ng-class = "{'blue' : gestionTareaCtrl.notas.tipo == 'todos', 'green-jungle': gestionTareaCtrl.notas.tipo == 'publicos', 'red-thunderbird': gestionTareaCtrl.notas.tipo == 'privados'}">
+							<div class = "row">
+								<div class = "col-xs-8">
+									<div class = "list-head-title-container">
+										<h3 class = "list-title uppercase sbold">{{gestionTareaCtrl.notas.titulo}}</h3>
+										<div class = "list-date">Un total de {{gestionTareaCtrl.tarea.notas.todas.length}} comentarios.</div>
 									</div>
-								</li>
-							</ul>
-						</div>
-						<div class = "tab-pane fade" id = "publicas">
-							<ul class = "list-group">
-								<li class = "list-group-item" ng-repeat = "nota in gestionTareaCtrl.tarea.notas.publicas">
-									<h6 class = "help-block font-green-turquoise"> <i class = "fa fa-check-circle-o"></i> Visto por el cliente. </h6>
-									<p>{{nota.nota}} </p>
-									<h6 class = "bold font-grey-mint"><i class = "fa fa-calendar"></i> {{nota.creada | amFromUnix | amDateFormat:'DD [de] MMMM [del] YYYY [a las] hh:mm:ss A'}}</h6>
-									<h6 ng-show = "nota.publico"><span class = "label label-primary"> <b>Pública</b> </span></h6>
-									<div ng-show = "nota.archivos.length > 0">
-										<hr>
-										<h6>Archivos adjuntos:</h6>
-										<ul>
-											<li ng-repeat = "archivo in nota.archivos">
-												<a ng-href = "{{archivo.downloadUrl}}" target = "_blank">
-													<i class = "fa" ng-class = "{'fa-file-pdf-o' : archivo.contentType == 'application/pdf', 'fa-file-image-o' : archivo.contentType == 'image/jpeg'}"></i>
-													{{archivo.nombre}} | {{archivo.tamano/1000 | number:2}} KB
-												</a>
-											</li>
-										</ul>
+								</div>
+								<div class = "col-xs-4">
+									<div class = "list-head-summary-container">
+										<div class = "list-pending">
+											<div class = "list-count badge badge-default ">{{gestionTareaCtrl.tarea.notas.publicas.length}}</div>
+											<div class = "list-label">Públicas</div>
+										</div>
+										<div class = "list-done">
+											<div class = "list-count badge badge-default last">{{gestionTareaCtrl.tarea.notas.privadas.length}}</div>
+											<div class = "list-label">Privadas</div>
+										</div>
 									</div>
-								</li>
-							</ul>
+								</div>
+							</div>
 						</div>
-						<div class = "tab-pane fade" id = "privadas">
-							<ul class = "list-group">
-								<li class = "list-group-item" ng-repeat = "nota in gestionTareaCtrl.tarea.notas.privadas">
-									<h6 class = "help-block font-green-turquoise"> <i class = "fa fa-check-circle-o"></i> Visto por el cliente. </h6>
-									<p>{{nota.nota}} </p>
-									<h6 class = "bold font-grey-mint"><i class = "fa fa-calendar"></i> {{nota.creada | amFromUnix | amDateFormat:'DD [de] MMMM [del] YYYY [a las] hh:mm:ss A'}}</h6>
-									<h6 ng-show = "!nota.publico"><span class = "label label-danger"> <b>Privada</b> </span></h6>
-									<div ng-show = "nota.archivos.length > 0">
+						<div class = "mt-list-container list-default ext-1">
+							<ul>
+								<li class = "mt-list-item" ng-repeat = "nota in gestionTareaCtrl.notas.lista" ng-attr-id = "{{'nota'+nota.id}}">
+									<div class = "list-icon-container">
+										<i class = "icon-check"></i>
+									</div>
+									<div class = "list-datetime">
+										<b>Avance</b><br>{{nota.avance}} %
+									</div>
+									<div class = "list-item-content">
+										<h6 class = "uppercase">
+											 {{nota.creada | amFromUnix | amDateFormat:'DD [de] MMMM [del] YYYY [a las] hh:mm a'}}
+										</h6>
+										<small>{{nota.id}}. {{nota.nota}}</small>
+										<div ng-show = "nota.archivos.length > 0">
+											<hr>
+											<h6>Archivos adjuntos:</h6>
+											<ul>
+												<li ng-repeat = "archivo in nota.archivos">
+													<a ng-href = "{{archivo.downloadUrl}}" target = "_blank" class = "btn btn-xs default">
+														<i class = "fa" ng-class = "{'fa-file-pdf-o' : archivo.contentType == 'application/pdf', 'fa-file-image-o' : archivo.contentType == 'image/jpeg'}"></i>
+														{{archivo.nombre}} | {{archivo.tamano/1000 | number:2}} KB
+													</a>
+												</li>
+											</ul>
+										</div>
 										<hr>
-										<h6>Archivos adjuntos:</h6>
-										<ul>
-											<li ng-repeat = "archivo in nota.archivos">
-												<a ng-href = "{{archivo.downloadUrl}}" target = "_blank">
-													<i class = "fa" ng-class = "{'fa-file-pdf-o' : archivo.contentType == 'application/pdf', 'fa-file-image-o' : archivo.contentType == 'image/jpeg'}"></i>
-													{{archivo.nombre}} | {{archivo.tamano/1000 | number:2}} KB
-												</a>
-											</li>
-										</ul>
+										<button type = "button" class = "btn red btn-xs" ng-click = "gestionTareaCtrl.notas.elimina(nota.id)">
+											<i class = "fa fa-trash"></i>
+										</button>
+										<button type = "button" class = "btn blue btn-xs" ng-click = "gestionTareaCtrl.notas.edita(nota.nota)">
+											<i class = "fa fa-edit"></i>
+										</button>
+										<button type = "button" class = "btn green-jungle btn-xs" ng-show = "!nota.publico" ng-click = "gestionTareaCtrl.notas.cambia(nota.publico)">
+											<i class = "fa fa-toggle-on"></i>
+										</button>
+										<button type = "button" class = "btn red-thunderbird btn-xs" ng-show = "nota.publico" ng-click = "gestionTareaCtrl.notas.cambia(nota.publico)">
+											<i class = "fa fa-toggle-off"></i>
+										</button>
 									</div>
 								</li>
 							</ul>
@@ -380,107 +406,6 @@
 				</form>
 			</div>
 		</div>
-		<div class = "portlet light" ng-show = "gestionTareaCtrl.tarea.fecha_inicio != null && gestionTareaCtrl.tarea.fecha_tentativa_cierre != null && gestionTareaCtrl.tarea.duracion_minutos != 0">
-			<div class = "portlet-title">
-				<div class = "caption">
-					<i class = "fa fa-calendar font-grey-gallery"></i>
-					<span class = "caption-subject bold font-grey-gallery uppercase"> Fechas programadas</span>
-				</div>
-			</div>
-			<div class = "portlet-body">
-				<dl>
-					<dt><i class = "fa fa-clock-o"></i> Fecha inicio</dt>
-					<dd>{{gestionTareaCtrl.tarea.fecha_inicio | amFromUnix | amDateFormat:'DD [de] MMMM [del] YYYY [a las] hh:mm A'}}</dd>
-					<br>
-					<dt><i class = "fa fa-clock-o"></i> Fecha tentativa de cierre</dt>
-					<dd>{{gestionTareaCtrl.tarea.fecha_tentativa_cierre | amFromUnix | amDateFormat:'DD [de] MMMM [del] YYYY [a las] hh:mm A'}}</dd>
-					<br>
-					<dt><i class = "fa fa-hourglass-start"></i> Tiempo dedicado a la tarea</dt>
-					<dd>
-						{{gestionTareaCtrl.tarea.duracion_tentativa_segundos | duracion:'HH:mm':'s'}} horas
-					</dd>
-				</dl>
-			</div>
-		</div>
-		<div class = "portlet light" id = "miagenda">
-			<div class = "portlet-title">
-				<div class = "caption">
-					<i class = "fa fa-calendar font-grey-gallery"></i>
-					<span class = "caption-subject bold font-grey-gallery uppercase"> Añadir a mi agenda</span>
-				</div>
-				<div class = "actions">
-					<button class = "btn btn-circle btn-icon-only btn-default" ng-click = "gestionTareaCtrl.agenda.reloadAgenda()">
-						<i class = "fa fa-refresh"></i>
-					</button>
-				</div>
-			</div>
-			<div class = "portlet-body">
-				<form name = "gestionTareaCtrl.agenda.formFechaAgenda">
-					<div class = "form-group">
-						<label>Fecha y hora: </label>
-						<div class = "input-group input-group-sm">
-							<input type = "text" class = "form-control"
-							       datetime-picker = "dd/MM/yyyy HH:mm"
-							       ng-model = "gestionTareaCtrl.agenda.fechaInicio"
-							       is-open = "gestionTareaCtrl.agenda.open"
-							       datepicker-options = "gestionTareaCtrl.agenda.options"
-							       placeholder = "Fecha de inicio"
-							       readonly
-							       required>
-							<span class = "input-group-btn">
-								<button class = "btn green bold" type = "button" ng-click = "gestionTareaCtrl.agenda.openCalendar()">
-									<i class = "fa fa-calendar"></i>
-								</button>
-							</span>
-						</div>
-					</div>
-					<div class = "form-group">
-						<label>Duración: </label>
-						<div class = "input-icon input-icon-sm right">
-							<i class = "fa fa-clock-o"></i>
-							<input type = "text" class = "form-control input-sm"
-							       ng-model = "gestionTareaCtrl.agenda.duracion"
-							       placeholder = "00:00"
-							       mask = "9?99:59"
-							       restrict = "reject"
-							       validate = "true"
-							       required>
-						</div>
-					</div>
-					<button class = "btn green-sharp btn-block bold uppercase"
-					        ng-click = "gestionTareaCtrl.agenda.guarda()"
-					        ng-disabled = "!gestionTareaCtrl.agenda.formFechaAgenda.$valid"> Añadir a mi agenda
-					</button>
-				</form>
-				<hr>
-				<h6>Mis recordatorios: </h6>
-				<b ng-show = "gestionTareaCtrl.recordatorios.length == 0">- No hay recordatorios.</b>
-				<div class = "table-scrollable table-scrollable-borderless" ng-show = "gestionTareaCtrl.recordatorios.length > 0">
-					<table class = "table table-hover table-light">
-						<thead>
-							<tr class = "uppercase">
-								<th> Fecha y hora </th>
-								<th></th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr ng-repeat = "recordatorio in gestionTareaCtrl.recordatorios">
-								<td> {{recordatorio.start | amFromUnix | amDateFormat:'DD [de] MMM [a las] h:mm a'}}</td>
-								<td>
-									<button class = "btn btn-xs red-thunderbird" ng-click = "gestionTareaCtrl.agenda.elimina(recordatorio.id)">
-                                                                                <i class = "fa fa-trash-o"></i>
-                                                                        </button>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<hr>
-				<button class = "btn green-turquoise btn-block bold uppercase"
-				        ng-click = "gestionTareaCtrl.agenda.abreAgenda()"><i class = "fa fa-calendar"></i>  Ver mi agenda
-				</button>
-			</div>
-		</div>
 		<div class = "portlet light">
 			<div class = "portlet-title">
 				<div class = "caption">
@@ -548,6 +473,85 @@
 				</div>
 				<hr>
 				<button class = "btn blue btn-block" ng-click = "gestionTareaCtrl.vistaCaso()"><b>Vista del caso</b></button>
+			</div>
+		</div>
+		<div class = "portlet light" id = "miagenda">
+			<div class = "portlet-title">
+				<div class = "caption">
+					<i class = "fa fa-calendar font-grey-gallery"></i>
+					<span class = "caption-subject bold font-grey-gallery uppercase"> Añadir a mi agenda</span>
+				</div>
+				<div class = "actions">
+					<button class = "btn btn-circle btn-icon-only btn-default" ng-click = "gestionTareaCtrl.agenda.reloadAgenda()">
+						<i class = "fa fa-refresh"></i>
+					</button>
+				</div>
+			</div>
+			<div class = "portlet-body">
+				<form name = "gestionTareaCtrl.agenda.formFechaAgenda">
+					<div class = "form-group">
+						<label>Fecha y hora: </label>
+						<div class = "input-group input-group-sm">
+							<input type = "text" class = "form-control"
+							       datetime-picker = "dd/MM/yyyy HH:mm"
+							       ng-model = "gestionTareaCtrl.agenda.fechaInicio"
+							       is-open = "gestionTareaCtrl.agenda.open"
+							       datepicker-options = "gestionTareaCtrl.agenda.options"
+							       placeholder = "Fecha de inicio"
+							       readonly
+							       required>
+							<span class = "input-group-btn">
+								<button class = "btn green bold" type = "button" ng-click = "gestionTareaCtrl.agenda.openCalendar()">
+									<i class = "fa fa-calendar"></i>
+								</button>
+							</span>
+						</div>
+					</div>
+					<div class = "form-group">
+						<label>Duración: </label>
+						<div class = "input-icon input-icon-sm right">
+							<i class = "fa fa-clock-o"></i>
+							<input type = "text" class = "form-control input-sm"
+							       ng-model = "gestionTareaCtrl.agenda.duracion"
+							       placeholder = "00:00"
+							       mask = "9?99:59"
+							       restrict = "reject"
+							       validate = "true"
+							       required>
+						</div>
+					</div>
+					<button class = "btn green-sharp btn-block bold uppercase"
+					        ng-click = "gestionTareaCtrl.agenda.guarda()"
+					        ng-disabled = "!gestionTareaCtrl.agenda.formFechaAgenda.$valid"> Añadir a mi agenda
+					</button>
+				</form>
+				<hr>
+				<h6>Mis recordatorios: </h6>
+				<b ng-show = "gestionTareaCtrl.recordatorios.length == 0">- No hay recordatorios.</b>
+				<div class = "table-scrollable table-scrollable-borderless" ng-show = "gestionTareaCtrl.recordatorios.length > 0">
+					<table class = "table table-hover table-light">
+						<thead>
+							<tr class = "uppercase">
+								<th> Fecha y hora </th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat = "recordatorio in gestionTareaCtrl.recordatorios">
+								<td> {{recordatorio.start | amFromUnix | amDateFormat:'DD [de] MMM [de] h:mm a'}} a {{recordatorio.end | amFromUnix | amDateFormat:'h:mm a'}}</td>
+								<td>
+									<button class = "btn btn-xs red-thunderbird" ng-click = "gestionTareaCtrl.agenda.elimina(recordatorio.id)">
+                                                                                <i class = "fa fa-trash-o"></i>
+                                                                        </button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<hr>
+				<button class = "btn green-turquoise btn-block bold uppercase"
+				        ng-click = "gestionTareaCtrl.agenda.abreAgenda()"><i class = "fa fa-calendar"></i>  Ver mi agenda
+				</button>
 			</div>
 		</div>
 	</div>

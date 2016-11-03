@@ -57,10 +57,7 @@ angular.module('MetronicApp')
 	})
 	.filter('duracion', function () {
 		return function (input, format, unidades) {
-			if (!input) {
-				return '00:00:00';
-			}
-
+	
 // 			var d = Number(input);
 // 			var h = Math.floor(d / 3600);
 // 			var m = Math.floor(d % 3600 / 60);
