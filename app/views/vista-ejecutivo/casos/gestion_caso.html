@@ -238,12 +238,12 @@
 				
 				<hr>
 				
-				<div class = "alert alert-warning" ng-if = "gestionCasosCtrl.caso.fechatentativacierre == null">
-                                       <i class = "fa fa-warning"></i>  <strong> Aún no se tiene el cálculo tentativo de cierre del caso.</strong>
+				<div class = "alert alert-warning" ng-if = "gestionCasosCtrl.caso.fecha_tentativa_precierre == null">
+                                       <i class = "fa fa-warning"></i>  <strong> Aún no se tiene el cálculo tentativo de precierre del caso.</strong>
 				</div>
 				
-				<div class = "alert alert-info" ng-if = "gestionCasosCtrl.caso.fechatentativacierre != null">
-					<strong>En tiempo para terminar a la fecha tentativa.</strong> - {{gestionCasosCtrl.caso.fechatentativacierre | amFromUnix | amDateFormat:'DD [de] MMMM [a las] hh:mm A'}} (<span class="bold" am-time-ago="gestionCasosCtrl.caso.fechatentativacierre | amFromUnix"></span>)
+				<div class = "alert alert-info" ng-if = "gestionCasosCtrl.caso.fecha_tentativa_precierre != null">
+					<strong>En tiempo para terminar a la fecha tentativa.</strong> - {{gestionCasosCtrl.caso.fecha_tentativa_precierre | amFromUnix | amDateFormat:'DD [de] MMMM [a las] hh:mm A'}} (<span class="bold" am-time-ago="gestionCasosCtrl.caso.fecha_tentativa_precierre | amFromUnix"></span>)
 				</div>
 				
 				<h5 ng-if = "gestionCasosCtrl.caso.tareas.length == 0">Avance general: <b>No se han asignado tareas.</b></h5>

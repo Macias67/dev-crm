@@ -126,7 +126,7 @@ angular.module('MetronicApp')
 						}
 					}, function (response) {
 						App.unblockUI('#ui-view');
-						NotifService.error('Ocurrio un error en el servidor, ponte contacto con departamento de desarrollo.', response.statusText + ' (' + response.status + ').');
+						NotifService.error('Ocurrió un error en el servidor, ponte contacto con departamento de desarrollo.', response.statusText + ' (' + response.status + ').');
 					});
 				}
 			};
@@ -160,7 +160,7 @@ angular.module('MetronicApp')
 						}
 					}, function (response) {
 						App.unblockUI('#miagenda');
-						NotifService.error('Ocurrio un error en el servidor, ponte contacto con departamento de desarrollo.', response.statusText + ' (' + response.status + ').');
+						NotifService.error('Ocurrió un error en el servidor, ponte contacto con departamento de desarrollo.', response.statusText + ' (' + response.status + ').');
 					});
 				},
 				abreAgenda     : function () {
@@ -330,8 +330,6 @@ angular.module('MetronicApp')
 							console.log('error subida', error);
 							vm.notas.loading = false;
 						}, function () {
-							// Handle successful uploads on complete
-							// For instance, get the download URL: https://firebasestorage.googleapis.com/...
 							vm.notas.form.archivo = {
 								url        : uploadTask.snapshot.downloadURL,
 								contentType: uploadTask.snapshot.metadata.contentType,
@@ -362,17 +360,26 @@ angular.module('MetronicApp')
 									NotifService.success('Se añadio una nueva nota a la tarea', 'Nueva nota añadida');
 								}
 							}, function (error) {
-								
-								// Create a reference to the file to delete
 								var desertRef = storageRef.child(uploadTask.snapshot.metadata.name);
-								// Delete the file
 								desertRef.delete().then(function () {
-									// File deleted successfully
 								}).catch(function (error) {
-									// Uh-oh, an error occurred!
 								});
 								
-								console.log(error);
+								vm.notas.formNotas.$setPristine();
+								vm.notas.formNotas.$setUntouched();
+								vm.notas.formNotas.$dirty = false;
+								
+								vm.notas.form.descripcion = '';
+								vm.notas.form.tipo        = 1;
+								vm.notas.form.avance      = response.data.avance;
+								vm.notas.form.file        = null;
+								
+								vm.notas.loading                = false;
+								vm.notas.progress               = 0;
+								vm.notas.sliderOptions.minLimit = response.data.avance;
+								vm.reloadCaso();
+								
+								NotifService.error('Error al guardar nota, comunica esto al departamento de desarrollo.', error.statusText + ' (' + error.status + ')');
 								vm.notas.loading = false;
 							});
 						});
@@ -398,7 +405,7 @@ angular.module('MetronicApp')
 								NotifService.success('Se añadio una nueva nota a la tarea', 'Nueva nota añadida');
 							}
 						}, function (response) {
-							NotifService.error('Error al eliminar evento, comunica esto al departamento de desarrollo.', response.statusText + ' (' + response.status + ')');
+							NotifService.error('Error al guardar nota, comunica esto al departamento de desarrollo.', response.statusText + ' (' + response.status + ')');
 							vm.notas.loading = false;
 						});
 					}
@@ -430,46 +437,127 @@ angular.module('MetronicApp')
 					
 					App.unblockUI('#lista-comentarios');
 				},
-				elimina      : function (id) {
+				elimina      : function (nota) {
 					$ngBootbox.confirm('¿Seguro de eliminar esta nota?')
 						.then(function () {
 							App.blockUI({
-								target      : '#nota' + id,
+								target      : '#nota' + nota.id,
 								message     : '<b> Borrando. </b>',
 								boxed       : true,
 								zIndex      : 99999,
 								overlayColor: App.getBrandColor('grey')
 							});
 							
-							TareaNota.delete({
-								idtarea: vm.tarea.id,
-								idnota : id
-							}).$promise.then(function (response) {
-								if (response.$resolved) {
-									App.unblockUI('#nota' + id);
-									vm.reloadCaso();
-									vm.notas.filtro('todos');
-								}
-							}, function (response) {
-								App.unblockUI('#nota' + id);
-								NotifService.error('Error al eliminar nota, comunica esto al departamento de desarrollo.', response.statusText + ' (' + response.status + ')');
-							});
+							if (nota.archivos.length > 0) {
+								var q = [];
+								angular.forEach(nota.archivos, function (val, key) {
+									this.push(firebase.storage().ref().child(val.path).delete());
+								}, q);
+								
+								$q.all(q).then(function () {
+									TareaNota.delete({
+										idtarea: vm.tarea.id,
+										idnota : nota.id
+									}).$promise.then(function (response) {
+										if (response.$resolved) {
+											App.unblockUI('#nota' + nota.id);
+											vm.reloadCaso();
+											vm.notas.filtro(vm.notas.tipo);
+										}
+									}, function (response) {
+										App.unblockUI('#nota' + nota.id);
+										NotifService.error('Error al eliminar nota, comunica esto al departamento de desarrollo.', response.statusText + ' (' + response.status + ')');
+									});
+								}, function (results) {
+									NotifService.error('Error al borrar imagenes, comunica esto al departamento de desarrollo.', results.statusText + '(' + results.status + ')');
+									App.unblockUI('#ui-view');
+								});
+							}
+							else {
+								TareaNota.delete({
+									idtarea: vm.tarea.id,
+									idnota : nota.id
+								}).$promise.then(function (response) {
+									if (response.$resolved) {
+										App.unblockUI('#nota' + nota.id);
+										vm.reloadCaso();
+										vm.notas.filtro(vm.notas.tipo);
+									}
+								}, function (response) {
+									App.unblockUI('#nota' + nota.id);
+									NotifService.error('Error al eliminar nota, comunica esto al departamento de desarrollo.', response.statusText + ' (' + response.status + ')');
+								});
+							}
 						});
 				},
 				edita        : function (nota) {
-					$ngBootbox.prompt('Edita la nota', nota)
+					$ngBootbox.prompt('Edita la nota', nota.nota)
 						.then(function (result) {
+							App.blockUI({
+								target      : '#nota' + nota.id,
+								message     : '<b> Actualizando. </b>',
+								boxed       : true,
+								zIndex      : 99999,
+								overlayColor: App.getBrandColor('grey')
+							});
 							
-						}, function () {
-							
+							var data = {
+								nota   : result,
+								publico: nota.publico,
+								avance : nota.avance
+							};
+							TareaNota.update({idtarea: vm.tarea.id, idnota: nota.id}, data).$promise.then(function (response) {
+								if (response.$resolved) {
+									vm.reloadCaso();
+								}
+							}, function (response) {
+								if (response.data.hasOwnProperty('errors') && response.status == 422) {
+									for (var key in response.data.errors) {
+										if (response.data.errors.hasOwnProperty(key)) {
+											NotifService.error(response.data.errors[key][0], 'Error con el formulario.');
+										}
+									}
+									App.unblockUI('#nota' + nota.id);
+									return;
+								}
+								NotifService.error('Error al editar comentario, comunica esto al departamento de desarrollo.', response.statusText + '(' + response.status + ')');
+								App.unblockUI('#nota' + nota.id);
+							});
 						});
 				},
-				cambia       : function () {
+				cambia       : function (nota) {
 					$ngBootbox.confirm('¿Seguro de cambiar la privacidad de esta nota?')
 						.then(function () {
-							console.log('Confirmed!');
-						}, function () {
-							console.log('Confirm dismissed!');
+							App.blockUI({
+								target      : '#nota' + nota.id,
+								message     : '<b> Actualizando. </b>',
+								boxed       : true,
+								zIndex      : 99999,
+								overlayColor: App.getBrandColor('grey')
+							});
+							
+							var data = {
+								nota   : nota.nota,
+								publico: !nota.publico,
+								avance : nota.avance
+							};
+							TareaNota.update({idtarea: vm.tarea.id, idnota: nota.id}, data).$promise.then(function (response) {
+								if (response.$resolved) {
+									vm.reloadCaso();
+								}
+							}, function (response) {
+								if (response.data.hasOwnProperty('errors') && response.status == 422) {
+									for (var key in response.data.errors) {
+										if (response.data.errors.hasOwnProperty(key)) {
+											NotifService.error(response.data.errors[key][0], 'Error con el formulario.');
+										}
+									}
+									App.unblockUI('#nota' + nota.id);
+									return;
+								}
+								NotifService.error('Error al editar comentario, comunica esto al departamento de desarrollo.', response.statusText + '(' + response.status + ')');
+								App.unblockUI('#nota' + nota.id);
+							});
 						});
 				}
 			};
@@ -514,9 +602,8 @@ angular.module('MetronicApp')
 					}
 				},
 				detener : function () {
-					App.scrollTop();
 					App.blockUI({
-						target      : '#ui-view',
+						target      : '#registro-tiempos',
 						message     : '<b>Añadiendo tiempos</b>',
 						boxed       : true,
 						zIndex      : 99999,
@@ -541,22 +628,25 @@ angular.module('MetronicApp')
 											$timeout(function () {
 												vm.trabajaTarea.tarea = null;
 												$rootScope.$broadcast('recarga-tareas');
-												App.unblockUI('#ui-view');
+												App.unblockUI('#registro-tiempos');
 											});
 										}, function (error) {
 											console.log("Remove failed: " + error.message);
+											App.unblockUI('#registro-tiempos');
+											NotifService.error("Remove failed: " + error.message, 'Error al eliminar tarea en Firebase.');
 										});
 									}
 								}, function (response) {
-									App.unblockUI('#ui-view');
-									NotifService.error('Ocurrio un error en el servidor, ponte contacto con departamento de desarrollo.', response.statusText + ' (' + response.status + ').');
+									App.unblockUI('#registro-tiempos');
+									NotifService.error('Ocurrió un error en el servidor, ponte contacto con departamento de desarrollo.', response.statusText + ' (' + response.status + ').');
 								});
 							}
 						});
-					}, function (s) {
-						
+					}, function (error) {
+						console.log(error);
+						App.unblockUI('#registro-tiempos');
+						NotifService.error('Ocurrió un error al recuperar dato de Firebase, ponte contacto con departamento de desarrollo.', 'Error Firebase.');
 					});
-					
 				}
 			};
 			
@@ -566,6 +656,7 @@ angular.module('MetronicApp')
 						snapshot.forEach(function (childSnapshot) {
 							vm.trabajaTarea.tarea            = childSnapshot.val();
 							vm.trabajaTarea.tarea.idFirebase = childSnapshot.key;
+							$scope.$broadcast('rzSliderForceRender');
 						});
 					}
 				});
@@ -583,8 +674,9 @@ angular.module('MetronicApp')
 					tarea          : Tarea.get({idtarea: vm.tarea.id}).$promise,
 					ejecutivoAgenda: TareaAgenda.get({idtarea: dataTarea.data.id, notificado: false}).$promise
 				}).then(function (results) {
-					vm.caso                         = results.caso.data;
-					vm.tarea                        = results.tarea.data;
+					vm.caso  = results.caso.data;
+					vm.tarea = results.tarea.data;
+					vm.notas.filtro(vm.notas.tipo);
 					vm.notas.form.avance            = vm.tarea.avance;
 					vm.notas.sliderOptions.minLimit = vm.tarea.avance;
 					vm.recordatorios                = results.ejecutivoAgenda.data;
