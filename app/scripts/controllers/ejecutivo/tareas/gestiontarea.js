@@ -319,8 +319,6 @@ angular.module('MetronicApp')
 						var storageRef = firebase.storage().ref('notas/' + vm.tarea.id);
 						var uploadTask = storageRef.child(file.name).put(file);
 						uploadTask.on('state_changed', function (snapshot) {
-							// Observe state change events such as progress, pause, and resume
-							// See below for more detail
 							var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 							$scope.$apply(function () {
 								vm.notas.progress = $filter('number')(progress, 0);
@@ -341,6 +339,7 @@ angular.module('MetronicApp')
 							delete vm.notas.form.file;
 							
 							var tareaNota = new TareaNota(vm.notas.form);
+							
 							tareaNota.$save({idtarea: vm.tarea.id}).then(function (response) {
 								if (response.$resolved) {
 									vm.notas.formNotas.$setPristine();
@@ -355,6 +354,11 @@ angular.module('MetronicApp')
 									vm.notas.loading                = false;
 									vm.notas.progress               = 0;
 									vm.notas.sliderOptions.minLimit = response.data.avance;
+									
+									if (vm.notas.form.avance == 100) {
+										vm.trabajaTarea.detener();
+									}
+									
 									vm.reloadCaso();
 									
 									NotifService.success('Se añadio una nueva nota a la tarea', 'Nueva nota añadida');
@@ -561,17 +565,7 @@ angular.module('MetronicApp')
 						});
 				}
 			};
-			
-			vm.avisos = {
-				defineFecha: function () {
-					return vm.tarea.fecha_inicio == null || vm.tarea.fecha_tentativa_cierre == null || vm.tarea.duracion_minutos == 0;
-				},
-				atraso     : function () {
-					return vm.tarea.fecha_tentativa_cierre < moment().unix();
-				},
-				ultimaTarea: true
-			};
-			
+						
 			vm.trabajaTarea = {
 				tarea   : null,
 				trabajar: function () {
@@ -724,6 +718,33 @@ angular.module('MetronicApp')
 				}).then(function (results) {
 					vm.caso          = results.caso.data;
 					vm.recordatorios = results.ejecutivoAgenda.data;
+					
+					vm.avisos = {
+						terminoCaso : function () {
+							return vm.caso.fecha_tentativa_precierre <= moment().unix();
+						},
+						defineFecha : function () {
+							return vm.tarea.fecha_inicio == null || vm.tarea.fecha_tentativa_cierre == null || vm.tarea.duracion_minutos == 0;
+						},
+						atrasoCaso : function () {
+							return vm.caso.fecha_tentativa_precierre < moment().unix() && vm.tarea.estatus.id == 3;
+						},
+						atrasoTarea: function () {
+							return vm.tarea.fecha_tentativa_cierre < moment().unix();
+						},
+						excesoTiempo: function () {
+							return vm.tarea.duracion_real_segundos > vm.tarea.duracion_tentativa_segundos;
+						},
+						ultimaTarea : function () {
+							angular.forEach(vm.caso.tareas, function (tarea, index) {
+								if (tarea.avance != 100 && tarea.id != vm.tarea.id) {
+									return false;
+								}
+							});
+							return true;
+						}
+					};
+					
 					App.unblockUI('#ui-view');
 				}, function (results) {
 					NotifService.error('Error al cargar algunos datos, comunica esto al departamento de desarrollo.', results.statusText + '(' + results.status + ')');

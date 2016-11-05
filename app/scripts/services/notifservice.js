@@ -12,6 +12,8 @@ angular.module('MetronicApp')
 		'toastr', 'ngAudio', 'authUser', 'Token',
 		function (toastr, ngAudio, authUser, Token) {
 			
+			ngAudio.setUnlock(false);
+			
 			var success = function (mensaje, titulo) {
 				ngAudio.load('sounds/chord.mp3').play();
 				toastr.success(mensaje, titulo);

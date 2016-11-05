@@ -51,13 +51,14 @@
 
 <div class = "row">
 	<div class = "col-md-12">
-		<div class = "alert alert-block alert-danger fade in">
-			<h4 class = "alert-heading">Se te ha asignado este nuevo caso.</h4>
-			<p> Debes de aceptar ser líder de este caso antes de continuar o reasginar el caso a otro ejecutivo. </p>
+		<div class = "alert bg-yellow-saffron bg-font-yellow-saffron" ng-show = "gestionCasosCtrl.avisos.reasignaCaso()">
+			<h4 class = "alert-heading bold">Se te ha asignado este nuevo caso.</h4>
+			<p> Puedes aceptar el caso asginando tareas o reasginar el caso a otro ejecutivo. </p>
 			<br>
 			<p>
-			    <button type = "button" class = "btn green-meadow"><b>Aceptar caso</b></button>
-			    <button type = "button" class = "btn red-sunglo"><b>Reasginar caso</b></button>
+			    <button type = "button" class = "btn red-sunglo">
+				    <b><i class = "fa fa-refresh"></i> Reasginar caso</b>
+			    </button>
 			</p>
 		</div>
 	</div>
@@ -178,27 +179,42 @@
 									<div class = "todo-tasklist-item-text"><b>{{tarea.titulo}}</b></div>
 									<div class = "todo-tasklist-item-text"> {{tarea.descripcion}} </div>
 									<br>
-									<div class = "todo-tasklist-item-text"><i class = "fa fa-calendar"></i> <b>Inicio programado: </b>
-										<span ng-if = "tarea.fecha_inicio == null"> <i>Sin definir por {{tarea.ejecutivo.nombre}}</i> </span>
+									<div class = "todo-tasklist-item-text">
+										<i class = "fa fa-calendar"></i> <b>Inicio programado: </b>
+										<span ng-if = "tarea.fecha_inicio == null">
+											<i>Sin definir por {{tarea.ejecutivo.nombre}}</i>
+										</span>
 										<span ng-if = "tarea.fecha_inicio != null">
-											{{tarea.fecha_inicio | amFromUnix | amDateFormat:'DD[/]MMMM[/]YYYY [a las] hh:mm A'}}
+											{{tarea.fecha_inicio | amFromUnix | amDateFormat:'D[/]MMMM[/]YYYY [a las] hh:mm a'}}
 										</span>
 									</div>
-									<div class = "todo-tasklist-item-text"><i class = "fa fa-calendar"></i> <b>Cierre tentativo: </b>
-										<span ng-if = "tarea.fecha_tentativa_cierre == null"> <i>Sin definir por {{tarea.ejecutivo.nombre}}</i> </span>
+									<div class = "todo-tasklist-item-text" ng-class = "{'animated shake bold font-red-thunderbird': gestionCasosCtrl.avisos.atrasoTarea(tarea)}">
+										<i class = "fa fa-calendar"></i> <b>Cierre tentativo: </b>
+										<span ng-if = "tarea.fecha_tentativa_cierre == null">
+											<i>Sin definir por {{tarea.ejecutivo.nombre}}</i>
+										</span>
 										<span ng-if = "tarea.fecha_tentativa_cierre != null">
-											{{tarea.fecha_tentativa_cierre | amFromUnix | amDateFormat:'DD[/]MMMM[/]YYYY [a las] hh:mm A'}}
+											{{tarea.fecha_tentativa_cierre | amFromUnix | amDateFormat:'D[/]MMMM[/]YYYY [a las] hh:mm a'}}
 										</span>
 									</div>
-									<div class = "todo-tasklist-item-text"><i class = "fa fa-hourglass-start"></i> <b>Duración estimada:</b>
+									<div class = "todo-tasklist-item-text">
+										<i class = "fa fa-hourglass-start"></i> <b>Duración estimada:</b>
 										<span ng-if = "tarea.duracion_tentativa_segundos == 0"> <i>Sin definir por {{tarea.ejecutivo.nombre}}</i> </span>
 										<span ng-if = "tarea.duracion_tentativa_segundos != 0">
 											{{ tarea.duracion_tentativa_segundos | duracion:'HH:mm':'s'}} horas.
 										</span>
 									</div>
-									<div class = "todo-tasklist-item-text"><i class = "fa fa-hourglass-start"></i> <b>Duración real:</b> {{ tarea.duracion_real_segundos | duracion:'HH:mm':'s'}} horas. </div>
-									<div class = "todo-tasklist-item-text"><i class = "fa fa-comment"></i> <b>Privados:</b> {{tarea.notas.privadas.length}} mensajes </div>
-									<div class = "todo-tasklist-item-text"><i class = "fa fa-comment-o"></i> <b>Públicos:</b> {{tarea.notas.publicas.length}} mensajes </div>
+									<div class = "todo-tasklist-item-text" ng-class = "{'animated shake bold font-red-thunderbird': gestionCasosCtrl.avisos.atrasoTarea(tarea)}">
+										<i class = "fa fa-hourglass-start"></i>
+										<b>Duración real:</b>
+										<span>{{tarea.duracion_real_segundos | duracion:'HH:mm':'s'}} horas.</span>
+									</div>
+									<div class = "todo-tasklist-item-text">
+										<i class = "fa fa-comment"></i> <b>Privados:</b> {{tarea.notas.privadas.length}} mensajes
+									</div>
+									<div class = "todo-tasklist-item-text">
+										<i class = "fa fa-comment-o"></i> <b>Públicos:</b> {{tarea.notas.publicas.length}} mensajes
+									</div>
 									<hr>
 									<div class = "todo-tasklist-controls">
 										<div class = "todo-tasklist-item-text"><b>Avance:</b> {{tarea.avance}}%</div>
@@ -211,7 +227,7 @@
 									<hr>
 									<div class = "todo-tasklist-controls">
 										<button type = "button" class = "btn green btn-xs" ng-click = "gestionCasosCtrl.detalleTarea()">Ver detalles</button>
-										<button type = "button" class = "btn green btn-xs" ng-click = "gestionCasosCtrl.editaTarea()">Editar</button>
+										<button type = "button" class = "btn green btn-xs" ng-click = "gestionCasosCtrl.editaTarea(tarea.id)">Editar</button>
 									</div>
 								</div>
 							</div>
@@ -238,12 +254,18 @@
 				
 				<hr>
 				
-				<div class = "alert alert-warning" ng-if = "gestionCasosCtrl.caso.fecha_tentativa_precierre == null">
+				<div class = "alert alert-warning" ng-if = "!gestionCasosCtrl.caso.fecha_tentativa_precierre == null">
                                        <i class = "fa fa-warning"></i>  <strong> Aún no se tiene el cálculo tentativo de precierre del caso.</strong>
 				</div>
 				
-				<div class = "alert alert-info" ng-if = "gestionCasosCtrl.caso.fecha_tentativa_precierre != null">
-					<strong>En tiempo para terminar a la fecha tentativa.</strong> - {{gestionCasosCtrl.caso.fecha_tentativa_precierre | amFromUnix | amDateFormat:'DD [de] MMMM [a las] hh:mm A'}} (<span class="bold" am-time-ago="gestionCasosCtrl.caso.fecha_tentativa_precierre | amFromUnix"></span>)
+				<div class = "alert bg-red-thunderbird bg-font-red-thunderbird animated infinite pulse" ng-show = "gestionCasosCtrl.avisos.atrasoCaso()">
+					<b>El caso va atrasado.</b>
+					<p>La fecha tentativa de precierre fue programada para el {{gestionCasosCtrl.caso.fecha_tentativa_precierre | amFromUnix | amDateFormat:'D [de] MMMM [a las] h:mm a'}}, <span class = "bold" am-time-ago = "gestionCasosCtrl.caso.fecha_tentativa_precierre | amFromUnix"></span>.</p>
+				</div>
+				
+				<div class = "alert bg-yellow-soft bg-font-yellow-soft" ng-show = "!gestionCasosCtrl.avisos.atrasoCaso()">
+					<b>A tiempo para terminar a la fecha tentativa.</b>
+					<p>La fecha tentativa de precierre esta establecida para el {{gestionCasosCtrl.caso.fecha_tentativa_precierre | amFromUnix | amDateFormat:'D [de] MMMM [a las] h:mm a'}}, <span class = "bold" am-time-ago = "gestionCasosCtrl.caso.fecha_tentativa_precierre | amFromUnix"></span>.</p>
 				</div>
 				
 				<h5 ng-if = "gestionCasosCtrl.caso.tareas.length == 0">Avance general: <b>No se han asignado tareas.</b></h5>
@@ -446,18 +468,5 @@
 	</div>
 	<div class = "modal-footer">
 		<button class = "btn grey-mint btn-outline" ng-click = "modalDetalleTareas.cancel()">Cerrar</button>
-	</div>
-</script>
-
-<script type = "text/ng-template" id = "modalEditaTarea.html">
-	<div class = "modal-header">
-		<button type = "button" class = "close" aria-hidden = "true" ng-click = "modalEditaTareas.cancel()"></button>
-		<h4 class = "modal-title font-green-sharp"><i class = "fa file-pdf-o"></i> Tarea No. </h4>
-	</div>
-	<div class = "modal-body">
-		
-	</div>
-	<div class = "modal-footer">
-		<button class = "btn grey-mint btn-outline" ng-click = "modalEditaTareas.cancel()">Cerrar</button>
 	</div>
 </script>

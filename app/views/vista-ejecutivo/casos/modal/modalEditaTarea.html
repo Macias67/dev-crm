@@ -1,0 +1,126 @@
+<div class = "modal-header">
+		<button type = "button" class = "close" aria-hidden = "true" ng-click = "modalEditaTareas.cancel()"></button>
+		<h4 class = "modal-title font-yellow-casablanca">
+			<i class = "fa fa-tasks"></i> Tarea: {{modalEditaTareas.tarea.titulo}}
+		</h4>
+	</div>
+	<div class = "modal-body">
+		<div class = "col-md-6 form">
+			<form role = "form">
+				<div class = "form-body">
+					<div class = "form-group">
+						<label>Titulo</label>
+						<div class = "input-icon input-icon-lg">
+							<i class = "fa fa-bell-o"></i>
+							<input type = "text" class = "form-control input-lg"
+							       ng-model = "modalEditaTareas.formTarea.titulo"
+							       placeholder = "Título tarea"
+							       required>
+						</div>
+					</div>
+					<div class = "form-group">
+						<label>Descripción</label>
+						<textarea class = "form-control"
+						          rows = "3"
+						          ng-model = "modalEditaTareas.formTarea.descripcion"
+						          required>
+						</textarea>
+					</div>
+					<div class = "form-group">
+						<label>Fecha y hora de inicio: </label>
+						<div class = "input-group input-group-sm">
+							<input type = "text" class = "form-control"
+							       datetime-picker = "dd/MM/yyyy h:mm a"
+							       ng-model = "modalEditaTareas.formTarea.fechainicio"
+							       is-open = "modalEditaTareas.fechas.fechainicio.open"
+							       datepicker-options = "modalEditaTareas.fechas.fechainicio.options"
+							       placeholder = "Fecha de inicio"
+							       readonly
+							       required>
+							<span class = "input-group-btn">
+								<button class = "btn green bold" type = "button" ng-click = "modalEditaTareas.fechas.fechainicio.openCalendar()">
+									<i class = "fa fa-calendar"></i>
+								</button>
+							</span>
+						</div>
+					</div>
+					<div class = "form-group">
+						<label>Duración de la tarea en horas: </label>
+						<div class = "input-icon input-icon-sm right">
+							<i class = "fa fa-clock-o"></i>
+							<input type = "text" class = "form-control input-sm"
+							       ng-model = "modalEditaTareas.formTarea.duracion"
+							       placeholder = "00:00"
+							       mask = "9?99:59"
+							       restrict = "reject"
+							       validate = "true"
+							       required>
+						</div>
+					</div>
+					<div class = "form-group">
+						<label>Fecha y hora tentativa de cierre: </label>
+						<div class = "input-group input-group-sm">
+							<input type = "text" class = "form-control"
+							       datetime-picker = "dd/MM/yyyy h:mm a"
+							       ng-model = "modalEditaTareas.formTarea.fechatentativacierre"
+							       enable-time = "true"
+							       is-open = "modalEditaTareas.fechas.fechacierre.open"
+							       datepicker-options = "modalEditaTareas.fechas.fechacierre.options"
+							       placeholder = "Fecha tentativa cierre"
+							       readonly
+							       required>
+							<span class = "input-group-btn">
+								<button class = "btn green bold" type = "button" ng-click = "modalEditaTareas.fechas.fechacierre.openCalendar()">
+									<i class = "fa fa-calendar"></i>
+								</button>
+							</span>
+						</div>
+					</div>
+					<div class = "form-group" ng-show="modalEditaTareas.deshabilitaMotivo">
+						<rzslider rz-slider-model = "modalEditaTareas.formTarea.avance"
+						          rz-slider-options = "modalEditaTareas.slider.sliderOptions"></rzslider>
+					</div>
+					<div class = "form-group" ng-show="modalEditaTareas.deshabilitaMotivo">
+						<label class = "bold">Estatus de la tarea</label>
+						<select
+							class = "form-control input-lg"
+							ng-options = "estatus.id as estatus.estatus for estatus in modalEditaTareas.estatus"
+							ng-model = "modalEditaTareas.formTarea.estatus">
+							</select>
+					</div>
+					<div class = "form-group">
+						<label class = "bold">Reasginar tarea</label>
+						<div class = "form-group">
+							<select
+								class = "form-control input-lg"
+								ng-options = "ejecutivo.id as ejecutivo.nombre +' '+ejecutivo.apellido + ' | '+ ejecutivo.departamento.area for ejecutivo in modalEditaTareas.ejecutivos"
+								ng-model = "modalEditaTareas.formTarea.ejecutivo">
+							</select>
+						</div>
+					</div>
+					<div class = "form-group" ng-hide="modalEditaTareas.deshabilitaMotivo">
+						<label>Motivo de la reasignación</label>
+						<textarea class = "form-control"
+						          rows = "3"
+						          ng-model = "modalEditaTareas.formTarea.motivo"
+						          ng-disabled="modalEditaTareas.deshabilitaMotivo"
+						          ng-required="!modalEditaTareas.deshabilitaMotivo">
+						</textarea>
+					</div>
+					<div class = "form-group">
+						<button type = "submit" class = "btn blue">Submit</button>
+						<button type = "button" class = "btn default">Cancel</button>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class = "col-md-6">
+			{{modalEditaTareas.formTarea}}
+		</div>
+		<div class = "clearfix"></div>
+	</div>
+	<div class = "modal-footer">
+		<button class = "btn grey-mint btn-outline"
+		        ng-click = "modalEditaTareas.cancel()">Cancelar
+		</button>
+	</div>

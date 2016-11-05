@@ -94,7 +94,7 @@
 							<li ng-repeat = "tarea in headerCtrl.tareasEnMarcha">
 								<a href = "javascript:;" style = "text-decoration: none" ng-click = "headerCtrl.abreModalTarea(tarea.fbID)">
 									<span class = "time bold" ng-class = "{'font-green-jungle': tarea.estaTrabajando, 'font-red-thunderbird': !tarea.estaTrabajando}">
-										<timer ng-attr-id = "{{'timer'+tarea.idTarea}}" ng-attr-fbid = "{{tarea.fbID}}" interval = "1000" start-time = "tarea.inicio" max-time-unit = "'hour'">{{hhours}}:{{mminutes}}:{{sseconds}}</timer>
+										<timer ng-attr-id = "{{'timer'+tarea.idTarea}}" ng-attr-fbid = "{{tarea.fbID}}" interval = "1000" start-time = "tarea.inicio" max-time-unit = "'hour'" language="es">{{hhours}}:{{mminutes}}:{{sseconds}}</timer>
 									</span>
 									<span class = "details">
 										<!--<span class = "label label-sm label-success">-->
