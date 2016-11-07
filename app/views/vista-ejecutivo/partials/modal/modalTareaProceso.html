@@ -1,105 +1,112 @@
 <div class = "modal-header">
-		<button type = "button" class = "close" aria-hidden = "true" ng-click = "modalTareaProcesoController.cancel()"></button>
-		<h4 class = "modal-title font-yellow-casablanca">
-			<i class = "fa fa-tasks"></i> Tarea: {{modalTareaProcesoController.tarea.titulo}}
-		</h4>
+	<button type = "button" class = "close" aria-hidden = "true" ng-click = "modalTareaProcesoController.cancel()"></button>
+	<h4 class = "modal-title font-yellow-casablanca bold">
+		<i class = "fa fa-tasks"></i> Tarea: {{modalTareaProcesoController.tarea.titulo}}
+	</h4>
+</div>
+<div class = "modal-body">
+	<div class = "col-md-12">
+		<h5 class = "font-grey-silver bold">CASO #{{modalTareaProcesoController.tarea.caso.id}} | {{modalTareaProcesoController.tarea.caso.cliente.razonsocial  }} | Avance {{modalTareaProcesoController.tarea.caso.avance}}%</h5>
+		<p class = "lead">{{modalTareaProcesoController.tarea.descripcion}}</p>
 	</div>
-	<div class = "modal-body">
+	<div class = "col-md-6">
+		<a class = "dashboard-stat dashboard-stat-v2 {{modalTareaProcesoController.tarea.estatus.class}}">
+			<div class = "visual" style = "padding-top: 0px; margin-bottom: 20px;">
+				<i class = "fa fa-asterisk"></i>
+			</div>
+			<div class = "details">
+				<div class = "number">
+					<span>{{modalTareaProcesoController.tarea.estatus.estatus}}</span>
+				</div>
+				<div class = "desc"> Estatus </div>
+			</div>
+		</a>
+		<a class = "dashboard-stat dashboard-stat-v2 yellow-casablanca">
+			<div class = "visual" style = "padding-top: 0px; margin-bottom: 20px;">
+				<i class = "fa fa-cogs"></i>
+			</div>
+			<div class = "details">
+				<div class = "number">
+					<span>{{modalTareaProcesoController.tarea.avance}}%</span>
+				</div>
+				<div class = "desc"> Progreso </div>
+			</div>
+		</a>
+		<a class = "dashboard-stat dashboard-stat-v2 blue">
+			<div class = "visual" style = "padding-top: 0px; margin-bottom: 20px;">
+				<i class = "fa fa-calendar"></i>
+			</div>
+			<div class = "details">
+				<div class = "number">
+					<span>{{modalTareaProcesoController.tarea.fecha_tentativa_cierre | amFromUnix | amDateFormat:'D.MMM h:mm a'}}</span>
+				</div>
+				<div class = "desc"> Fecha de cierre </div>
+			</div>
+		</a>
+		<a class = "dashboard-stat dashboard-stat-v2 purple-seance">
+			<div class = "visual" style = "padding-top: 0px; margin-bottom: 20px;">
+				<i class = "fa fa-hourglass-start"></i>
+			</div>
+			<div class = "details">
+				<div class = "number">
+					<span>{{modalTareaProcesoController.tarea.duracion_tentativa_segundos | duracion:'H:mm':'s'}} horas</span>
+				</div>
+				<div class = "desc"> Duración </div>
+			</div>
+		</a>
+	</div>
+	<div class = "col-md-6">
 		<div class = "col-md-12">
-			<h4 class = "font-grey-silver bold">Caso #{{modalTareaProcesoController.tarea.caso.id}} | {{modalTareaProcesoController.tarea.caso.cliente.razonsocial}}</h4>
-			<p class = "lead">{{modalTareaProcesoController.tarea.descripcion}}</p>
-			<hr>
-		</div>
-		<div class = "col-md-5">
-			<div class = "portlet light">
-				<div class = "portlet-title">
-					<div class = "caption">
-					<i class = "icon-puzzle font-grey-gallery"></i>
-					<span class = "caption-subject bold font-grey-gallery uppercase"> Bitácora de eventos</span>
-					</div>
-				</div>
-				<div class = "portlet-body">
-					<form role = "form" name = "modalTareaProcesoController.notas.formNotas">
-						<div class = "form-body">
-							<div class = "form-group">
-								<textarea class = "form-control" rows = "3" placeholder = "Descripción de la nota" ng-model = "modalTareaProcesoController.notas.form.descripcion" required></textarea>
-							</div>
-							<div class = "form-group">
-								<div class = "mt-radio-inline" style = "padding: 0px">
-									<label class = "mt-radio">
-										<input type = "radio" name = "tipoNota" id = "tipoNota1" value = "1" checked = "" ng-model = "modalTareaProcesoController.notas.form.tipo" ng-required = "true"> Pública
-										<span></span>
-									</label>
-									<label class = "mt-radio">
-										<input type = "radio" name = "tipoNota" id = "tipoNota2" value = "0" ng-model = "modalTareaProcesoController.notas.form.tipo" ng-required = "true"> Privada
-										<span></span>
-									</label>
-								</div>
-							</div>
-							<div class = "form-group">
-								<rzslider rz-slider-model = "modalTareaProcesoController.notas.form.avance"
-								          rz-slider-options = "modalTareaProcesoController.notas.sliderOptions"></rzslider>
-							</div>
-							<div class = "form-group">
-								<input type = "file" ngf-select ng-model = "modalTareaProcesoController.notas.form.file" name = "file" accept = "image/*" ngf-max-size = "2MB" ngf-model-invalid = "errorFile">
-								<p class = "help-block"> Tamaño max. de archivo 5MB.  </p>
-								<div class = "progress progress-striped" ng-show = "modalTareaProcesoController.notas.form.file != null">
-									<div class = "progress-bar progress-bar-info" role = "progressbar" aria-valuenow = "{{modalTareaProcesoController.notas.progress}}" aria-valuemin = "0" aria-valuemax = "100" ng-style = "{width: modalTareaProcesoController.notas.progress+'%'}">
-										<span class = "sr-only"> {{modalTareaProcesoController.notas.progress}}% Complete </span>
-									</div>
-								</div>
-							</div>
-							<div class = "form-group">
-								<button class = "btn green-jungle btn-xs" ladda = "modalTareaProcesoController.notas.loading" data-style = "expand-right" ng-click = "modalTareaProcesoController.notas.guarda()" ng-disabled = "!modalTareaProcesoController.notas.formNotas.$valid">
-									<b><i class = "fa fa-plus"></i>  Añade nota</b>
-								</button>
-							</div>
-						</div>
-					</form>
-				</div>
+			<div class = "alert bg-grey-steel bg-font-grey-steel text-center">
+				<i class = "fa fa-clock-o faa-pulse animated"></i>&nbsp;
+				Sesión actual: <b>{{modalTareaProcesoController.snapshot.duracionMilis | duracion:'HH:mm:ss':'ms'}}</b>
 			</div>
 		</div>
-		<div class = "col-md-7">
-			<h2 class="text-center">
-				Sesión actual: <b>{{modalTareaProcesoController.snapshot.duracionMilis | duracion:'HH:mm:ss':'ms'}}</b>
-			</h2>
-			<hr>
-			<table class = "table table-hover table-light">
-				<thead>
-					<tr class = "uppercase">
-						<th>Comentario </th>
-						<th> Tipo </th>
-						<th> </th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr ng-repeat = "nota in modalTareaProcesoController.tarea.notas.todas">
-						<td> {{nota.nota}} </td>
-						<td>
-							<span class = "badge bg-red-mint bg-font-red-mint bold uppercase" ng-show = "!nota.publico">Privada </span>
-							<span class = "badge bg-green-turquoise bg-font-green-turquoise bold uppercase" ng-show = "nota.publico"> Pública </span>
-						</td>
-						<td>
-							<button class = "btn bt-xs btn-icon-only red-mint">
-								<i class = "fa fa-trash"></i>
+		<hr>
+		<form role = "form" name = "modalTareaProcesoController.notas.formNotas">
+					<div class = "form-body">
+						<div class = "form-group">
+							<textarea class = "form-control" rows = "3" placeholder = "Descripción de la nota" ng-model = "modalTareaProcesoController.notas.form.descripcion" required></textarea>
+						</div>
+						<div class = "form-group">
+							<div class = "mt-radio-inline" style = "padding: 0px">
+								<label class = "mt-radio">
+									<input type = "radio" name = "tipoNota" id = "tipoNota1" value = "1" checked = "" ng-model = "modalTareaProcesoController.notas.form.tipo" ng-required = "true"> Pública
+									<span></span>
+								</label>
+								<label class = "mt-radio">
+									<input type = "radio" name = "tipoNota" id = "tipoNota2" value = "0" ng-model = "modalTareaProcesoController.notas.form.tipo" ng-required = "true"> Privada
+									<span></span>
+								</label>
+							</div>
+						</div>
+						<div class = "form-group">
+							<rzslider rz-slider-model = "modalTareaProcesoController.notas.form.avance"
+							          rz-slider-options = "modalTareaProcesoController.notas.sliderOptions"></rzslider>
+						</div>
+						<div class = "form-group">
+							<input type = "file" ngf-select ng-model = "modalTareaProcesoController.notas.form.file" name = "file" accept = "image/*" ngf-max-size = "2MB" ngf-model-invalid = "errorFile">
+							<p class = "help-block"> Tamaño max. de archivo 5MB.  </p>
+							<div class = "progress progress-striped" ng-show = "modalTareaProcesoController.notas.form.file != null">
+								<div class = "progress-bar progress-bar-info" role = "progressbar" aria-valuenow = "{{modalTareaProcesoController.notas.progress}}" aria-valuemin = "0" aria-valuemax = "100" ng-style = "{width: modalTareaProcesoController.notas.progress+'%'}">
+									<span class = "sr-only"> {{modalTareaProcesoController.notas.progress}}% Complete </span>
+								</div>
+							</div>
+						</div>
+						<div class = "form-group">
+							<button class = "btn green-jungle btn-xs" ladda = "modalTareaProcesoController.notas.loading" data-style = "expand-right" ng-click = "modalTareaProcesoController.notas.guarda()" ng-disabled = "!modalTareaProcesoController.notas.formNotas.$valid">
+								<b><i class = "fa fa-plus"></i>  Añade nota</b>
 							</button>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-		<div class = "clearfix"></div>
-		<!--{{modalTareaProcesoController.snapshot}}-->
-		<!--{{modalTareaProcesoController.tarea}}-->
+						</div>
+					</div>
+				</form>
 	</div>
-	<div class = "modal-footer">
-		<button class = "btn red-thunderbird" ng-show = "modalTareaProcesoController.snapshot.estaTrabajando"
-		        ng-click = "modalTareaProcesoController.trabajaTarea.detener()"> Detener
-		</button>
-		<button class = "btn green-jungle" ng-show = "!modalTareaProcesoController.snapshot.estaTrabajando"
-		        ng-click = "modalTareaProcesoController.trabajaTarea.trabajar()"> Trabajar
-		</button>
-		<button class = "btn grey-mint btn-outline"
-		        ng-click = "modalTareaProcesoController.cancel()">Cancelar
-		</button>
-	</div>
+	<div class = "clearfix"></div>
+	<!--{{modalTareaProcesoController.snapshot}}-->
+	<!--{{modalTareaProcesoController.tarea}}-->
+</div>
+<div class = "modal-footer">
+	<button class = "btn grey-mint btn-outline"
+	        ng-click = "modalTareaProcesoController.cancel()">Cancelar
+	</button>
+</div>

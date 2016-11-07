@@ -14,37 +14,51 @@ angular.module('MetronicApp')
 			return $resource(CRM_APP.url + 'tareas/:idtarea',
 				{idtarea: '@idtarea'},
 				{
-					get        : {
+					get          : {
 						isArray: false,
 						headers: {
 							'Authorization': 'Bearer ' + authUser.getToken()
 						}
 					},
-					save       : {
+					save         : {
 						method : 'POST',
 						headers: {
 							'Authorization': 'Bearer ' + authUser.getToken()
 						}
 					},
-					query      : {
+					query        : {
 						isArray: false,
 						headers: {
 							'Authorization': 'Bearer ' + authUser.getToken()
 						}
 					},
-					update     : {
+					update       : {
 						method : 'PUT',
 						headers: {
 							'Authorization': 'Bearer ' + authUser.getToken()
 						}
 					},
-					asignafecha: {
+					asignafecha  : {
 						url    : CRM_APP.url + 'tareas/:idtarea/fechas',
 						method : 'PUT',
 						headers: {
 							'Authorization': 'Bearer ' + authUser.getToken()
 						}
-					}
+					},
+					reasgina     : {
+						url    : CRM_APP.url + 'tareas/:idtarea/reasgina',
+						method : 'PUT',
+						headers: {
+							'Authorization': 'Bearer ' + authUser.getToken()
+						}
+					},
+					cambiaEstatus: {
+						url    : CRM_APP.url + 'tareas/:idtarea/cambia-estatus',
+						method : 'PUT',
+						headers: {
+							'Authorization': 'Bearer ' + authUser.getToken()
+						}
+					},
 				});
 		}
 	]);

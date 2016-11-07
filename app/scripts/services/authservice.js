@@ -37,6 +37,8 @@ angular.module('authService', [])
 				PermPermissionStore.clearStore();
 				PermRoleStore.clearStore();
 				sessionControl.unset('ec_data');
+				sessionControl.unset('idToken');
+				sessionControl.unset('deviceToken');
 				$auth.logout();
 			};
 			
@@ -106,7 +108,8 @@ angular.module('authService', [])
 									toastr.error(response.data.errors[key][0], 'Error con el formulario.');
 								}
 							}
-						} else {
+						}
+						else {
 							toastr.error(response.data.message, 'Error con el formulario.');
 						}
 						App.unblockUI();

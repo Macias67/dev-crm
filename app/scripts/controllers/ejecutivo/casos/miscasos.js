@@ -77,11 +77,25 @@ angular.module('MetronicApp')
 						else {
 							return full.cliente.razonsocial;
 						}
-					}).withOption('sWidth', '60%'),
+					}).withOption('sWidth', '50%'),
+					DTColumnBuilder.newColumn(null).withTitle('Avance').renderWith(function (data, type, full, meta) {
+						return '<b>' + data.avance + '%</b>'
+					}).withOption('sWidth', '5%'),
+					DTColumnBuilder.newColumn(null).withTitle('Precierre').renderWith(function (data, type, full, meta) {
+						if (moment(data.fecha_tentativa_precierre, "X") < moment()) {
+							return '<span class="badge bg-red-thunderbird bg-font-red-thunderbird bold"> ' + moment(data.fecha_tentativa_precierre, "X").format("DD/M/Y h:mm a") + ' </span>'
+						} else {
+							return '<span class="badge bg-green-jungle bg-font-green-jungle bold"> ' + moment(data.fecha_tentativa_precierre, "X").format("DD/M/Y h:mm a") + ' </span>'
+						}
+					}).withOption('sWidth', '15%'),
 					DTColumnBuilder.newColumn(null).withTitle('Estatus').notSortable().renderWith(function (data, type, full, meta) {
 						return '<span class="label label-sm label-success bg-' + data.estatus.class + '"><b>' + data.estatus.estatus + '</b></span>';
 					}).withOption('sWidth', '10%'),
-					DTColumnBuilder.newColumn(null).notSortable().renderWith(actionsHtml).withOption('sWidth', '30%'),
+					DTColumnBuilder.newColumn(null).notSortable().renderWith(function (data, type, full, meta) {
+						return '<button ng-click="misCasosCtrl.openDetalles(' + data.id + ')" class="btn btn-xs green-jungle" type="button">' +
+							'<i class="fa fa-plus"></i>' +
+							'</button>';
+					}).withOption('sWidth', '5%'),
 				],
 				reloadTable: function () {
 					App.blockUI({

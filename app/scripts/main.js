@@ -151,29 +151,33 @@ MetronicApp.controller('AppController', [
 /* Setup Layout Part - Header */
 MetronicApp.controller('HeaderController', [
 	'$scope',
+	'$rootScope',
 	'authUser',
 	'NotifService',
 	'Cronometro',
 	'$uibModal',
-	'$firebaseArray',
+	'$state',
 	'$timeout',
-	function ($scope, authUser, NotifService, Cronometro, $uibModal, $firebaseArray, $timeout) {
+	'TareaTiempos',
+	function ($scope, $rootScope, authUser, NotifService, Cronometro, $uibModal, $state, $timeout, TareaTiempos) {
 		NotifService.fbNotificacion();
 		
 		var vm            = this;
 		vm.tareasEnMarcha = [];
 		
-		firebase.database().ref('tarea-enproceso').orderByChild('idEjecutivo').equalTo(authUser.getSessionData().id).once('value', function (snapshot) {
+		firebase.database().ref('tarea-enproceso').orderByChild('idEjecutivo').equalTo(authUser.getSessionData().id).on('value', function (snapshot) {
 			$timeout(function () {
-				vm.tareasEnMarcha = [];
-				snapshot.forEach(function (childSnapshot) {
-					var tarea = childSnapshot.val();
-					if (tarea.estaTrabajando) {
-						tarea.fbID = childSnapshot.key;
-						//tarea.inicio = moment().valueOf() - childSnapshot.val().duracionMilis;
-						vm.tareasEnMarcha.push(tarea);
-					}
-				});
+				if (snapshot.numChildren() != vm.tareasEnMarcha.length) {
+					vm.tareasEnMarcha = [];
+					snapshot.forEach(function (childSnapshot) {
+						var tarea = childSnapshot.val();
+						if (tarea.estaTrabajando) {
+							tarea.fbID = childSnapshot.key;
+							//tarea.inicio = moment().valueOf() - childSnapshot.val().duracionMilis;
+							vm.tareasEnMarcha.push(tarea);
+						}
+					});
+				}
 			});
 		});
 		
@@ -193,11 +197,9 @@ MetronicApp.controller('HeaderController', [
 			});
 		});
 		
-		
 		$scope.$on('timer-tick', function (event, args) {
 			$timeout(function () {
 				var fbID = angular.element(args.timerElement).attr('fbid');
-				
 				if (fbID != undefined || fbID != null) {
 					firebase.database().ref('tarea-enproceso/' + fbID).update({
 						duracionMilis: Math.floor(args.millis / 1000) * 1000
@@ -206,30 +208,76 @@ MetronicApp.controller('HeaderController', [
 			});
 		});
 		
-		vm.abreModalTarea = function (fbID) {
-			App.blockUI({
-				target      : '#ui-view',
-				message     : '<b>Abriendo datos de la tarea </b>',
-				boxed       : true,
-				zIndex      : 99999,
-				overlayColor: App.getBrandColor('grey')
-			});
-			
-			firebase.database().ref('tarea-enproceso/' + fbID).once('value', function (snapshot) {
-				$uibModal.open({
-					backdrop   : 'static',
-					templateUrl: 'views/vista-ejecutivo/partials/modal/modalTareaProceso.html',
-					controller : 'ModalTareaProcesoController as modalTareaProcesoController',
-					resolve    : {
-						dataTarea: [
-							'$stateParams', 'Tarea', function ($stateParams, Tarea) {
-								return Tarea.get({idtarea: snapshot.val().idTarea}).$promise;
-							}
-						]
-					},
-					size       : 'lg'
+		vm.tareasTrabajando = {
+			enProceso     : false,
+			abreModalTarea: function (fbID) {
+				App.blockUI({
+					target      : '#ui-view',
+					message     : '<b>Abriendo datos de la tarea </b>',
+					boxed       : true,
+					zIndex      : 99999,
+					overlayColor: App.getBrandColor('grey')
 				});
-			});
+				
+				firebase.database().ref('tarea-enproceso/' + fbID).once('value', function (snapshot) {
+					$uibModal.open({
+						backdrop   : 'static',
+						templateUrl: 'views/vista-ejecutivo/partials/modal/modalTareaProceso.html',
+						controller : 'ModalTareaProcesoController as modalTareaProcesoController',
+						resolve    : {
+							dataTarea: [
+								'$stateParams', 'Tarea', function ($stateParams, Tarea) {
+									return Tarea.get({idtarea: snapshot.val().idTarea}).$promise;
+								}
+							]
+						},
+						size       : 'lg'
+					});
+				});
+			},
+			detener       : function (notificacion) {
+				vm.tareasTrabajando.enProceso = true;
+				$('timer#timer' + notificacion.tarea.id)[0].stop();
+				firebase.database().ref('tarea-enproceso/' + notificacion.fbID).once('value').then(function (snapshot) {
+					$timeout(function () {
+						if (snapshot.val() != null) {
+							var tarea = snapshot.val();
+							var data  = {
+								inicio  : moment(tarea.inicio).format('YYYY-MM-DD H:mm:ss'),
+								fin     : moment().format('YYYY-MM-DD H:mm:ss'),
+								duracion: tarea.duracionMilis / 1000
+							};
+							
+							TareaTiempos.save({idtarea: notificacion.tarea.id}, data).$promise.then(function (response) {
+								if (response.$resolved) {
+									firebase.database().ref('tarea-enproceso/' + notificacion.fbID).update({estaTrabajando: false}).then(function () {
+										firebase.database().ref('tarea-enproceso/' + notificacion.fbID).remove().then(function () {
+											$timeout(function () {
+												$rootScope.$broadcast('recarga-tareas');
+												NotifService.success("Se ha detenido la sesión de la tarea y registrado el tiempo correctamente.", 'Se añadio nuevo registro de tiempo.');
+												vm.tareasTrabajando.enProceso = false;
+											});
+										}, function (error) {
+											console.log("Remove failed: " + error.message);
+											NotifService.error("Remove failed: " + error.message, 'Error al eliminar tarea en Firebase.');
+											vm.tareasTrabajando.enProceso = false;
+										});
+									});
+								}
+							}, function (response) {
+								NotifService.error('Ocurrió un error en el servidor al tratar de registra la sesión de trabajo de la tarea.', response.statusText + ' (' + response.status + ').');
+								vm.tareasTrabajando.enProceso = false;
+							});
+						}
+					});
+				}, function (error) {
+					console.log(error);
+					NotifService.error('Ocurrió un error al recuperar dato de Firebase, ponte contacto con departamento de desarrollo.', 'Error Firebase.');
+				});
+			},
+			abreTarea     : function (tareaID) {
+				$state.go('gestion-tarea', {idtarea: tareaID}, {notify: true});
+			}
 		};
 		
 		$scope.$on('$includeContentLoaded', function () {
@@ -249,9 +297,10 @@ MetronicApp.controller('ModalTareaProcesoController', [
 	'dataTarea',
 	'$timeout',
 	'TareaNota',
+	'TareaTiempos',
 	'Tarea',
 	'NotifService',
-	function ($rootScope, $scope, $uibModalInstance, dataTarea, $timeout, TareaNota, Tarea, NotifService) {
+	function ($rootScope, $scope, $uibModalInstance, dataTarea, $timeout, TareaNota, TareaTiempos, Tarea, NotifService) {
 		App.unblockUI('#ui-view');
 		var vm   = this;
 		vm.tarea = dataTarea.data;
@@ -264,20 +313,6 @@ MetronicApp.controller('ModalTareaProcesoController', [
 				});
 			});
 		});
-		
-		vm.trabajaTarea = {
-			trabajar: function () {
-				firebase.database().ref('tarea-enproceso/' + vm.snapshot.key).update({
-					estaTrabajando: true
-				});
-			},
-			detener : function () {
-				firebase.database().ref('tarea-enproceso/' + vm.snapshot.key).update({
-					estaTrabajando: false,
-					//duracionMilis : moment().valueOf() - (moment().valueOf() - vm.snapshot.duracionMilis)
-				});
-			}
-		};
 		
 		vm.notas = {
 			formNotas    : null,
@@ -347,6 +382,56 @@ MetronicApp.controller('ModalTareaProcesoController', [
 			guarda       : function () {
 				vm.notas.loading = true;
 				var file         = vm.notas.form.file;
+				
+				console.log(vm.snapshot.key);
+				
+				if (vm.notas.form.avance == 100) {
+					App.blockUI({
+						target      : '#ui-view',
+						animate     : true,
+						overlayColor: App.getBrandColor('grey')
+					});
+					
+					// Detiene el tiempo
+					$('timer#timer' + vm.snapshot.tarea.id)[0].stop();
+					firebase.database().ref('tarea-enproceso/' + vm.snapshot.key).once('value').then(function (snapshot) {
+						$timeout(function () {
+							if (snapshot.val() != null) {
+								var tarea = snapshot.val();
+								var data  = {
+									inicio  : moment(tarea.inicio).format('YYYY-MM-DD H:mm:ss'),
+									fin     : moment().format('YYYY-MM-DD H:mm:ss'),
+									duracion: tarea.duracionMilis / 1000
+								};
+								
+								TareaTiempos.save({idtarea: vm.snapshot.tarea.id}, data).$promise.then(function (response) {
+									if (response.$resolved) {
+										firebase.database().ref('tarea-enproceso/' + vm.snapshot.key).update({estaTrabajando: false}).then(function () {
+											firebase.database().ref('tarea-enproceso/' + vm.snapshot.key).remove().then(function () {
+												$timeout(function () {
+													$rootScope.$broadcast('recarga-tareas');
+													NotifService.success("Se ha detenido la sesión de la tarea y registrado el tiempo correctamente.", 'Se añadio nuevo registro de tiempo.');
+													App.unblockUI('#ui-view');
+												});
+											}, function (error) {
+												console.log("Remove failed: " + error.message);
+												NotifService.error("Remove failed: " + error.message, 'Error al eliminar tarea en Firebase.');
+												App.unblockUI('#ui-view');
+											});
+										});
+									}
+								}, function (response) {
+									App.unblockUI('#ui-view');
+									NotifService.error('Ocurrió un error en el servidor al tratar de registra la sesión de trabajo de la tarea.', response.statusText + ' (' + response.status + ').');
+								});
+							}
+						});
+					}, function (error) {
+						console.log(error);
+						App.unblockUI('#ui-view');
+						NotifService.error('Ocurrió un error al recuperar dato de Firebase, ponte contacto con departamento de desarrollo.', 'Error Firebase.');
+					});
+				}
 				
 				if (file != null) {
 					var storageRef = firebase.storage().ref('notas/' + vm.tarea.id);
@@ -436,6 +521,37 @@ MetronicApp.controller('ModalTareaProcesoController', [
 						App.unblockUI('#ui-view');
 					});
 				}
+				
+				$uibModalInstance.dismiss('cancel');
+			}
+		};
+		
+		vm.avisos = {
+			tienFechaCierre: function () {
+				return vm.tarea.fecha_tentativa_cierre != null;
+			},
+			terminoCaso    : function () {
+				return vm.caso.fecha_tentativa_precierre <= moment().unix();
+			},
+			defineFecha    : function () {
+				return vm.tarea.fecha_inicio == null || vm.tarea.fecha_tentativa_cierre == null || vm.tarea.duracion_minutos == 0;
+			},
+			atrasoCaso     : function () {
+				return vm.caso.fecha_tentativa_precierre < moment().unix() && vm.tarea.estatus.id == 3;
+			},
+			atrasoTarea    : function () {
+				return vm.tarea.fecha_tentativa_cierre < moment().unix() && vm.avisos.tienFechaCierre();
+			},
+			excesoTiempo   : function () {
+				return vm.tarea.duracion_real_segundos > vm.tarea.duracion_tentativa_segundos;
+			},
+			ultimaTarea    : function () {
+				angular.forEach(vm.caso.tareas, function (tarea, index) {
+					if (tarea.avance != 100 && tarea.id != vm.tarea.id) {
+						return false;
+					}
+				});
+				return vm.avisos.tienFechaCierre();
 			}
 		};
 		
@@ -453,7 +569,7 @@ MetronicApp.controller('ModalTareaProcesoController', [
 			
 			Tarea.get({idtarea: vm.tarea.id}).$promise.then(function (response) {
 				if (response.$resolved) {
-					vm.tarea = response.data;
+					vm.tarea                        = response.data;
 					vm.notas.form.avance            = vm.tarea.avance;
 					vm.notas.sliderOptions.minLimit = vm.tarea.avance;
 					

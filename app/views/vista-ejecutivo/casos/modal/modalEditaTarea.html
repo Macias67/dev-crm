@@ -4,7 +4,7 @@
 			<i class = "fa fa-tasks"></i> Tarea: {{modalEditaTareas.tarea.titulo}}
 		</h4>
 	</div>
-	<div class = "modal-body">
+	<div class = "modal-body" id = "modalEditaTarea">
 		<div class = "col-md-6 form">
 			<form role = "form">
 				<div class = "form-body">
@@ -30,7 +30,7 @@
 						<label>Fecha y hora de inicio: </label>
 						<div class = "input-group input-group-sm">
 							<input type = "text" class = "form-control"
-							       datetime-picker = "dd/MM/yyyy h:mm a"
+							       datetime-picker = "dd/MM/yyyy H:mm"
 							       ng-model = "modalEditaTareas.formTarea.fechainicio"
 							       is-open = "modalEditaTareas.fechas.fechainicio.open"
 							       datepicker-options = "modalEditaTareas.fechas.fechainicio.options"
@@ -61,7 +61,7 @@
 						<label>Fecha y hora tentativa de cierre: </label>
 						<div class = "input-group input-group-sm">
 							<input type = "text" class = "form-control"
-							       datetime-picker = "dd/MM/yyyy h:mm a"
+							       datetime-picker = "dd/MM/yyyy H:mm"
 							       ng-model = "modalEditaTareas.formTarea.fechatentativacierre"
 							       enable-time = "true"
 							       is-open = "modalEditaTareas.fechas.fechacierre.open"
@@ -76,11 +76,11 @@
 							</span>
 						</div>
 					</div>
-					<div class = "form-group" ng-show="modalEditaTareas.deshabilitaMotivo">
+					<div class = "form-group">
 						<rzslider rz-slider-model = "modalEditaTareas.formTarea.avance"
 						          rz-slider-options = "modalEditaTareas.slider.sliderOptions"></rzslider>
 					</div>
-					<div class = "form-group" ng-show="modalEditaTareas.deshabilitaMotivo">
+					<div class = "form-group">
 						<label class = "bold">Estatus de la tarea</label>
 						<select
 							class = "form-control input-lg"
@@ -89,27 +89,9 @@
 							</select>
 					</div>
 					<div class = "form-group">
-						<label class = "bold">Reasginar tarea</label>
-						<div class = "form-group">
-							<select
-								class = "form-control input-lg"
-								ng-options = "ejecutivo.id as ejecutivo.nombre +' '+ejecutivo.apellido + ' | '+ ejecutivo.departamento.area for ejecutivo in modalEditaTareas.ejecutivos"
-								ng-model = "modalEditaTareas.formTarea.ejecutivo">
-							</select>
-						</div>
-					</div>
-					<div class = "form-group" ng-hide="modalEditaTareas.deshabilitaMotivo">
-						<label>Motivo de la reasignación</label>
-						<textarea class = "form-control"
-						          rows = "3"
-						          ng-model = "modalEditaTareas.formTarea.motivo"
-						          ng-disabled="modalEditaTareas.deshabilitaMotivo"
-						          ng-required="!modalEditaTareas.deshabilitaMotivo">
-						</textarea>
-					</div>
-					<div class = "form-group">
-						<button type = "submit" class = "btn blue">Submit</button>
-						<button type = "button" class = "btn default">Cancel</button>
+						<button class = "btn btn-lg green" ng-click = "modalEditaTareas.guardar()">
+							<i class = "fa fa-refresh"></i> Editar
+						</button>
 					</div>
 				</div>
 			</form>

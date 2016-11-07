@@ -29,10 +29,12 @@ angular.module('MetronicApp')
 		'$firebaseObject',
 		'TareaTiempos',
 		'$ngBootbox',
-		function ($rootScope, $scope, dataTarea, $uibModal, authUser, $state, Caso, Tarea, NotifService, $filter, TareaNota, NotaFB, $timeout, TareaAgenda, EjecutivoAgenda, $q, $firebaseArray, $firebaseObject, TareaTiempos, $ngBootbox) {
+		'ngAudio',
+		function ($rootScope, $scope, dataTarea, $uibModal, authUser, $state, Caso, Tarea, NotifService, $filter, TareaNota, NotaFB, $timeout, TareaAgenda, EjecutivoAgenda, $q, $firebaseArray, $firebaseObject, TareaTiempos, $ngBootbox, ngAudio) {
 			var vm = this;
 			
-			vm.tarea = dataTarea.data;
+			vm.tarea           = dataTarea.data;
+			vm.iniciaAnimacion = false;
 			
 			vm.fechas = {
 				formFechatarea: null,
@@ -94,7 +96,7 @@ angular.module('MetronicApp')
 					var data = {
 						fechainicio              : moment(vm.fechas.fechatarea.fechainicio).format("YYYY-MM-DD HH:mm:ss"),
 						duraciontentativasegundos: vm.fechas.fechatarea.duracionsegundos,
-						fechatentativacierre     : moment(vm.fechas.fechatarea.fechacierre).format("YYYY-MM-DD HH:mm:ss"),
+						fechatentativacierre     : moment(vm.fechas.fechatarea.fechacierre).format("YYYY-MM-DD HH:mm:ss")
 					};
 					
 					App.blockUI({
@@ -314,6 +316,10 @@ angular.module('MetronicApp')
 				guarda       : function () {
 					vm.notas.loading = true;
 					var file         = vm.notas.form.file;
+					
+					if (vm.notas.form.avance == 100) {
+						vm.trabajaTarea.detener();
+					}
 					
 					if (file != null) {
 						var storageRef = firebase.storage().ref('notas/' + vm.tarea.id);
@@ -565,7 +571,7 @@ angular.module('MetronicApp')
 						});
 				}
 			};
-						
+			
 			vm.trabajaTarea = {
 				tarea   : null,
 				trabajar: function () {
@@ -574,9 +580,9 @@ angular.module('MetronicApp')
 						var objeto            = $firebaseArray(ref);
 						vm.trabajaTarea.tarea = {
 							idTarea       : vm.tarea.id,
+							idCaso        : vm.caso.id,
 							idEjecutivo   : vm.tarea.ejecutivo.id,
-							titulo        : vm.tarea.titulo,
-							descripcion   : vm.tarea.descripcion,
+							tarea         : vm.tarea,
 							inicio        : moment().valueOf(),
 							duracionMilis : 0,
 							estaTrabajando: true
@@ -604,6 +610,8 @@ angular.module('MetronicApp')
 						overlayColor: App.getBrandColor('grey')
 					});
 					
+					$('timer#timer' + vm.tarea.id)[0].stop();
+					
 					firebase.database().ref('tarea-enproceso/' + vm.trabajaTarea.tarea.idFirebase).once('value').then(function (snapshot) {
 						$timeout(function () {
 							if (snapshot.val() != null) {
@@ -617,17 +625,18 @@ angular.module('MetronicApp')
 								TareaTiempos.save({idtarea: vm.tarea.id}, data).$promise.then(function (response) {
 									if (response.$resolved) {
 										vm.tarea = response.data;
-										firebase.database().ref('tarea-enproceso/' + vm.trabajaTarea.tarea.idFirebase).update({estaTrabajando: false});
-										firebase.database().ref('tarea-enproceso/' + vm.trabajaTarea.tarea.idFirebase).remove().then(function () {
-											$timeout(function () {
-												vm.trabajaTarea.tarea = null;
-												$rootScope.$broadcast('recarga-tareas');
+										firebase.database().ref('tarea-enproceso/' + vm.trabajaTarea.tarea.idFirebase).update({estaTrabajando: false}).then(function () {
+											firebase.database().ref('tarea-enproceso/' + vm.trabajaTarea.tarea.idFirebase).remove().then(function () {
+												$timeout(function () {
+													vm.trabajaTarea.tarea = null;
+													$rootScope.$broadcast('recarga-tareas');
+													App.unblockUI('#registro-tiempos');
+												});
+											}, function (error) {
+												console.log("Remove failed: " + error.message);
 												App.unblockUI('#registro-tiempos');
+												NotifService.error("Remove failed: " + error.message, 'Error al eliminar tarea en Firebase.');
 											});
-										}, function (error) {
-											console.log("Remove failed: " + error.message);
-											App.unblockUI('#registro-tiempos');
-											NotifService.error("Remove failed: " + error.message, 'Error al eliminar tarea en Firebase.');
 										});
 									}
 								}, function (response) {
@@ -643,6 +652,140 @@ angular.module('MetronicApp')
 					});
 				}
 			};
+			
+			vm.cambiaEstatus = {
+				estatus     : [],
+				estatusNuevo: vm.tarea.estatus.id,
+				actuliza    : function () {
+					var msj  = '';
+					var tipo = null;
+					if (vm.cambiaEstatus.estatusNuevo == 4) {
+						msj  = '<b class="font-red-thunderbird">IMPORTANTE: </b> Si cambias el estatus de la tarea a <b>cerrado</b> ya no podrás ' +
+							'registrar tiempos ni añadir notas a la tarea y se marcará el avance al 100%. Si estás de acuerdo confirma escribiendo tu contraseña y presiona OK.';
+						tipo = $ngBootbox.prompt(msj);
+					}
+					else if (vm.cambiaEstatus.estatusNuevo == 5) {
+						msj  = '<b class="font-red-thunderbird">IMPORTANTE: </b> Si cambias el estatus de la tarea a <b>suspendido</b> el caso no podrá ' +
+							'cambiar a precierre, hasta que todas las actividades estén cerradas. Para confirmar el cambio escribe tu contraseña y presiona OK.';
+						tipo = $ngBootbox.prompt(msj);
+					}
+					else {
+						msj  = 'La tarea cambiará a <b class="font-green-jungle">Proceso</b>. Escribe tu contraseña para confirmar y presiona OK.';
+						tipo = $ngBootbox.prompt(msj);
+					}
+					
+					tipo.then(function (result) {
+						App.scrollTop();
+						App.blockUI({
+							target      : '#ui-view',
+							message     : '<b>Cambiando estatus</b>',
+							boxed       : true,
+							overlayColor: App.getBrandColor('grey'),
+							zIndex      : 99999
+						});
+						
+						var data = {
+							estatus : vm.cambiaEstatus.estatusNuevo,
+							password: result
+						};
+						Tarea.cambiaEstatus({idtarea: vm.tarea.id}, data).$promise.then(function (response) {
+							vm.tarea = response.data;
+							App.unblockUI('#ui-view');
+							NotifService.success('Se ha cambiado el estatus de la tarea correctamente.', 'Cambio de estatus correcto.');
+						}, function (response) {
+							App.unblockUI('#ui-view');
+							NotifService.error('La contraseña es incorrecta o no estás permitido hacer este cambio.', response.statusText + ' (' + response.status + ').');
+						});
+					}, function () {
+						vm.cambiaEstatus.estatusNuevo = vm.tarea.estatus.id;
+					});
+				}
+			};
+			
+			var cont           = $('#chats');
+			var form           = $('.chat-form', cont);
+			var input          = $('input', form);
+			vm.usuarioActual   = authUser.getSessionData();
+			var getLastPostPos = function () {
+				var height = 0;
+				cont.find("li.out, li.in").each(function () {
+					height = height + $(this).outerHeight();
+				});
+				return height;
+			};
+			
+			input.keypress(function (e) {
+				if (e.which == 13) {
+					vm.chat.enviar();
+					return false; //<---- Add this line
+				}
+			});
+			
+			vm.chat = {
+				enviar: function () {
+					var inputText = angular.element('#mensaje');
+					var mensaje   = inputText.val();
+					if (mensaje.length == 0) {
+						return;
+					}
+					firebase.database().ref('caso/' + vm.tarea.caso.id + '/chat').push({
+						ejecutivo: {
+							id    : vm.usuarioActual.id,
+							nombre: vm.usuarioActual.nombre + ' ' + vm.usuarioActual.apellido,
+							rol   : 'Tarea #' + vm.tarea.id,
+							color : vm.usuarioActual.ejecutivo.color,
+							class : vm.usuarioActual.ejecutivo.class
+						},
+						visto    : [],
+						mensaje  : mensaje,
+						timestamp: moment().unix()
+					}).then(function (response) {
+						inputText.val('');
+					}, function (response) {
+					});
+				}
+			};
+			
+			vm.mensajesChat = [];
+			firebase.database().ref('caso/' + vm.tarea.caso.id + '/chat').on('value', function (snapshot) {
+				$timeout(function () {
+					vm.mensajesChat = snapshot.val();
+				});
+				
+				setTimeout(function () {
+					ngAudio.setUnlock(false);
+					ngAudio.load('sounds/duo.mp3').play();
+					cont.find('.scroller').slimScroll({
+						scrollTo: getLastPostPos()
+					});
+				});
+			});
+			
+			setTimeout(function () {
+				cont.find('.scroller').slimScroll({
+					scrollTo: getLastPostPos()
+				});
+			}, 2000);
+			
+			var estatus = [
+				{
+					'id'     : 3,
+					'estatus': 'Proceso'
+				},
+				{
+					'id'     : 4,
+					'estatus': 'Cerrado'
+				},
+				{
+					'id'     : 5,
+					'estatus': 'Suspendido'
+				}
+			];
+			estatus.forEach(function (e, index) {
+				if (e.id != vm.tarea.estatus.id) {
+					vm.cambiaEstatus.estatus.push(e);
+				}
+			});
 			
 			firebase.database().ref('tarea-enproceso').orderByChild('idTarea').equalTo(vm.tarea.id).on('value', function (snapshot) {
 				$timeout(function () {
@@ -702,7 +845,8 @@ angular.module('MetronicApp')
 				
 				$timeout(function () {
 					$scope.$broadcast('rzSliderForceRender');
-				});
+					vm.iniciaAnimacion = true;
+				}, 2000);
 				
 				App.blockUI({
 					target      : '#ui-view',
@@ -720,32 +864,43 @@ angular.module('MetronicApp')
 					vm.recordatorios = results.ejecutivoAgenda.data;
 					
 					vm.avisos = {
-						terminoCaso : function () {
+						reasignado     : function () {
+							return vm.tarea.reasignaciones.length > 0 && vm.tarea.estatus.id == 2;
+						},
+						tienFechaCierre: function () {
+							return vm.tarea.fecha_tentativa_cierre != null;
+						},
+						terminoCaso    : function () {
 							return vm.caso.fecha_tentativa_precierre <= moment().unix();
 						},
-						defineFecha : function () {
+						defineFecha    : function () {
 							return vm.tarea.fecha_inicio == null || vm.tarea.fecha_tentativa_cierre == null || vm.tarea.duracion_minutos == 0;
 						},
-						atrasoCaso : function () {
+						atrasoCaso     : function () {
 							return vm.caso.fecha_tentativa_precierre < moment().unix() && vm.tarea.estatus.id == 3;
 						},
-						atrasoTarea: function () {
-							return vm.tarea.fecha_tentativa_cierre < moment().unix();
+						atrasoTarea    : function () {
+							return vm.tarea.fecha_tentativa_cierre < moment().unix() && vm.avisos.tienFechaCierre();
 						},
-						excesoTiempo: function () {
+						excesoTiempo   : function () {
 							return vm.tarea.duracion_real_segundos > vm.tarea.duracion_tentativa_segundos;
 						},
-						ultimaTarea : function () {
+						ultimaTarea    : function () {
+							var esUltima = true;
 							angular.forEach(vm.caso.tareas, function (tarea, index) {
-								if (tarea.avance != 100 && tarea.id != vm.tarea.id) {
-									return false;
+								if (tarea.id != vm.tarea.id) {
+									if (tarea.avance != 100) {
+										esUltima = false;
+									}
 								}
 							});
-							return true;
+							
+							return esUltima && vm.avisos.tienFechaCierre();
 						}
 					};
 					
 					App.unblockUI('#ui-view');
+					
 				}, function (results) {
 					NotifService.error('Error al cargar algunos datos, comunica esto al departamento de desarrollo.', results.statusText + '(' + results.status + ')');
 					App.unblockUI('#ui-view');

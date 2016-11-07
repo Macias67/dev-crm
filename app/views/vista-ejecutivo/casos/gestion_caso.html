@@ -48,7 +48,6 @@
 		</div>
 	</div>
 </div>
-
 <div class = "row">
 	<div class = "col-md-12">
 		<div class = "alert bg-yellow-saffron bg-font-yellow-saffron" ng-show = "gestionCasosCtrl.avisos.reasignaCaso()">
@@ -176,7 +175,10 @@
 									</div>
 									<img class = "todo-userpic pull-left" src = "../assets/pages/media/users/avatar4.jpg" width = "27px" height = "27px">
 									<div class = "todo-tasklist-item-title">{{tarea.ejecutivo.nombre}}</div>
-									<div class = "todo-tasklist-item-text"><b>{{tarea.titulo}}</b></div>
+									<div class = "todo-tasklist-item-text" ng-class = "{'font-green-jungle': gestionCasosCtrl.isWorking(tarea.id)}">
+										<i class = "fa fa-cog fa-spin" ng-show = "gestionCasosCtrl.isWorking(tarea.id)" title = "Trabajando en estos momentos..."></i>
+										<b>{{tarea.titulo}}</b>
+									</div>
 									<div class = "todo-tasklist-item-text"> {{tarea.descripcion}} </div>
 									<br>
 									<div class = "todo-tasklist-item-text">
@@ -228,6 +230,9 @@
 									<div class = "todo-tasklist-controls">
 										<button type = "button" class = "btn green btn-xs" ng-click = "gestionCasosCtrl.detalleTarea()">Ver detalles</button>
 										<button type = "button" class = "btn green btn-xs" ng-click = "gestionCasosCtrl.editaTarea(tarea.id)">Editar</button>
+										<button type = "button" class = "btn red btn-xs faa-parent animated-hover" ng-click = "gestionCasosCtrl.modalReasgina(tarea.id)">
+											<i class = "fa fa-refresh faa-spin"></i>&nbsp;Reasginar
+										</button>
 									</div>
 								</div>
 							</div>
@@ -254,16 +259,16 @@
 				
 				<hr>
 				
-				<div class = "alert alert-warning" ng-if = "!gestionCasosCtrl.caso.fecha_tentativa_precierre == null">
+				<div class = "alert alert-warning" ng-show = "gestionCasosCtrl.caso.fecha_tentativa_precierre == null">
                                        <i class = "fa fa-warning"></i>  <strong> Aún no se tiene el cálculo tentativo de precierre del caso.</strong>
 				</div>
 				
-				<div class = "alert bg-red-thunderbird bg-font-red-thunderbird animated infinite pulse" ng-show = "gestionCasosCtrl.avisos.atrasoCaso()">
+				<div class = "alert bg-red-thunderbird bg-font-red-thunderbird animated infinite pulse" ng-show = "gestionCasosCtrl.avisos.atrasoCaso() && gestionCasosCtrl.avisos.tienFechaPrecierre()">
 					<b>El caso va atrasado.</b>
 					<p>La fecha tentativa de precierre fue programada para el {{gestionCasosCtrl.caso.fecha_tentativa_precierre | amFromUnix | amDateFormat:'D [de] MMMM [a las] h:mm a'}}, <span class = "bold" am-time-ago = "gestionCasosCtrl.caso.fecha_tentativa_precierre | amFromUnix"></span>.</p>
 				</div>
 				
-				<div class = "alert bg-yellow-soft bg-font-yellow-soft" ng-show = "!gestionCasosCtrl.avisos.atrasoCaso()">
+				<div class = "alert bg-yellow-soft bg-font-yellow-soft" ng-show = "!gestionCasosCtrl.avisos.atrasoCaso() && gestionCasosCtrl.avisos.tienFechaPrecierre()">
 					<b>A tiempo para terminar a la fecha tentativa.</b>
 					<p>La fecha tentativa de precierre esta establecida para el {{gestionCasosCtrl.caso.fecha_tentativa_precierre | amFromUnix | amDateFormat:'D [de] MMMM [a las] h:mm a'}}, <span class = "bold" am-time-ago = "gestionCasosCtrl.caso.fecha_tentativa_precierre | amFromUnix"></span>.</p>
 				</div>
@@ -293,101 +298,30 @@
 				<div class = "caption">
 					<i class = "fa fa-comments font-green"></i>
 					<span class = "caption-subject font-green bold uppercase">Mensajes</span>
+					<span class = "caption-helper">Chat con el cliente y ejecutivos del caso.</span>
 				</div>
 			</div>
 			<div class = "portlet-body" id = "chats">
 				<div class = "scroller" style = "height: 300px;" data-always-visible = "1" data-rail-visible1 = "1">
-					<ul class = "chats">
-						<li class = "out">
+					<ul class = "chats" ng-repeat = "mensaje in gestionCasosCtrl.mensajesChat">
+						<li ng-class = "{'out': mensaje.ejecutivo.id != gestionCasosCtrl.usuarioActual.id, 'in': mensaje.ejecutivo.id == gestionCasosCtrl.usuarioActual.id}">
 							<img class = "avatar" alt = "" src = "../assets/layouts/layout2/img/avatar2.jpg"/>
 							<div class = "message">
 								<span class = "arrow"> </span>
-								<a href = "javascript:;" class = "name"> Lisa Wong </a>
-								<span class = "datetime"> at 20:11 </span>
-								<span class = "body"> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. </span>
-							</div>
-						</li>
-						<li class = "out">
-							<img class = "avatar" alt = "" src = "../assets/layouts/layout2/img/avatar2.jpg"/>
-							<div class = "message">
-								<span class = "arrow"> </span>
-								<a href = "javascript:;" class = "name"> Lisa Wong </a>
-								<span class = "datetime"> at 20:11 </span>
-								<span class = "body"> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. </span>
-							</div>
-						</li>
-						<li class = "in">
-							<img class = "avatar" alt = "" src = "../assets/layouts/layout2/img/avatar1.jpg"/>
-							<div class = "message">
-								<span class = "arrow"> </span>
-								<a href = "javascript:;" class = "name"> Bob Nilson </a>
-								<span class = "datetime"> at 20:30 </span>
-								<span class = "body"> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. </span>
-							</div>
-						</li>
-						<li class = "in">
-							<img class = "avatar" alt = "" src = "../assets/layouts/layout2/img/avatar1.jpg"/>
-							<div class = "message">
-								<span class = "arrow"> </span>
-								<a href = "javascript:;" class = "name"> Bob Nilson </a>
-								<span class = "datetime"> at 20:30 </span>
-								<span class = "body"> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. </span>
-							</div>
-						</li>
-						<li class = "out">
-							<img class = "avatar" alt = "" src = "../assets/layouts/layout2/img/avatar3.jpg"/>
-							<div class = "message">
-								<span class = "arrow"> </span>
-								<a href = "javascript:;" class = "name"> Richard Doe </a>
-								<span class = "datetime"> at 20:33 </span>
-								<span class = "body"> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. </span>
-							</div>
-						</li>
-						<li class = "in">
-							<img class = "avatar" alt = "" src = "../assets/layouts/layout2/img/avatar3.jpg"/>
-							<div class = "message">
-								<span class = "arrow"> </span>
-								<a href = "javascript:;" class = "name"> Richard Doe </a>
-								<span class = "datetime"> at 20:35 </span>
-								<span class = "body"> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. </span>
-							</div>
-						</li>
-						<li class = "out">
-							<img class = "avatar" alt = "" src = "../assets/layouts/layout2/img/avatar1.jpg"/>
-							<div class = "message">
-								<span class = "arrow"> </span>
-								<a href = "javascript:;" class = "name"> Bob Nilson </a>
-								<span class = "datetime"> at 20:40 </span>
-								<span class = "body"> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. </span>
-							</div>
-						</li>
-						<li class = "in">
-							<img class = "avatar" alt = "" src = "../assets/layouts/layout2/img/avatar3.jpg"/>
-							<div class = "message">
-								<span class = "arrow"> </span>
-								<a href = "javascript:;" class = "name"> Richard Doe </a>
-								<span class = "datetime"> at 20:40 </span>
-								<span class = "body"> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. </span>
-							</div>
-						</li>
-						<li class = "out">
-							<img class = "avatar" alt = "" src = "../assets/layouts/layout2/img/avatar1.jpg"/>
-							<div class = "message">
-								<span class = "arrow"> </span>
-								<a href = "javascript:;" class = "name"> Bob Nilson </a>
-								<span class = "datetime"> at 20:54 </span>
-								<span class = "body"> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. sed diam nonummy nibh euismod tincidunt ut laoreet. </span>
+								<span class = "name font-{{mensaje.ejecutivo.class}}">{{mensaje.ejecutivo.rol}} | <b>{{mensaje.ejecutivo.nombre}}</b></span>
+								<span class = "datetime font-grey-salsa" am-time-ago = "mensaje.timestamp | amFromUnix"></span>
+								<span class = "body"> {{mensaje.mensaje}} </span>
 							</div>
 						</li>
 					</ul>
 				</div>
 				<div class = "chat-form">
 					<div class = "input-cont">
-						<input class = "form-control" type = "text" placeholder = "Escribe aquí tu mensaje."/>
+						<input class = "form-control" type = "text" id = "mensaje" placeholder = "Escribe aquí tu mensaje."/>
 					</div>
 					<div class = "btn-cont">
 						<span class = "arrow"> </span>
-						<a href = "" class = "btn blue icn-only">
+						<a href = "" class = "btn blue icn-only" ng-click = "gestionCasosCtrl.chat.enviar()">
 							<i class = "fa fa-check icon-white"></i>
 						</a>
 					</div>

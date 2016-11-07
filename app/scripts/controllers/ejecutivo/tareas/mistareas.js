@@ -20,7 +20,7 @@ angular.module('MetronicApp')
 						oSettings.jqXHR = $.ajax({
 							'dataType'  : 'json',
 							'type'      : 'GET',
-							'url'       : CRM_APP.url + 'tareas?estatus=1&ejecutivo=' + authUser.getSessionData().id,
+							'url'       : CRM_APP.url + 'tareas?estatus=1&estatus=2&ejecutivo=' + authUser.getSessionData().id,
 							'data'      : aoData,
 							'success'   : fnCallback,
 							'beforeSend': function (xhr) {

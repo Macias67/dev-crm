@@ -9,8 +9,8 @@
  */
 angular.module('MetronicApp')
 	.controller('GestionCasosCtrl', [
-		'$rootScope', '$scope', 'dataCaso', '$uibModal', 'Caso',
-		function ($rootScope, $scope, dataCaso, $uibModal, Caso) {
+		'$rootScope', '$scope', 'dataCaso', '$uibModal', 'Caso', '$timeout', 'authUser', 'ngAudio',
+		function ($rootScope, $scope, dataCaso, $uibModal, Caso, $timeout, authUser, ngAudio) {
 			var vm  = this;
 			vm.caso = dataCaso.data;
 			
@@ -19,18 +19,34 @@ angular.module('MetronicApp')
 			}, 2000);
 			
 			vm.avisos = {
-				reasignaCaso: function () {
+				tienFechaPrecierre: function () {
+					return vm.caso.fecha_tentativa_precierre != null;
+				},
+				reasignaCaso      : function () {
 					return vm.caso.estatus.id == 2 || vm.caso.estatus.id == 3;
 				},
-				atrasoTarea : function (tarea) {
+				atrasoTarea       : function (tarea) {
 					if (tarea == null) {
 						return false;
 					}
-					return tarea.fecha_tentativa_cierre < moment().unix();
+					return tarea.fecha_tentativa_cierre < moment().unix() && vm.avisos.tienFechaPrecierre();
 				},
-				atrasoCaso  : function () {
+				atrasoCaso        : function () {
 					return vm.caso.fecha_tentativa_precierre <= moment().unix();
 				}
+			};
+			
+			vm.estaTrabajando = false;
+			vm.isWorking      = function (id) {
+				firebase.database().ref('tarea-enproceso').orderByChild('idTarea').equalTo(id).on('value', function (snapshot) {
+					if (snapshot.val() != null) {
+						snapshot.forEach(function (childSnapshot) {
+							vm.estaTrabajando = childSnapshot.val().estaTrabajando;
+						});
+					}
+				});
+				
+				return vm.estaTrabajando;
 			};
 			
 			vm.calculoAvanceGeneral = function () {
@@ -146,8 +162,104 @@ angular.module('MetronicApp')
 				});
 			};
 			
+			vm.modalReasgina = function (idTarea) {
+				App.blockUI({
+					target      : '#ui-view',
+					animate     : true,
+					overlayColor: App.getBrandColor('blue'),
+					zIndex      : 9999
+				});
+				$uibModal.open({
+					backdrop   : 'static',
+					templateUrl: 'views/vista-ejecutivo/casos/modal/modalReasignaTarea.html',
+					controller : 'ModalReasignaTarea as modalReasignaTarea',
+					size       : 'lg',
+					resolve    : {
+						tarea     : [
+							'Tarea', function (Tarea) {
+								return Tarea.get({idtarea: idTarea}).$promise
+							}
+						],
+						ejecutivos: [
+							'Ejecutivo', function (Ejecutivo) {
+								return Ejecutivo.get({online: true}).$promise
+							}
+						]
+					}
+				});
+			};
+			
+			var cont           = $('#chats');
+			var form           = $('.chat-form', cont);
+			var input          = $('input', form);
+			vm.usuarioActual   = authUser.getSessionData();
+			var getLastPostPos = function () {
+				var height = 0;
+				cont.find("li.out, li.in").each(function () {
+					height = height + $(this).outerHeight();
+				});
+				return height;
+			};
+			
+			input.keypress(function (e) {
+				if (e.which == 13) {
+					vm.chat.enviar();
+					return false; //<---- Add this line
+				}
+			});
+			
+			vm.chat = {
+				enviar: function () {
+					var inputText = angular.element('#mensaje');
+					var mensaje   = inputText.val();
+					if (mensaje.length == 0) {
+						return;
+					}
+					firebase.database().ref('caso/' + vm.caso.id + '/chat').push({
+						ejecutivo: {
+							id    : vm.usuarioActual.id,
+							nombre: vm.usuarioActual.nombre + ' ' + vm.usuarioActual.apellido,
+							rol   : 'Líder',
+							color : vm.usuarioActual.ejecutivo.color,
+							class : vm.usuarioActual.ejecutivo.class
+						},
+						visto    : [],
+						mensaje  : mensaje,
+						timestamp: moment().unix()
+					}).then(function (response) {
+						inputText.val('');
+					}, function (response) {
+					});
+				}
+			};
+			
+			vm.mensajesChat = [];
+			firebase.database().ref('caso/' + vm.caso.id + '/chat').on('value', function (snapshot) {
+				$timeout(function () {
+					vm.mensajesChat = snapshot.val();
+				});
+				
+				setTimeout(function () {
+					ngAudio.setUnlock(false);
+					ngAudio.load('sounds/duo.mp3').play();
+					cont.find('.scroller').slimScroll({
+						scrollTo: getLastPostPos()
+					});
+				});
+			});
+			
+			setTimeout(function () {
+				cont.find('.scroller').slimScroll({
+					scrollTo: getLastPostPos()
+				});
+			}, 2000);
+			
 			$scope.$on('creadaNuevaTarea', function (e, args) {
 				vm.caso = args;
+			});
+			
+			$scope.$on('recarga-tareas', function (e, args) {
+				vm.reloadTareas();
 			});
 			
 			$scope.$on('$viewContentLoaded', function () {
@@ -272,7 +384,9 @@ angular.module('MetronicApp')
 		'ejecutivos',
 		'$ngBootbox',
 		'$timeout',
-		function ($rootScope, $scope, $uibModalInstance, tarea, ejecutivos, $ngBootbox, $timeout) {
+		'Tarea',
+		'NotifService',
+		function ($rootScope, $scope, $uibModalInstance, tarea, ejecutivos, $ngBootbox, $timeout, Tarea, NotifService) {
 			var vm = this;
 			
 			App.unblockUI('#ui-view');
@@ -295,19 +409,18 @@ angular.module('MetronicApp')
 			];
 			
 			vm.formTarea = {
+				caso                : vm.tarea.caso.id,
 				titulo              : vm.tarea.titulo,
 				descripcion         : vm.tarea.descripcion,
-				fechainicio         : new Date(moment.utc(vm.tarea.fecha_inicio, 'X')),
-				duracion            : moment.utc(moment.duration(vm.tarea.duracion_tentativa_segundos, 's').asHours(), 'H').format('HH:mm'),
+				fechainicio         : moment.utc(vm.tarea.fecha_inicio, 'X').toDate(),
+				duracion            : moment(moment.duration(vm.tarea.duracion_tentativa_segundos, 's').asHours(), 'H').format('HH:mm'),
 				duracionsegundos    : vm.tarea.duracion_tentativa_segundos,
-				fechatentativacierre: new Date(moment.utc(vm.tarea.fecha_tentativa_cierre, 'X')),
+				fechatentativacierre: moment.utc(vm.tarea.fecha_tentativa_cierre, 'X').toDate(),
 				avance              : vm.tarea.avance,
-				estatus             : vm.tarea.estatus.id,
-				ejecutivo           : vm.tarea.ejecutivo.id,
-				motivo              : ""
+				estatus             : vm.tarea.estatus.id
 			};
 			
-			vm.deshabilitaMotivo = true;
+			console.log(moment.utc(vm.tarea.fecha_tentativa_cierre, 'X'), moment(vm.tarea.fecha_tentativa_cierre, 'X').toISOString(), moment(vm.tarea.fecha_tentativa_cierre, 'X').toISOString(), new Date(moment(vm.tarea.fecha_tentativa_cierre, 'X')));
 			
 			vm.fechas = {
 				formFechatarea: null,
@@ -332,12 +445,6 @@ angular.module('MetronicApp')
 						startingDay: 1,
 						minDate    : moment(vm.formTarea.fechainicio).add(vm.tarea.duracion_tentativa_segundos, 's')
 					}
-				},
-				fechatarea    : {
-					fechainicio     : null,
-					duracion        : null,
-					duracionsegundos: 0,
-					fechacierre     : null
 				},
 				guarda        : function () {
 					var data = {
@@ -408,11 +515,46 @@ angular.module('MetronicApp')
 				loading      : false
 			};
 			
-			App.unblockUI('#ui-view');
-			
 			$timeout(function () {
 				$scope.$broadcast('rzSliderForceRender');
 			}, 1000);
+			
+			vm.guardar = function () {
+				App.blockUI({
+					target      : '#modalEditaTarea',
+					message     : '<b> Actualizando </b>',
+					boxed       : true,
+					zIndex      : 99999,
+					overlayColor: App.getBrandColor('grey')
+				});
+				
+				vm.formTarea.fechainicio = moment(vm.formTarea.fechainicio).format('YYYY-MM-DD HH:mm:ss');
+				vm.formTarea.fechatentativacierre = moment(vm.formTarea.fechatentativacierre).format('YYYY-MM-DD HH:mm:ss');
+				
+				Tarea.update({idtarea: vm.tarea.id}, vm.formTarea).$promise.then(function (response) {
+					if (response.$resolved) {
+						vm.tarea = response.data;
+						App.unblockUI('#modalEditaTarea');
+						$uibModalInstance.dismiss('cancel');
+						$rootScope.$broadcast('recarga-tareas');
+						NotifService.success('Se ha editado correctamente la tarea.', 'Tarea editada.');
+					}
+				}, function (response) {
+					if (response.status == 422) {
+						if (response.data.hasOwnProperty('errors')) {
+							for (var key in response.data.errors) {
+								if (response.data.errors.hasOwnProperty(key)) {
+									NotifService.error(response.data.errors[key][0], 'Error con los datos.');
+								}
+							}
+							App.unblockUI('#modalEditaTarea');
+							return;
+						}
+					}
+					App.unblockUI('#modalEditaTarea');
+					NotifService.error('Error al actualizar los datos de la tarea.', response.statusText + ' (' + response.status + ')');
+				});
+			};
 			
 			vm.cancel = function () {
 				$uibModalInstance.dismiss('cancel');
@@ -480,18 +622,60 @@ angular.module('MetronicApp')
 				}
 			});
 			
-			$scope.$watch('modalEditaTareas.formTarea.ejecutivo', function (newValue, oldValue) {
-				if (newValue != oldValue) {
-					if (vm.formTarea.ejecutivo == vm.tarea.ejecutivo.id) {
-						vm.deshabilitaMotivo = true;
-						vm.formTarea.motivo  = "";
-					}
-					else {
-						vm.deshabilitaMotivo = false;
-						vm.formTarea.estatus = 3;
-					}
-				}
-			});
 		}
 	])
-;
+	.controller('ModalReasignaTarea', [
+		'$rootScope',
+		'$scope',
+		'$uibModalInstance',
+		'tarea',
+		'ejecutivos',
+		'$ngBootbox',
+		'$timeout',
+		'Tarea',
+		'NotifService',
+		function ($rootScope, $scope, $uibModalInstance, tarea, ejecutivos, $ngBootbox, $timeout, Tarea, NotifService) {
+			var vm = this;
+			
+			App.unblockUI('#ui-view');
+			
+			vm.tarea      = tarea.data;
+			vm.ejecutivos = [];
+			ejecutivos.data.forEach(function (ejecutivo, index) {
+				if (ejecutivo.id != vm.tarea.ejecutivo.id) {
+					vm.ejecutivos.push(ejecutivo);
+				}
+			});
+			
+			vm.form = {
+				ejecutivo: vm.tarea.ejecutivo.id,
+				motivo   : ""
+			};
+			
+			vm.guardar = function () {
+				App.blockUI({
+					target      : '#modalEditaTarea',
+					message     : '<b> Reasignando </b>',
+					boxed       : true,
+					zIndex      : 99999,
+					overlayColor: App.getBrandColor('grey')
+				});
+				
+				Tarea.reasgina({idtarea: vm.tarea.id}, vm.form).$promise.then(function (response) {
+					if (response.$resolved) {
+						$uibModalInstance.dismiss('cancel');
+						NotifService.success('Se le ha notificado a ' + response.data.actual.nombre + ' de la reasginación.', 'Reasginada la tarea.');
+						$rootScope.$broadcast('recarga-tareas');
+						App.unblockUI('#modalEditaTarea');
+					}
+				}, function (response) {
+					App.unblockUI('#modalEditaTarea');
+					NotifService.error('Error al actualizar los datos de la tarea.', response.statusText + ' (' + response.status + ')');
+				});
+			};
+			
+			vm.cancel = function () {
+				$uibModalInstance.dismiss('cancel');
+			};
+		}
+	]);

@@ -51,17 +51,21 @@
 
 <div class = "row">
 	<div class = "col-md-12">
-		<div class = "alert alert-danger" ng-show = "gestionTareaCtrl.avisos.defineFecha()">
-			<strong>¡Faltan datos por asignar!</strong>
-			Antes de continuar, debes establecer fecha de inicio de la tarea, tiempo de duración aproximada y fecha de cierre tentativo.
+		<div class = "alert bg-yellow-mint bg-font-yellow-mint" ng-show = "gestionTareaCtrl.avisos.reasignado()">
+			<strong>Tarea reasignada.</strong>
+			Esta tarea se te ha reasginado por este motivo: <i class = "bold">{{gestionTareaCtrl.tarea.reasignaciones[0].motivo}}</i> Toma en cuenta que si esta tarea ya tenia eventos  agendadas, ahora aparecerán en tu agenda. Puedes eliminar los recordatorios y establecer fechas nuevas.
 		</div>
-		<div class = "alert alert-danger" ng-show = "gestionTareaCtrl.avisos.atrasoCaso()">
+		<div class = "alert bg-red-mint bg-font-red-mint animated flash" ng-show = "gestionTareaCtrl.avisos.defineFecha()">
+			<strong>¡Faltan datos por asignar!</strong>
+			Antes de continuar, debes establecer fecha de <b>inicio de la tarea</b>, <b>tiempo de duración aproximada</b> y <b>fecha de cierre tentativo</b>.
+		</div>
+		<div class = "alert bg-red-mint bg-font-red-mint" ng-show = "gestionTareaCtrl.avisos.atrasoCaso()">
 			<strong>¡El caso va atrasado!</strong> La fecha tentativa del precierre del <b>caso</b> ya pasó, procura terminar la tarea lo más pronto posible.
 		</div>
-		<div class = "alert alert-danger" ng-show = "gestionTareaCtrl.avisos.atrasoTarea()">
+		<div class = "alert bg-red-mint bg-font-red-mint" ng-show = "gestionTareaCtrl.avisos.atrasoTarea()">
 			<strong>¡Vas atrasado!</strong> La fecha tentativa del cierre de la <b>tarea</b> ya pasó, procura terminar la tarea lo más pronto posible.
 		</div>
-		<div class = "alert alert-warning" ng-show = "gestionTareaCtrl.avisos.excesoTiempo()">
+		<div class = "alert bg-yellow-saffron bg-font-yellow-saffron" ng-show = "gestionTareaCtrl.avisos.excesoTiempo()">
 			<strong>¡Te has excedido con el tiempo estimado!</strong> Procura terminar lo antes posible para no atrasar la fecha de precierre del caso.
 		</div>
 		<div class = "alert alert-info alert-dismissable" ng-show = "gestionTareaCtrl.avisos.ultimaTarea()">
@@ -164,96 +168,25 @@
 					</div>
 					<div class = "portlet-body" id = "chats">
 						<div class = "scroller" style = "height: 380px;" data-always-visible = "1" data-rail-visible1 = "1">
-							<ul class = "chats">
-								<li class = "out">
+							<ul class = "chats" ng-repeat = "mensaje in gestionTareaCtrl.mensajesChat">
+								<li ng-class = "{'out': mensaje.ejecutivo.id != gestionTareaCtrl.usuarioActual.id, 'in': mensaje.ejecutivo.id == gestionTareaCtrl.usuarioActual.id}">
 									<img class = "avatar" alt = "" src = "../assets/layouts/layout2/img/avatar2.jpg"/>
 									<div class = "message">
 										<span class = "arrow"> </span>
-										<a href = "javascript:;" class = "name"> Lisa Wong </a>
-										<span class = "datetime"> at 20:11 </span>
-										<span class = "body"> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. </span>
-									</div>
-								</li>
-								<li class = "out">
-									<img class = "avatar" alt = "" src = "../assets/layouts/layout2/img/avatar2.jpg"/>
-									<div class = "message">
-										<span class = "arrow"> </span>
-										<a href = "javascript:;" class = "name"> Lisa Wong </a>
-										<span class = "datetime"> at 20:11 </span>
-										<span class = "body"> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. </span>
-									</div>
-								</li>
-								<li class = "in">
-									<img class = "avatar" alt = "" src = "../assets/layouts/layout2/img/avatar1.jpg"/>
-									<div class = "message">
-										<span class = "arrow"> </span>
-										<a href = "javascript:;" class = "name"> Bob Nilson </a>
-										<span class = "datetime"> at 20:30 </span>
-										<span class = "body"> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. </span>
-									</div>
-								</li>
-								<li class = "in">
-									<img class = "avatar" alt = "" src = "../assets/layouts/layout2/img/avatar1.jpg"/>
-									<div class = "message">
-										<span class = "arrow"> </span>
-										<a href = "javascript:;" class = "name"> Bob Nilson </a>
-										<span class = "datetime"> at 20:30 </span>
-										<span class = "body"> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. </span>
-									</div>
-								</li>
-								<li class = "out">
-									<img class = "avatar" alt = "" src = "../assets/layouts/layout2/img/avatar3.jpg"/>
-									<div class = "message">
-										<span class = "arrow"> </span>
-										<a href = "javascript:;" class = "name"> Richard Doe </a>
-										<span class = "datetime"> at 20:33 </span>
-										<span class = "body"> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. </span>
-									</div>
-								</li>
-								<li class = "in">
-									<img class = "avatar" alt = "" src = "../assets/layouts/layout2/img/avatar3.jpg"/>
-									<div class = "message">
-										<span class = "arrow"> </span>
-										<a href = "javascript:;" class = "name"> Richard Doe </a>
-										<span class = "datetime"> at 20:35 </span>
-										<span class = "body"> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. </span>
-									</div>
-								</li>
-								<li class = "out">
-									<img class = "avatar" alt = "" src = "../assets/layouts/layout2/img/avatar1.jpg"/>
-									<div class = "message">
-										<span class = "arrow"> </span>
-										<a href = "javascript:;" class = "name"> Bob Nilson </a>
-										<span class = "datetime"> at 20:40 </span>
-										<span class = "body"> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. </span>
-									</div>
-								</li>
-								<li class = "in">
-									<img class = "avatar" alt = "" src = "../assets/layouts/layout2/img/avatar3.jpg"/>
-									<div class = "message">
-										<span class = "arrow"> </span>
-										<a href = "javascript:;" class = "name"> Richard Doe </a>
-										<span class = "datetime"> at 20:40 </span>
-										<span class = "body"> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. </span>
-									</div>
-								</li>
-								<li class = "out">
-									<img class = "avatar" alt = "" src = "../assets/layouts/layout2/img/avatar1.jpg"/>
-									<div class = "message">
-										<span class = "arrow"> </span>
-										<a href = "javascript:;" class = "name"> Bob Nilson </a>
-										<span class = "datetime"> at 20:54 </span>
-										<span class = "body"> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. sed diam nonummy nibh euismod tincidunt ut laoreet. </span>
+										<span class = "name font-{{mensaje.ejecutivo.class}}">{{mensaje.ejecutivo.rol}} | <b>{{mensaje.ejecutivo.nombre}}</b></span>
+										<span class = "datetime font-grey-salsa" am-time-ago = "mensaje.timestamp | amFromUnix"></span>
+										<span class = "body"> {{mensaje.mensaje}} </span>
 									</div>
 								</li>
 							</ul>
 						</div>
 						<div class = "chat-form">
 							<div class = "input-cont">
-								<input class = "form-control" type = "text" placeholder = "Escribe tu mensaje..."/> </div>
+								<input class = "form-control" type = "text" id = "mensaje" placeholder = "Escribe tu mensaje..."/>
+							</div>
 							<div class = "btn-cont">
 								<span class = "arrow"> </span>
-								<a href = "" class = "btn blue icn-only">
+								<a href = "" class = "btn blue icn-only" ng-click = "gestionTareaCtrl.chat.enviar()">
 									<i class = "fa fa-check icon-white"></i>
 								</a>
 							</div>
@@ -468,7 +401,7 @@
 		</div>
 	</div>
 	<div class = "col-md-3">
-		<div class = "portlet light" ng-show = "gestionTareaCtrl.tarea.fecha_inicio == null || gestionTareaCtrl.tarea.fecha_tentativa_cierre == null || gestionTareaCtrl.tarea.duracion_minutos == 0">
+		<div class = "portlet light" ng-class = "{'animated tada': gestionTareaCtrl.iniciaAnimacion}" ng-show = "gestionTareaCtrl.tarea.fecha_inicio == null || gestionTareaCtrl.tarea.fecha_tentativa_cierre == null || gestionTareaCtrl.tarea.duracion_minutos == 0">
 			<div class = "portlet-title">
 				<div class = "caption">
 					<i class = "fa fa-calendar font-red-thunderbird"></i>
@@ -486,22 +419,22 @@
 								Inicio:
 								<span ng-if = "tarea.fecha_inicio == null"> <i>Sin definir por {{tarea.ejecutivo.nombre}}</i> </span>
 								<span ng-if = "tarea.fecha_inicio != null">
-									<i>{{tarea.fecha_inicio | amFromUnix | amDateFormat:'DD[/]MMMM[/]YYYY [a las] hh:mm A'}}</i>
+									<i class = "font-blue-madison">{{tarea.fecha_inicio | amFromUnix | amDateFormat:'D[/]MM[/]YY [a las] h:mm a'}}</i>
 								</span>
 							</li>
 							<li>
 								Cierre tentativo
 								<span ng-if = "tarea.fecha_tentativa_cierre == null"> <i>Sin definir por {{tarea.ejecutivo.nombre}}</i> </span>
 								<span ng-if = "tarea.fecha_tentativa_cierre != null">
-									<i>{{tarea.fecha_tentativa_cierre | amFromUnix | amDateFormat:'DD[/]MMMM[/]YYYY [a las] hh:mm A'}}</i>
+									<i class = "font-blue-madison">{{tarea.fecha_tentativa_cierre | amFromUnix | amDateFormat:'D[/]MM[/]YY [a las] h:mm a'}}</i>
 								</span>
 							</li>
 							<li>
 								Duración estimada
 								<span ng-if = "tarea.duracion_tentativa_segundos == 0"> <i>Sin definir por {{tarea.ejecutivo.nombre}}</i> </span>
 								<span ng-if = "tarea.duracion_tentativa_segundos != 0">
-									<i>
-										{{tarea.duracion_tentativa_segundos | duracion:'HH:mm':'s'}} horas
+									<i class = "font-blue-madison">
+										{{tarea.duracion_tentativa_segundos | duracion:'H:mm':'s'}} horas
 									</i>
 								</span>
 							</li>
@@ -514,7 +447,7 @@
 						<label>Fecha y hora de inicio: </label>
 						<div class = "input-group input-group-sm">
 							<input type = "text" class = "form-control"
-							       datetime-picker = "dd/MM/yyyy h:mm a"
+							       datetime-picker = "dd/MM/yyyy H:mm"
 							       ng-model = "gestionTareaCtrl.fechas.fechatarea.fechainicio"
 							       is-open = "gestionTareaCtrl.fechas.fechainicio.open"
 							       datepicker-options = "gestionTareaCtrl.fechas.fechainicio.options"
@@ -545,7 +478,7 @@
 						<label>Fecha y hora tentativa de cierre: </label>
 						<div class = "input-group input-group-sm">
 							<input type = "text" class = "form-control"
-							       datetime-picker = "dd/MM/yyyy h:mm a"
+							       datetime-picker = "dd/MM/yyyy H:mm"
 							       ng-model = "gestionTareaCtrl.fechas.fechatarea.fechacierre"
 							       enable-time = "true"
 							       is-open = "gestionTareaCtrl.fechas.fechacierre.open"
@@ -606,8 +539,8 @@
 						<dd ng-if = "gestionTareaCtrl.caso.fecha_tentativa_precierre != null">
 							<h5>
 								{{gestionTareaCtrl.caso.fecha_tentativa_precierre | amFromUnix | amDateFormat:'DD [de] MMM [del] YY [a las] h:mm a'}}
-								<small class = "font-green-jungle bold" ng-show="!gestionTareaCtrl.avisos.terminoCaso()" am-time-ago = "gestionTareaCtrl.caso.fecha_tentativa_precierre | amFromUnix"></small>
-								<small  class = "font-red-thunderbird bold" ng-show="gestionTareaCtrl.avisos.terminoCaso()"> Debió terminar <span am-time-ago = "gestionTareaCtrl.caso.fecha_tentativa_precierre | amFromUnix"></span></small>
+								<small class = "font-green-jungle bold" ng-show = "!gestionTareaCtrl.avisos.terminoCaso()" am-time-ago = "gestionTareaCtrl.caso.fecha_tentativa_precierre | amFromUnix"></small>
+								<small class = "font-red-thunderbird bold" ng-show = "gestionTareaCtrl.avisos.terminoCaso()"> Debió terminar <span am-time-ago = "gestionTareaCtrl.caso.fecha_tentativa_precierre | amFromUnix"></span></small>
 							</h5>
 						</dd>
 					</div>
@@ -710,6 +643,29 @@
 						</button>
 					</div>
 				</div>
+		<div class = "portlet light">
+			<div class = "portlet-title">
+				<div class = "caption">
+					<i class = "fa fa-refresh font-red"></i>
+					<span class = "caption-subject bold font-red uppercase"> Cambiar estatus</span>
+				</div>
+			</div>
+			<div class = "portlet-body">
+				<form name = "gestionTareaCtrl.agenda.formFechaAgenda">
+					<div class = "form-group">
+						<label class = "bold">Cambia estatus</label>
+						<div class = "form-group">
+							<select
+								class = "form-control input-lg"
+								ng-options = "estatus.id as estatus.estatus for estatus in gestionTareaCtrl.cambiaEstatus.estatus"
+								ng-change = "gestionTareaCtrl.cambiaEstatus.actuliza()"
+								ng-model = "gestionTareaCtrl.cambiaEstatus.estatusNuevo">
+							</select>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
 	</div>
 </div>
 

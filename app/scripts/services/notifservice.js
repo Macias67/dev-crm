@@ -54,6 +54,9 @@ angular.module('MetronicApp')
 									info('Token guardado correctamente.', 'Ahora pordrás recibir notificaciones.');
 								}, function (response) {
 									error('Error al guardar el token.', response.statusText + ' (' + response.status + ')');
+									setTimeout(function () {
+										location.reload();
+									}, 1000);
 								});
 							}
 						})
@@ -106,7 +109,8 @@ angular.module('MetronicApp')
 							});
 					});
 					
-				} else {
+				}
+				else {
 					console.log('aok');
 				}
 			};
