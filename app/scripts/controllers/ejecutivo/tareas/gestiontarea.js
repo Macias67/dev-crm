@@ -480,7 +480,7 @@ angular.module('MetronicApp')
 									});
 								}, function (results) {
 									NotifService.error('Error al borrar imagenes, comunica esto al departamento de desarrollo.', results.statusText + '(' + results.status + ')');
-									App.unblockUI('#ui-view');
+									App.unblockUI('#nota' + nota.id);
 								});
 							}
 							else {

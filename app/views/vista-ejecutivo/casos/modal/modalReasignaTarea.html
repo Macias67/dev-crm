@@ -4,43 +4,35 @@
 			<i class = "fa fa-tasks"></i> Tarea: {{modalReasignaTarea.tarea.titulo}}
 		</h4>
 	</div>
-	<div class = "modal-body" id = "modalEditaTarea">
-		<div class = "col-md-6 form">
-			<form role = "form">
-				<div class = "form-body">
+	<div class = "modal-body form" id = "modalEditaTarea">
+		<form role = "form" name = "modalReasignaTarea.form.formulario">
+			<div class = "form-body">
+				<div class = "form-group">
+					<label>Ejecutivo</label>
 					<div class = "form-group">
-						<label class = "bold">Reasginar tarea</label>
-						<div class = "form-group">
-							<select
-								class = "form-control input-lg"
-								ng-options = "ejecutivo.id as ejecutivo.nombre +' '+ejecutivo.apellido + ' | '+ ejecutivo.departamento.area for ejecutivo in modalReasignaTarea.ejecutivos"
-								ng-model = "modalReasignaTarea.form.ejecutivo">
-							</select>
-						</div>
-					</div>
-					<div class = "form-group">
-						<label>Motivo de la reasignación</label>
-						<textarea class = "form-control"
-						          rows = "3"
-						          ng-model = "modalReasignaTarea.form.motivo"
-						          ng-disabled = "modalReasignaTarea.deshabilitaMotivo"
-						          ng-required = "!modalReasignaTarea.deshabilitaMotivo">
-						</textarea>
-					</div>
-					<div class = "form-group">
-						<button class = "btn btn-lg green" ng-click = "modalReasignaTarea.guardar()">
-							<i class = "fa fa-refresh"></i> Editar
-						</button>
+						<select
+							class = "form-control input-lg"
+							ng-options = "ejecutivo.id as ejecutivo.nombre +' '+ejecutivo.apellido + ' | '+ ejecutivo.departamento.area for ejecutivo in modalReasignaTarea.ejecutivos"
+							ng-model = "modalReasignaTarea.form.ejecutivo"
+							required>
+						</select>
 					</div>
 				</div>
-			</form>
-		</div>
-		<div class = "col-md-6">
-			{{modalReasignaTarea.form}}
-		</div>
-		<div class = "clearfix"></div>
+				<div class = "form-group">
+					<label>Motivo de la reasignación</label>
+					<textarea class = "form-control"
+					          rows = "3"
+					          ng-model = "modalReasignaTarea.form.motivo"
+					          required>
+					</textarea>
+				</div>
+			</div>
+		</form>
 	</div>
 	<div class = "modal-footer">
+		<button class = "btn red" ng-disabled = "!modalReasignaTarea.form.formulario.$valid" ng-click = "modalReasignaTarea.guardar()">
+			<i class = "fa fa-refresh"></i> Reasignar
+		</button>
 		<button class = "btn grey-mint btn-outline"
 		        ng-click = "modalReasignaTarea.cancel()">Cancelar
 		</button>

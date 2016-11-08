@@ -996,7 +996,7 @@ MetronicApp.config([
 										'assets/apps/scripts/todo-2.min.js',
 									],
 									serie       : true
-								},
+								}
 							]);
 						}
 					],

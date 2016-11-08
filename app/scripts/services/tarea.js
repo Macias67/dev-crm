@@ -58,7 +58,7 @@ angular.module('MetronicApp')
 						headers: {
 							'Authorization': 'Bearer ' + authUser.getToken()
 						}
-					},
+					}
 				});
 		}
 	]);

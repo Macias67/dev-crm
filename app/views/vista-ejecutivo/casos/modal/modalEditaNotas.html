@@ -1,0 +1,97 @@
+<div class = "modal-header">
+	<button type = "button" class = "close" aria-hidden = "true" ng-click = "modalEditaNotas.cancel()"></button>
+	<h4 class = "modal-title font-yellow-casablanca">
+		<i class = "fa fa-tasks"></i> Tarea: {{modalEditaNotas.tarea.titulo}}
+	</h4>
+</div>
+<div class = "modal-body" id = "modalEditaNotas">
+	<div class = "btn-group">
+		<button type = "button" class = "btn btn-default blue" ng-click = "modalEditaNotas.notas.filtro('todos')">
+			<i class = "fa fa-comments-o"></i> Todos
+		</button>
+		<button type = "button" class = "btn btn-default green-jungle" ng-click = "modalEditaNotas.notas.filtro('publicos')">
+			<i class = "fa fa-comment-o"></i> Públicos
+		</button>
+		<button type = "button" class = "btn btn-default red-thunderbird" ng-click = "modalEditaNotas.notas.filtro('privados')">
+			<i class = "fa fa-comment"></i> Privados
+		</button>
+	</div>
+        <br><br>
+	<div class = "mt-element-list">
+		<div class = "mt-list-head list-default ext-1" ng-class = "{'blue' : modalEditaNotas.notas.tipo == 'todos', 'green-jungle': modalEditaNotas.notas.tipo == 'publicos', 'red-thunderbird': modalEditaNotas.notas.tipo == 'privados'}">
+			<div class = "row">
+				<div class = "col-xs-8">
+					<div class = "list-head-title-container">
+					<h3 class = "list-title uppercase sbold">{{modalEditaNotas.notas.titulo}}</h3>
+					<div class = "list-date">Un total de {{modalEditaNotas.tarea.notas.todas.length}} comentarios.</div>
+					</div>
+				</div>
+				<div class = "col-xs-4">
+					<div class = "list-head-summary-container">
+						<div class = "list-pending">
+							<div class = "list-count badge badge-default ">{{modalEditaNotas.tarea.notas.publicas.length}}</div>
+							<div class = "list-label">Públicas</div>
+						</div>
+						<div class = "list-done">
+							<div class = "list-count badge badge-default last">{{modalEditaNotas.tarea.notas.privadas.length}}</div>
+							<div class = "list-label">Privadas</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class = "mt-list-container list-default ext-1">
+			<div class = "scroller" style = "height: 380px;" data-always-visible = "1" data-rail-visible1 = "1">
+				<ul>
+					<li class = "mt-list-item" ng-repeat = "nota in modalEditaNotas.notas.lista" ng-attr-id = "{{'nota'+nota.id}}">
+						<div class = "list-icon-container">
+							<i class = "icon-check"></i>
+						</div>
+						<div class = "list-datetime">
+							<b>Avance</b><br>{{nota.avance}} %
+						</div>
+						<div class = "list-item-content">
+							<h6 class = "uppercase">
+								<span class = "label bg-green-jungle bg-font-green-jungle bold" ng-show = "nota.publico"> Pública </span>
+								<span class = "label bg-red-thunderbird bg-font-red-thunderbird bold" ng-show = "!nota.publico"> Privada </span>&nbsp;
+								{{nota.creada | amFromUnix | amDateFormat:'DD [de] MMM [a las] hh:mm a'}}
+							</h6>
+							<small>{{nota.id}}. {{nota.nota}}</small>
+							<div ng-show = "nota.archivos.length > 0">
+								<hr>
+								<h6>Archivos adjuntos:</h6>
+								<ul>
+									<li ng-repeat = "archivo in nota.archivos">
+								<a ng-href = "{{archivo.downloadUrl}}" target = "_blank" class = "btn btn-xs default">
+								<i class = "fa" ng-class = "{'fa-file-pdf-o' : archivo.contentType == 'application/pdf', 'fa-file-image-o' : archivo.contentType == 'image/jpeg'}"></i>
+								{{archivo.nombre}} | {{archivo.tamano/1000 | number:2}} KB
+								</a>
+								</li>
+								</ul>
+							</div>
+							<hr>
+							<button type = "button" class = "btn red btn-xs" ng-click = "modalEditaNotas.notas.elimina(nota)">
+								<i class = "fa fa-trash"></i>
+							</button>
+							<button type = "button" class = "btn blue btn-xs" ng-click = "modalEditaNotas.notas.edita(nota)">
+								<i class = "fa fa-edit"></i>
+							</button>
+							<button type = "button" class = "btn green-jungle btn-xs" ng-show = "!nota.publico" ng-click = "modalEditaNotas.notas.cambia(nota)">
+								<i class = "fa fa-toggle-on"></i>
+							</button>
+							<button type = "button" class = "btn red-thunderbird btn-xs" ng-show = "nota.publico" ng-click = "modalEditaNotas.notas.cambia(nota)">
+								<i class = "fa fa-toggle-off"></i>
+							</button>
+						</div>
+					</li>
+				</ul>
+				<br>
+			</div>
+		</div>
+	</div>
+</div>
+<div class = "modal-footer">
+	<button class = "btn grey-mint btn-outline"
+	        ng-click = "modalEditaNotas.cancel()">Cancelar
+	</button>
+</div>

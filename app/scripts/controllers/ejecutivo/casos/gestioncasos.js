@@ -9,10 +9,12 @@
  */
 angular.module('MetronicApp')
 	.controller('GestionCasosCtrl', [
-		'$rootScope', '$scope', 'dataCaso', '$uibModal', 'Caso', '$timeout', 'authUser', 'ngAudio',
-		function ($rootScope, $scope, dataCaso, $uibModal, Caso, $timeout, authUser, ngAudio) {
+		'$rootScope', '$scope', 'dataCaso', '$uibModal', 'Caso', '$timeout', 'authUser', 'ngAudio', 'Ejecutivo',
+		function ($rootScope, $scope, dataCaso, $uibModal, Caso, $timeout, authUser, ngAudio, Ejecutivo) {
 			var vm  = this;
 			vm.caso = dataCaso.data;
+			
+			console.log('ola');
 			
 			setTimeout(function () {
 				App.unblockUI('#ui-view');
@@ -33,6 +35,16 @@ angular.module('MetronicApp')
 				},
 				atrasoCaso        : function () {
 					return vm.caso.fecha_tentativa_precierre <= moment().unix();
+				}
+			};
+			
+			vm.reasignaCaso = {
+				formulario: null,
+				ejecutivos: vm.ejecutivos,
+				ejecutivo : null,
+				motivo    : null,
+				guarda    : function () {
+					
 				}
 			};
 			
@@ -119,7 +131,7 @@ angular.module('MetronicApp')
 				});
 			};
 			
-			vm.detalleTarea = function (idTarea) {
+			vm.editaTiempos = function (idTarea) {
 				App.blockUI({
 					target      : '#ui-view',
 					animate     : true,
@@ -129,9 +141,39 @@ angular.module('MetronicApp')
 				
 				$uibModal.open({
 					backdrop   : 'static',
-					templateUrl: 'modalDetallesTarea.html',
-					controller : 'ModalDetalleTareas as modalDetalleTareas',
-					size       : 'lg'
+					templateUrl: 'views/vista-ejecutivo/casos/modal/modalEditaTiempos.html',
+					controller : 'ModalEditaTiempos as modalEditaTiempos',
+					size       : 'lg',
+					resolve    : {
+						tarea: [
+							'Tarea', function (Tarea) {
+								return Tarea.get({idtarea: idTarea}).$promise
+							}
+						]
+					}
+				});
+			};
+			
+			vm.editaNotas = function (idTarea) {
+				App.blockUI({
+					target      : '#ui-view',
+					animate     : true,
+					overlayColor: App.getBrandColor('blue'),
+					zIndex      : 9999
+				});
+				
+				$uibModal.open({
+					backdrop   : 'static',
+					templateUrl: 'views/vista-ejecutivo/casos/modal/modalEditaNotas.html',
+					controller : 'ModalEditaNotas as modalEditaNotas',
+					size       : 'lg',
+					resolve    : {
+						tarea: [
+							'Tarea', function (Tarea) {
+								return Tarea.get({idtarea: idTarea}).$promise
+							}
+						],
+					}
 				});
 			};
 			
@@ -146,7 +188,6 @@ angular.module('MetronicApp')
 					backdrop   : 'static',
 					templateUrl: 'views/vista-ejecutivo/casos/modal/modalEditaTarea.html',
 					controller : 'ModalEditaTareas as modalEditaTareas',
-					size       : 'lg',
 					resolve    : {
 						tarea     : [
 							'Tarea', function (Tarea) {
@@ -173,7 +214,6 @@ angular.module('MetronicApp')
 					backdrop   : 'static',
 					templateUrl: 'views/vista-ejecutivo/casos/modal/modalReasignaTarea.html',
 					controller : 'ModalReasignaTarea as modalReasignaTarea',
-					size       : 'lg',
 					resolve    : {
 						tarea     : [
 							'Tarea', function (Tarea) {
@@ -263,6 +303,7 @@ angular.module('MetronicApp')
 			});
 			
 			$scope.$on('$viewContentLoaded', function () {
+				console.log('ola mundo');
 				// initialize core components
 				App.initAjax();
 				App.scrollTop();
@@ -273,6 +314,13 @@ angular.module('MetronicApp')
 					zIndex      : 99999,
 					overlayColor: App.getBrandColor('grey')
 				});
+				
+				Ejecutivo.get({online: true}).$promise.then(function (response) {
+					if (response.$resolved) {
+						vm.ejecutivos = response.data;
+					}
+				});
+				
 				
 				dataCaso.$promise.catch(function (err) {
 					console.log(err);
@@ -366,9 +414,275 @@ angular.module('MetronicApp')
 			};
 		}
 	])
-	.controller('ModalDetalleTareas', [
-		'$rootScope', '$scope', '$uibModalInstance', function ($rootScope, $scope, $uibModalInstance) {
-			var vm = this;
+	.controller('ModalEditaTiempos', [
+		'$rootScope',
+		'$scope',
+		'$uibModalInstance',
+		'tarea',
+		'$ngBootbox',
+		'TareaTiempos',
+		'Tarea',
+		'NotifService',
+		'$filter',
+		function ($rootScope, $scope, $uibModalInstance, tarea, $ngBootbox, TareaTiempos, Tarea, NotifService, $filter) {
+			var vm   = this;
+			vm.tarea = tarea.data;
+			
+			vm.edita = function (sesion) {
+				$ngBootbox.prompt('Escribe la duración en formato 00:00:00:', $filter('duracion')(sesion.duracionSegundos, 'HH:mm:ss', 's')).then(function (result) {
+					var segundos = moment.duration(result).asSeconds();
+					
+					if (segundos == 0) {
+						NotifService.error('El formato no corresponde.', 'No se actualizó el tiempo.');
+						return;
+					}
+					
+					sesion.fechaFin         = moment(sesion.fechaInicio + segundos, 'X').format('YYYY-MM-DD HH:mm:ss');
+					sesion.fechaInicio      = moment(sesion.fechaInicio, 'X').format('YYYY-MM-DD HH:mm:ss');
+					sesion.duracionSegundos = segundos;
+					
+					App.blockUI({
+						target      : '#modalEditaTiempos',
+						message     : '<b> Reasignando </b>',
+						boxed       : true,
+						zIndex      : 99999,
+						overlayColor: App.getBrandColor('grey')
+					});
+					
+					TareaTiempos.update({idtarea: vm.tarea.id, idtiempo: sesion.id}, sesion).$promise.then(function (response) {
+						if (response.$resolved) {
+							App.unblockUI('#modalEditaTiempos');
+							vm.reloadTarea();
+						}
+					}, function (response) {
+						NotifService.error('Hubo un error al actualizar el tiempo.', response.statusText + ' (' + response.status + ')');
+						App.unblockUI('#modalEditaTiempos');
+					});
+					
+				});
+			};
+			
+			vm.elimina = function (sesion) {
+				
+			};
+			
+			vm.reloadTarea = function () {
+				App.blockUI({
+					target      : '#modalEditaTiempos',
+					message     : '<b> Actualizando. </b>',
+					boxed       : true,
+					zIndex      : 99999,
+					overlayColor: App.getBrandColor('grey')
+				});
+				Tarea.get({idtarea: vm.tarea.id}).$promise.then(function (response) {
+					if (response.$resolved) {
+						vm.tarea = response.data;
+						App.unblockUI('#modalEditaTiempos');
+					}
+				}, function (response) {
+					NotifService.error('Error al actualizar notas, comunica esto al departamento de desarrollo.', response.statusText + '(' + response.status + ')');
+					App.unblockUI('#modalEditaTiempos');
+				});
+			};
+			
+			App.unblockUI('#ui-view');
+			
+			vm.cancel = function () {
+				$uibModalInstance.dismiss('cancel');
+			};
+		}
+	])
+	.controller('ModalEditaNotas', [
+		'$rootScope',
+		'$scope',
+		'$uibModalInstance',
+		'tarea',
+		'$ngBootbox',
+		'TareaNota',
+		'Tarea',
+		'NotifService',
+		function ($rootScope, $scope, $uibModalInstance, tarea, $ngBootbox, TareaNota, Tarea, NotifService) {
+			var vm   = this;
+			vm.tarea = tarea.data;
+			
+			vm.notas = {
+				loading : false,
+				progress: 0,
+				lista   : vm.tarea.notas.todas,
+				tipo    : 'todos',
+				titulo  : 'Todos',
+				filtro  : function (tipo) {
+					
+					App.blockUI({
+						target      : '#lista-comentarios',
+						animate     : true,
+						overlayColor: App.getBrandColor('grey')
+					});
+					
+					switch (tipo) {
+						case 'todos':
+							vm.notas.lista  = vm.tarea.notas.todas;
+							vm.notas.titulo = 'Todos';
+							break;
+						case 'publicos':
+							vm.notas.lista  = vm.tarea.notas.publicas;
+							vm.notas.titulo = 'Públicos';
+							break;
+						case 'privados':
+							vm.notas.lista  = vm.tarea.notas.privadas;
+							vm.notas.titulo = 'Privados';
+							break;
+					}
+					
+					vm.notas.tipo = tipo;
+					
+					App.unblockUI('#lista-comentarios');
+				},
+				elimina : function (nota) {
+					$ngBootbox.confirm('¿Seguro de eliminar esta nota?')
+						.then(function () {
+							App.blockUI({
+								target      : '#nota' + nota.id,
+								message     : '<b> Borrando. </b>',
+								boxed       : true,
+								zIndex      : 99999,
+								overlayColor: App.getBrandColor('grey')
+							});
+							
+							if (nota.archivos.length > 0) {
+								var q = [];
+								angular.forEach(nota.archivos, function (val, key) {
+									this.push(firebase.storage().ref().child(val.path).delete());
+								}, q);
+								
+								$q.all(q).then(function () {
+									TareaNota.delete({
+										idtarea: vm.tarea.id,
+										idnota : nota.id
+									}).$promise.then(function (response) {
+										if (response.$resolved) {
+											App.unblockUI('#nota' + nota.id);
+											vm.reloadTarea();
+										}
+									}, function (response) {
+										App.unblockUI('#nota' + nota.id);
+										NotifService.error('Error al eliminar nota, comunica esto al departamento de desarrollo.', response.statusText + ' (' + response.status + ')');
+									});
+								}, function (results) {
+									NotifService.error('Error al borrar imagenes, comunica esto al departamento de desarrollo.', results.statusText + '(' + results.status + ')');
+									App.unblockUI('#nota' + nota.id);
+								});
+							}
+							else {
+								TareaNota.delete({
+									idtarea: vm.tarea.id,
+									idnota : nota.id
+								}).$promise.then(function (response) {
+									if (response.$resolved) {
+										App.unblockUI('#nota' + nota.id);
+										vm.reloadTarea();
+									}
+								}, function (response) {
+									App.unblockUI('#nota' + nota.id);
+									NotifService.error('Error al eliminar nota, comunica esto al departamento de desarrollo.', response.statusText + ' (' + response.status + ')');
+								});
+							}
+						});
+				},
+				edita   : function (nota) {
+					$ngBootbox.prompt('Edita la nota', nota.nota)
+						.then(function (result) {
+							App.blockUI({
+								target      : '#nota' + nota.id,
+								message     : '<b> Actualizando. </b>',
+								boxed       : true,
+								zIndex      : 99999,
+								overlayColor: App.getBrandColor('grey')
+							});
+							
+							var data = {
+								nota   : result,
+								publico: nota.publico,
+								avance : nota.avance
+							};
+							TareaNota.update({idtarea: vm.tarea.id, idnota: nota.id}, data).$promise.then(function (response) {
+								if (response.$resolved) {
+									App.unblockUI('#nota' + nota.id);
+									vm.reloadTarea();
+								}
+							}, function (response) {
+								if (response.data.hasOwnProperty('errors') && response.status == 422) {
+									for (var key in response.data.errors) {
+										if (response.data.errors.hasOwnProperty(key)) {
+											NotifService.error(response.data.errors[key][0], 'Error con el formulario.');
+										}
+									}
+									App.unblockUI('#nota' + nota.id);
+									return;
+								}
+								NotifService.error('Error al editar comentario, comunica esto al departamento de desarrollo.', response.statusText + '(' + response.status + ')');
+								App.unblockUI('#nota' + nota.id);
+							});
+						});
+				},
+				cambia  : function (nota) {
+					$ngBootbox.confirm('¿Seguro de cambiar la privacidad de esta nota?')
+						.then(function () {
+							App.blockUI({
+								target      : '#nota' + nota.id,
+								message     : '<b> Actualizando. </b>',
+								boxed       : true,
+								zIndex      : 99999,
+								overlayColor: App.getBrandColor('grey')
+							});
+							
+							var data = {
+								nota   : nota.nota,
+								publico: !nota.publico,
+								avance : nota.avance
+							};
+							TareaNota.update({idtarea: vm.tarea.id, idnota: nota.id}, data).$promise.then(function (response) {
+								if (response.$resolved) {
+									App.unblockUI('#nota' + nota.id);
+									vm.reloadTarea();
+								}
+							}, function (response) {
+								if (response.data.hasOwnProperty('errors') && response.status == 422) {
+									for (var key in response.data.errors) {
+										if (response.data.errors.hasOwnProperty(key)) {
+											NotifService.error(response.data.errors[key][0], 'Error con el formulario.');
+										}
+									}
+									App.unblockUI('#nota' + nota.id);
+									return;
+								}
+								NotifService.error('Error al editar comentario, comunica esto al departamento de desarrollo.', response.statusText + '(' + response.status + ')');
+								App.unblockUI('#nota' + nota.id);
+							});
+						});
+				}
+			};
+			
+			vm.reloadTarea = function () {
+				App.blockUI({
+					target      : '#modalEditaNotas',
+					message     : '<b> Actualizando. </b>',
+					boxed       : true,
+					zIndex      : 99999,
+					overlayColor: App.getBrandColor('grey')
+				});
+				Tarea.get({idtarea: vm.tarea.id}).$promise.then(function (response) {
+					if (response.$resolved) {
+						vm.tarea = response.data;
+						vm.notas.filtro(vm.notas.tipo);
+						App.unblockUI('#modalEditaNotas');
+					}
+				}, function (response) {
+					NotifService.error('Error al actualizar notas, comunica esto al departamento de desarrollo.', response.statusText + '(' + response.status + ')');
+					App.unblockUI('#modalEditaNotas');
+				});
+			};
+			
 			App.unblockUI('#ui-view');
 			
 			vm.cancel = function () {
@@ -409,6 +723,7 @@ angular.module('MetronicApp')
 			];
 			
 			vm.formTarea = {
+				formulario          : null,
 				caso                : vm.tarea.caso.id,
 				titulo              : vm.tarea.titulo,
 				descripcion         : vm.tarea.descripcion,
@@ -419,8 +734,6 @@ angular.module('MetronicApp')
 				avance              : vm.tarea.avance,
 				estatus             : vm.tarea.estatus.id
 			};
-			
-			console.log(moment.utc(vm.tarea.fecha_tentativa_cierre, 'X'), moment(vm.tarea.fecha_tentativa_cierre, 'X').toISOString(), moment(vm.tarea.fecha_tentativa_cierre, 'X').toISOString(), new Date(moment(vm.tarea.fecha_tentativa_cierre, 'X')));
 			
 			vm.fechas = {
 				formFechatarea: null,
@@ -528,9 +841,9 @@ angular.module('MetronicApp')
 					overlayColor: App.getBrandColor('grey')
 				});
 				
-				vm.formTarea.fechainicio = moment(vm.formTarea.fechainicio).format('YYYY-MM-DD HH:mm:ss');
+				vm.formTarea.fechainicio          = moment(vm.formTarea.fechainicio).format('YYYY-MM-DD HH:mm:ss');
 				vm.formTarea.fechatentativacierre = moment(vm.formTarea.fechatentativacierre).format('YYYY-MM-DD HH:mm:ss');
-				
+				delete vm.formTarea.formulario;
 				Tarea.update({idtarea: vm.tarea.id}, vm.formTarea).$promise.then(function (response) {
 					if (response.$resolved) {
 						vm.tarea = response.data;
@@ -648,8 +961,9 @@ angular.module('MetronicApp')
 			});
 			
 			vm.form = {
-				ejecutivo: vm.tarea.ejecutivo.id,
-				motivo   : ""
+				ejecutivo : null,
+				motivo    : null,
+				formulario: null
 			};
 			
 			vm.guardar = function () {
@@ -661,6 +975,7 @@ angular.module('MetronicApp')
 					overlayColor: App.getBrandColor('grey')
 				});
 				
+				delete vm.form.formulario;
 				Tarea.reasgina({idtarea: vm.tarea.id}, vm.form).$promise.then(function (response) {
 					if (response.$resolved) {
 						$uibModalInstance.dismiss('cancel');

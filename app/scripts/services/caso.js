@@ -34,6 +34,12 @@ angular.module('MetronicApp')
 					headers: {
 						'Authorization': 'Bearer ' + authUser.getToken()
 					}
+				},
+				reasigna: {
+					method : 'PUT',
+					headers: {
+						'Authorization': 'Bearer ' + authUser.getToken()
+					}
 				}
 			});
 		}
