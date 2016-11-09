@@ -12,30 +12,38 @@ angular.module('MetronicApp')
 		'$resource', 'CRM_APP', 'authUser',
 		function ($resource, CRM_APP, authUser) {
 			return $resource(CRM_APP.url + 'casos/:id', {id: "@data.id"}, {
-				get   : {
+				get          : {
 					isArray: false,
 					headers: {
 						'Authorization': 'Bearer ' + authUser.getToken()
 					}
 				},
-				save  : {
+				save         : {
 					method : 'POST',
 					headers: {
 						'Authorization': 'Bearer ' + authUser.getToken()
 					}
 				},
-				query : {
+				query        : {
 					headers: {
 						'Authorization': 'Bearer ' + authUser.getToken()
 					}
 				},
-				update: {
+				update       : {
 					method : 'PUT',
 					headers: {
 						'Authorization': 'Bearer ' + authUser.getToken()
 					}
 				},
-				reasigna: {
+				reasigna     : {
+					url    : CRM_APP.url + 'casos/:id/reasigna',
+					method : 'PUT',
+					headers: {
+						'Authorization': 'Bearer ' + authUser.getToken()
+					}
+				},
+				cambiaEstatus: {
+					url    : CRM_APP.url + 'casos/:id/cambia-estatus',
 					method : 'PUT',
 					headers: {
 						'Authorization': 'Bearer ' + authUser.getToken()

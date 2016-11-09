@@ -50,7 +50,7 @@
 </div>
 <div class = "row">
 	<div class = "col-md-12">
-		<div class = "alert bg-yellow-saffron bg-font-yellow-saffron" ng-show = "gestionCasosCtrl.avisos.reasignaCaso()">
+		<div class = "alert bg-yellow-saffron bg-font-yellow-saffron" ng-show = "gestionCasosCtrl.avisos.asignaCaso()">
 			<h4 class = "alert-heading bold">Se te ha asignado este nuevo caso.</h4>
 			<p> Puedes aceptar el caso asginando tareas o reasignar el caso a otro ejecutivo. </p>
 			<br>
@@ -60,8 +60,73 @@
 			    </button>
 			</p>
 		</div>
+		<div class = "alert bg-yellow-saffron bg-font-yellow-saffron" ng-show = "gestionCasosCtrl.avisos.reasignaCaso() && gestionCasosCtrl.validacionesVista.esLider()">
+			<h4 class = "alert-heading bold">Se te ha reasignado este caso.</h4>
+			<p>El ejecutivo <b>{{gestionCasosCtrl.caso.reasginaciones[0].anterior.nombre}}</b> te ha reasginado el caso por el siguiente motivo:
+				<i class = "bold">"{{gestionCasosCtrl.caso.reasginaciones[0].motivo}}"</i>, para aceptar el cambio cambia el estatus del caso a <b>proceso</b> o haz click <a href = "javascript:;" ng-click = "gestionCasosCtrl.aceptaReasignacion()">aquí</a>.</p>
+		</div>
 	</div>
 	<div class = "col-md-3">
+		<div class = "mt-widget-1 margin-bottom-30 bg-white border-{{gestionCasosCtrl.caso.lider.class}}" ng-hide = "gestionCasosCtrl.validacionesVista.esLider()">
+			<div class = "mt-icon">
+				<a href = "#">
+					<i class = "icon-plus"></i>
+				</a>
+			</div>
+			<div class = "mt-img">
+				<img src = "../assets/pages/media/users/avatar80_6.jpg"> </div>
+			<div class = "mt-body">
+				<h3 class = "mt-username">{{gestionCasosCtrl.caso.lider.nombre}}</h3>
+				<p class = "mt-user-title">Líder del caso </p>
+				<div class = "mt-stats">
+					<div class = "btn-group btn-group btn-group-justified">
+						<a href = "javascript:;" class = "btn font-yellow">
+							<i class = "icon-bubbles"></i> 1,7k </a>
+						<a href = "javascript:;" class = "btn font-red">
+							<i class = "icon-social-twitter"></i> 2,6k </a>
+						<a href = "javascript:;" class = "btn font-green">
+							<i class = "icon-emoticon-smile"></i> 3,7k </a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class = "mt-widget-2 margin-bottom-30">
+			<div class = "mt-head" style = "background-image: url(../assets/pages/img/background/32.jpg);">
+				<div class = "mt-head-label">
+					<button type = "button" class = "btn sbold uppercase btn-outline white">
+						<i class = "fa fa-eye"></i>
+						Ver cliente
+					</button>
+				</div>
+				<div class = "mt-head-user">
+					<div class = "mt-head-user-img">
+						<img src = "../assets/pages/img/avatars/team7.jpg"> </div>
+					<div class = "mt-head-user-info">
+						<span class = "mt-user-name ng-binding">{{gestionCasosCtrl.caso.cotizacion.contacto.nombre}}</span>
+						<span class = "mt-user-time bold ng-binding">
+							 {{gestionCasosCtrl.caso.cotizacion.contacto.telefono | telefono}}
+						</span>
+						<span class = "mt-user-time bold ng-binding">
+							 {{gestionCasosCtrl.caso.cotizacion.contacto.email}}
+						</span>
+					</div>
+				</div>
+			</div>
+			<div class = "mt-body bg-white">
+				<h3 class = "mt-body-title uppercase ng-binding"> {{gestionCasosCtrl.caso.cliente.razonsocial}} </h3>
+				<span class = "mt-body-description text-justify ng-binding" style = "padding: 0 50px">
+					 {{gestionCasosCtrl.caso.cliente.email}} - {{gestionCasosCtrl.caso.cliente.telefono | telefono}}
+				</span>
+				<ul class = "mt-body-stats">
+					<li class = "font-green">
+						<i class = "icon-emoticon-smile"></i> 3,7k</li>
+					<li class = "font-yellow">
+						<i class = " icon-social-twitter"></i> 3,7k</li>
+					<li class = "font-red">
+						<i class = "  icon-bubbles"></i> 3,7k</li>
+				</ul>
+			</div>
+		</div>
 		<div class = "portlet light portlet-fit ">
 			<div class = "portlet-title">
 				<div class = "caption">
@@ -82,26 +147,6 @@
 		<div class = "portlet light portlet-fit ">
 			<div class = "portlet-title">
 				<div class = "caption">
-					<i class = " icon-layers font-green"></i>
-					<span class = "caption-subject font-green bold uppercase">Cliente</span>
-				</div>
-			</div>
-			<div class = "portlet-body">
-				<dl>
-					<dt>Cliente</dt>
-					<dd>{{gestionCasosCtrl.caso.cliente.razonsocial}}</dd>
-					<dd><i>{{gestionCasosCtrl.caso.cliente.rfc}}</i></dd>
-					<br>
-					<dt>Contacto</dt>
-					<dd>{{gestionCasosCtrl.caso.cotizacion.contacto.nombre}}</dd>
-					<dd>{{gestionCasosCtrl.caso.cotizacion.contacto.email}}</dd>
-					<dd>{{gestionCasosCtrl.caso.cotizacion.contacto.telefono | telefono}}</dd>
-				</dl>
-			</div>
-		</div>
-		<div class = "portlet light portlet-fit ">
-			<div class = "portlet-title">
-				<div class = "caption">
 					<i class = " icon-layers font-yellow-crusta"></i>
 					<span class = "caption-subject font-yellow-crusta bold uppercase">Póliza</span>
 				</div>
@@ -109,7 +154,7 @@
 			<div class = "portlet-body">
 			</div>
 		</div>
-		<div class = "portlet light portlet-fit ">
+		<div class = "portlet light portlet-fit" ng-show = "gestionCasosCtrl.validacionesVista.esLider() && gestionCasosCtrl.validacionesVista.estaProceso()">
 			<div class = "portlet-title">
 				<div class = "caption">
 					<i class = "fa fa-refresh font-red-thunderbird"></i>
@@ -120,40 +165,59 @@
 				</div>
 			</div>
 			<div class = "portlet-body portlet-collapsed">
-				<div class="col-md-12 form">
-					<form role = "form" name = "gestionCasosCtrl.reasignaCaso.formulario">
-						<div class = "form-body">
+				<form role = "form" name = "gestionCasosCtrl.reasignaCaso.formulario">
+					<div class = "form-body">
+						<div class = "form-group">
+							<label>Ejecutivo</label>
 							<div class = "form-group">
-								<label>Ejecutivo</label>
-								<div class = "form-group">
-									<select
-										class = "form-control input-lg"
-										ng-options = "ejecutivo.id as ejecutivo.nombre +' '+ejecutivo.apellido + ' | '+ ejecutivo.departamento.area for ejecutivo in gestionCasosCtrl.reasignaCaso.ejecutivos"
-										ng-model = "gestionCasosCtrl.reasignaCaso.ejecutivo"
-										required>
-									</select>
-								</div>
-							</div>
-							<div class = "form-group">
-								<label>Motivo de la reasignación</label>
-								<textarea class = "form-control"
-								          rows = "3"
-								          ng-model = "gestionCasosCtrl.reasignaCaso.motivo"
-								          required>
-								</textarea>
-							</div>
-							<div class = "form-group">
-								<button class = "btn red-thunderbird btn-block" ng-disabled = "!gestionCasosCtrl.reasignaCaso.formulario.$valid" ng-click = "gestionCasosCtrl.reasignaCaso.guarda()">
-									<i class = "fa fa-refresh"></i> Reasignar
-								</button>
+								<select
+									class = "form-control input-lg"
+									ng-options = "ejecutivo.id as ejecutivo.nombre +' '+ejecutivo.apellido + ' | '+ ejecutivo.departamento.area for ejecutivo in gestionCasosCtrl.reasignaCaso.ejecutivos"
+									ng-model = "gestionCasosCtrl.reasignaCaso.ejecutivo"
+									required>
+								</select>
 							</div>
 						</div>
-					</form>
-				</div>
-				<div class="clearfix"></div>
+						<div class = "form-group">
+							<label>Motivo de la reasignación</label>
+							<textarea class = "form-control"
+							          rows = "3"
+							          ng-model = "gestionCasosCtrl.reasignaCaso.motivo"
+							          required>
+							</textarea>
+						</div>
+						<div class = "form-group">
+							<button class = "btn red-thunderbird btn-block" ng-disabled = "!gestionCasosCtrl.reasignaCaso.formulario.$valid" ng-click = "gestionCasosCtrl.reasignaCaso.guarda()">
+								<i class = "fa fa-refresh"></i> Reasignar
+							</button>
+						</div>
+					</div>
+				</form>
+				<hr>
+				<h6>Historial de reasignaciónes</h6>
+				<p ng-show = "gestionCasosCtrl.caso.reasginaciones.length == 0">Sin registro de reasignaciones.</p>
+				<table class = "table table-hover table-light" ng-show = "gestionCasosCtrl.caso.reasginaciones.length > 0">
+					<thead>
+						<tr class = "uppercase">
+							<th> # </th>
+							<th> Anterior </th>
+							<th> Actual </th>
+							<th> Fecha </th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat = "reasignacion in gestionCasosCtrl.caso.reasginaciones">
+							<td>{{$index+1}} </td>
+							<td> {{reasignacion.anterior.nombre}} </td>
+							<td> {{reasignacion.actual.nombre}} </td>
+							<td> {{reasignacion.fecha | amFromUnix | amDateFormat:'D/M/Y H:mm a'}} </td>
+						</tr>
+					</tbody>
+				</table>
+				<div class = "clearfix"></div>
 			</div>
 		</div>
-		<div class = "portlet light portlet-fit ">
+		<div class = "portlet light portlet-fit" ng-show = "gestionCasosCtrl.validacionesVista.puedeReasignar()">
 			<div class = "portlet-title">
 				<div class = "caption">
 					<i class = "fa fa-exchange font-red-thunderbird"></i>
@@ -164,6 +228,19 @@
 				</div>
 			</div>
 			<div class = "portlet-body portlet-collapsed">
+				<form role = "form">
+					<div class = "form-group">
+						<label class = "bold">Cambia estatus</label>
+						<div class = "form-group">
+							<select
+								class = "form-control input-lg"
+								ng-options = "estatus.id as estatus.estatus for estatus in gestionCasosCtrl.cambiaEstatus.estatus"
+								ng-change = "gestionCasosCtrl.cambiaEstatus.actuliza()"
+								ng-model = "gestionCasosCtrl.cambiaEstatus.estatusNuevo">
+							</select>
+						</div>
+					</div>
+				</form>
 			</div>
 		</div>
 	</div>
@@ -177,7 +254,7 @@
 						<span class = "caption-subject font-green bold uppercase">Tareas</span>
 					</div>
 					<div class = "actions">
-						<a class = "btn btn-circle green-jungle" ng-click = "gestionCasosCtrl.nuevaTarea(gestionCasosCtrl.caso.id)">
+						<a class = "btn btn-circle green-jungle" ng-click = "gestionCasosCtrl.nuevaTarea(gestionCasosCtrl.caso.id)" ng-show = "gestionCasosCtrl.validacionesVista.esLider() || gestionCasosCtrl.validacionesVista.estaProceso()">
 							<i class = "fa fa-plus"></i> <b>Nueva tarea</b>
 						</a>
 						<a class = "btn btn-circle blue-steel" ng-click = "gestionCasosCtrl.modalDistribucionTareas()">
@@ -254,7 +331,7 @@
 										</div>
 									</div>
 									<hr>
-									<div class = "todo-tasklist-controls">
+									<div class = "todo-tasklist-controls" ng-show = "gestionCasosCtrl.validacionesVista.esLider() && gestionCasosCtrl.validacionesVista.estaProceso()">
 										<button type = "button" class = "btn red-mint btn-xs faa-parent animated-hover" ng-click = "gestionCasosCtrl.editaTiempos(tarea.id)">
 											<i class = "fa fa-clock-o faa-shake"></i>&nbsp;Tiempos
 										</button>
@@ -326,7 +403,6 @@
 				</ul>
 			</div>
 		</div>
-		<!-- BEGIN PORTLET-->
 		<div class = "portlet light portlet-fit">
 			<div class = "portlet-title">
 				<div class = "caption">
@@ -349,7 +425,7 @@
 						</li>
 					</ul>
 				</div>
-				<div class = "chat-form">
+				<div class = "chat-form" ng-show = "gestionCasosCtrl.validacionesVista.esLider()">
 					<div class = "input-cont">
 						<input class = "form-control" type = "text" id = "mensaje" placeholder = "Escribe aquí tu mensaje."/>
 					</div>
@@ -362,7 +438,6 @@
 				</div>
 			</div>
 		</div>
-		<!-- END PORTLET-->
 	</div>
 </div>
 

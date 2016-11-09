@@ -1,0 +1,301 @@
+<h3 class = "page-title"> {{vista.titulo}}
+	<small>{{vista.subtitulo}}</small>
+</h3>
+
+<div class = "page-bar">
+	<ul class = "page-breadcrumb">
+		<li>
+			<i class = "fa fa-home"></i>
+			<a href = "#/dashboard">Inicio</a>
+			<i class = "fa fa-angle-right"></i>
+		</li>
+		<li>
+			<a href = "#">Blank Page</a>
+			<i class = "fa fa-angle-right"></i>
+		</li>
+		<li>
+			<span>Page Layouts</span>
+		</li>
+	</ul>
+	<div class = "page-toolbar">
+		<div class = "btn-group pull-right">
+			<button type = "button" class = "btn btn-fit-height grey-salt dropdown-toggle" data-toggle = "dropdown" data-hover = "dropdown" data-delay = "1000" data-close-others = "true"> Actions
+				<i class = "fa fa-angle-down"></i>
+			</button>
+			<ul class = "dropdown-menu pull-right" role = "menu">
+				<li>
+					<a href = "#">
+						<i class = "icon-bell"></i>
+					</a>
+				</li>
+				<li>
+					<a href = "#">
+						<i class = "icon-shield"></i> Another action
+					</a>
+				</li>
+				<li>
+					<a href = "#">
+						<i class = "icon-user"></i> Something else here
+					</a>
+				</li>
+				<li class = "divider"> </li>
+				<li>
+					<a href = "#">
+						<i class = "icon-bag"></i> Separated link
+					</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>
+
+<div class = "row">
+	<div class = "col-md-8">
+		<div class = "row">
+			<div class = "col-lg-4 col-md-4 col-sm-4 col-xs-12">
+				<a class = "dashboard-stat green-turquoise" href = "#">
+					<div class = "visual">
+						<i class = "fa fa-dollar"></i>
+					</div>
+					<div class = "details">
+						<div class = "number">
+							<span data-counter = "counterup" data-value = "1349">$ {{gestionCotizacionCtrl.cotizacion.total | number:2}}</span>
+						</div>
+						<div class = "desc"> Total Cotización </div>
+					</div>
+				</a>
+			</div>
+			<div class = "col-lg-4 col-md-4 col-sm-4 col-xs-12">
+				<a class = "dashboard-stat {{gestionCotizacionCtrl.cotizacion.estatus.class}}" href = "#">
+					<div class = "visual">
+						<i class = "fa fa-history"></i>
+					</div>
+					<div class = "details">
+						<div class = "number">
+							<span>{{gestionCotizacionCtrl.cotizacion.estatus.estatus}}</span>
+						</div>
+						<div class = "desc"> Estatus</div>
+					</div>
+				</a>
+			</div>
+			<div class = "col-lg-4 col-md-4 col-sm-4 col-xs-12">
+				<a class = "dashboard-stat green" href = "#">
+					<div class = "visual">
+						<i class = "fa fa-history"></i>
+					</div>
+					<div class = "details">
+						<div class = "number">
+							<span>{{gestionCotizacionCtrl.cotizacion.pagos.length}}</span>
+						</div>
+						<div class = "desc"> Pagos</div>
+					</div>
+				</a>
+			</div>
+		</div>
+		<div class = "portlet light">
+                        <div class = "portlet-title">
+				<div class = "caption font-red-sunglo">
+					<i class = "icon-share font-red-sunglo"></i>
+					<span class = "caption-subject bold uppercase"> Detalles de la cotización</span>
+				</div>
+                        </div>
+                        <div class = "portlet-body">
+	                        <div class = "table-scrollable table-scrollable-borderless">
+					<table class = "table table-hover table-light">
+						<thead>
+							<tr class = "uppercase">
+								<th> # </th>
+								<th> Producto </th>
+								<th> Descripción </th>
+								<th> Cantidad </th>
+								<th> Neto </th>
+								<th> Total </th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat = "producto in gestionCotizacionCtrl.cotizacion.productos">
+								<td> {{$index + 1}} </td>
+								<td> {{producto.nombre}} </td>
+								<td> {{producto.descripcion}} </td>
+								<td>  {{producto.cantidad}} </td>
+								<td>  ${{producto.subtotal | number:2}} </td>
+								<td>
+									<span class = "label label-sm label-success bold">  ${{producto.total | number:2}} </span>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+                        </div>
+                    </div>
+		<div class = "col-md-6">
+			<div class = "portlet light">
+                        <div class = "portlet-title">
+				<div class = "caption font-red-sunglo">
+					<i class = "icon-share font-red-sunglo"></i>
+					<span class = "caption-subject bold uppercase"> Pagos por revisar</span>
+				</div>
+                        </div>
+                        <div class = "portlet-body">
+	                        <div class = "table-scrollable table-scrollable-borderless">
+					<table class = "table table-hover table-light">
+						<thead>
+							<tr class = "uppercase">
+								<th> Contacto </th>
+								<th> Cantidad </th>
+								<th> Tipo </th>
+								<th> Comentario </th>
+								<th> </th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat = "pago in gestionCotizacionCtrl.pagosPorRevisar">
+								<td> {{pago.contacto}} </td>
+								<td class = "bold">${{pago.cantidad | number:2}} </td>
+								<td>
+									<span class = "badge bg-red-mint bg-red-mint badge-roundless bold" ng-show = "pago.tipo == 'abono'">Abono </span>
+									<span class = "badge bg-green-jungle bg-font-green-jungle badge-roundless bold" ng-show = "pago.tipo == 'total'">Total</span>
+								</td>
+								<td>  {{pago.comentario}} </td>
+								<td> </td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+                        </div>
+                    </div>
+		</div>
+		<div class = "col-md-6">
+			<div class = "portlet light">
+                        <div class = "portlet-title">
+				<div class = "caption font-red-sunglo">
+					<i class = "icon-share font-red-sunglo"></i>
+					<span class = "caption-subject bold uppercase"> Pagos válidos</span>
+				</div>
+                        </div>
+                        <div class = "portlet-body">
+	                        <div class = "table-scrollable table-scrollable-borderless">
+					<table class = "table table-hover table-light">
+						<thead>
+							<tr class = "uppercase">
+								<th> Contacto </th>
+								<th> Cantidad </th>
+								<th> Tipo </th>
+								<th> Comentario </th>
+								<th> </th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat = "pago in gestionCotizacionCtrl.pagosValidos">
+								<td> {{pago.contacto}} </td>
+								<td class = "bold">${{pago.cantidad | number:2}} </td>
+								<td>
+									<span class = "badge bg-red-mint bg-red-mint badge-roundless bold" ng-show = "pago.tipo == 'abono'">Abono </span>
+									<span class = "badge bg-green-jungle bg-font-green-jungle badge-roundless bold" ng-show = "pago.tipo == 'total'">Total</span>
+								</td>
+								<td>  {{pago.comentario}} </td>
+								<td> </td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+                        </div>
+                    </div>
+		</div>
+		<div class = "col-md-12">
+			<div class = "portlet light">
+                        <div class = "portlet-title">
+				<div class = "caption font-red-sunglo">
+					<i class = "icon-share font-red-sunglo"></i>
+					<span class = "caption-subject bold uppercase"> Pagos inválidos</span>
+				</div>
+                        </div>
+                        <div class = "portlet-body">
+	                         <div class = "table-scrollable table-scrollable-borderless">
+					<table class = "table table-hover table-light">
+						<thead>
+							<tr class = "uppercase">
+								<th> Contacto </th>
+								<th> Cantidad </th>
+								<th> Tipo </th>
+								<th> Motivo </th>
+								<th> </th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat = "pago in gestionCotizacionCtrl.pagosInvalidos">
+								<td> {{pago.contacto}} </td>
+								<td class = "bold">${{pago.cantidad | number:2}} </td>
+								<td>
+									<span class = "badge bg-red-mint bg-red-mint badge-roundless bold" ng-show = "pago.tipo == 'abono'">Abono </span>
+									<span class = "badge bg-green-jungle bg-font-green-jungle badge-roundless bold" ng-show = "pago.tipo == 'total'">Total</span>
+								</td>
+								<td>  {{pago.comentario}} </td>
+								<td> </td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+                        </div>
+                    </div>
+		</div>
+	</div>
+	<div class = "col-md-4">
+		<div class = "portlet light">
+                        <div class = "portlet-title">
+				<div class = "caption font-red-sunglo">
+					<i class = "icon-share font-red-sunglo"></i>
+					<span class = "caption-subject bold uppercase"> Subida de pagos</span>
+				</div>
+                        </div>
+                        <div class = "portlet-body form">
+	                       <form name = "gestionCotizacionCtrl.subepago" id = "subeform">
+					<div class = "form-group">
+						<div class = "alert alert-danger" ng-show = "gestionCotizacionCtrl.subepago.file.$error.maxSize">
+							<strong>Error</strong> Archivo demsiado grande {{errorFile.size / 1000000|number:1}}MB: max 2M
+						</div>
+						<input type = "file" ngf-select
+						       ng-model = "gestionCotizacionCtrl.formArchivos.archivo"
+						       ngf-model-invalid = "errorFile"
+						       ngf-accept = "'application/pdf, image/*'"
+						       ngf-pattern = "'.pdf,image/*'"
+						       name = "file"
+						       ngf-max-size = "2MB"
+						       required>
+						<p class = "help-block"> Solo imagenes y archivos PDF, menores a 2MB. </p>
+					</div>
+					<div class = "form-group">
+						<label>Tipo de Pago</label>
+						<select class = "form-control input-sm" ng-model = "gestionCotizacionCtrl.formArchivos.pago" ng-change = "gestionCotizacionCtrl.total()">
+							<option value = "abono">Abono</option>
+							<option value = "total">Pago total</option>
+						</select>
+					</div>
+					<div class = "form-group" ng-show = "gestionCotizacionCtrl.formArchivos.pago == 'abono'">
+						<label>Cantidad a abonar</label>
+						<div class = "input-icon input-icon-lg">
+							<i class = "fa fa-dollar"></i>
+							<input type = "text" class = "form-control input-lg" ng-model = "gestionCotizacionCtrl.formArchivos.cantidad" mask = "9?9?9?9?9?9?.99" restrict = "reject" validate = "false">
+						</div>
+					</div>
+					<div class = "form-group">
+						<label>Comentarios</label>
+						<textarea class = "form-control" rows = "2" ng-model = "gestionCotizacionCtrl.formArchivos.comentarios"></textarea>
+					</div>
+					<div class = "progress progress-striped active" ng-show = "gestionCotizacionCtrl.formArchivos.archivo != null">
+						<div class = "progress-bar progress-bar-info" role = "progressbar" aria-valuenow = "{{gestionCotizacionCtrl.progress}}" aria-valuemin = "0" aria-valuemax = "100" ng-style = "{width: gestionCotizacionCtrl.progress+'%'}">
+							<span class = "sr-only"> {{gestionCotizacionCtrl.progress}}% Complete (success) </span>
+						</div>
+					</div>
+					<div class = "form-group">
+						<button class = "btn green-jungle btn-sm" ladda = "gestionCotizacionCtrl.uploading" data-style = "expand-right"
+						        ng-disabled = "!gestionCotizacionCtrl.subepago.$valid"
+						        ng-click = "gestionCotizacionCtrl.uploadFiles()">
+							<b><i class = "fa fa-save"></i>  Añade comprobante</b>
+						</button>
+					</div>
+				</form>
+                        </div>
+                    </div>
+	</div>
+</div>

@@ -971,7 +971,7 @@ MetronicApp.config([
 				},
 				controller : 'GestionCasosCtrl as gestionCasosCtrl',
 				resolve    : {
-					deps    : [
+					deps          : [
 						'$ocLazyLoad', function ($ocLazyLoad) {
 							return $ocLazyLoad.load([
 								{
@@ -1000,9 +1000,14 @@ MetronicApp.config([
 							]);
 						}
 					],
-					dataCaso: [
+					dataCaso      : [
 						'$stateParams', 'Caso', function ($stateParams, Caso) {
 							return Caso.get({id: $stateParams.idcaso}).$promise;
+						}
+					],
+					dataEjecutivos: [
+						'$stateParams', 'Ejecutivo', function ($stateParams, Ejecutivo) {
+							return Ejecutivo.get({online: true}).$promise;
 						}
 					]
 				}
@@ -1327,6 +1332,33 @@ MetronicApp.config([
 									'scripts/controllers/cliente/inicio/dashboard.js'
 								]
 							});
+						}
+					]
+				}
+			})
+			.state('c/cotizacion', {
+				url        : '/c/cotizacion/:id',
+				parent     : 'tmpl',
+				templateUrl: 'views/vista-cliente/cotizacion/cotizacion.html',
+				data       : {
+					pageTitle: 'Cotización'
+				},
+				controller : 'GestionCotizacionCtrl as gestionCotizacionCtrl',
+				resolve    : {
+					deps: [
+						'$ocLazyLoad', function ($ocLazyLoad) {
+							return $ocLazyLoad.load({
+								name        : 'MetronicApp',
+								insertBefore: '#ng_load_plugins_ng',
+								files       : [
+									'scripts/controllers/cliente/cotizacion/gestioncotizacion.js'
+								]
+							});
+						}
+					],
+					dataCotizacion: [
+						'$stateParams', 'Cotizacion', function ($stateParams, Cotizacion) {
+							return Cotizacion.get({id: $stateParams.id}).$promise;
 						}
 					]
 				}

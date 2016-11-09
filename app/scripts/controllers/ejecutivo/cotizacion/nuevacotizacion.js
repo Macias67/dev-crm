@@ -167,6 +167,24 @@ angular.module('MetronicApp')
 				}
 			};
 			vm.porletVencimiento = {
+				setFecha: function (tipo) {
+					var fecha = moment();
+					switch (tipo) {
+						case 1:
+							fecha = moment().add(1, 'd').toDate();
+							break;
+						case 2:
+							fecha = moment().add(7, 'd').toDate();
+							break;
+						case 3:
+							fecha = moment().add(15, 'd').toDate();
+							break;
+						case 4:
+							fecha = moment().add(1, 'M').toDate();
+							break;
+					}
+					vm.cotizacion.vencimiento = fecha;
+				},
 				popup          : {
 					opened: false
 				},
@@ -178,7 +196,7 @@ angular.module('MetronicApp')
 				dateOptions    : {
 					formatYear : 'yy',
 					maxDate    : new Date(2020, 5, 22),
-					minDate    : new Date(),
+					minDate    : moment().add(1, 'd').toDate(),
 					startingDay: 1
 				}
 			};
@@ -328,7 +346,6 @@ angular.module('MetronicApp')
 				vm.cotizacion.vencimiento = null;
 				vm.cotizacion.cxc         = false;
 				vm.cotizacion.enviar      = false;
-				
 			}
 			
 			// Watchers Productos

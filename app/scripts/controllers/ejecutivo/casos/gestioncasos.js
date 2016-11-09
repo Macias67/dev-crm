@@ -9,23 +9,58 @@
  */
 angular.module('MetronicApp')
 	.controller('GestionCasosCtrl', [
-		'$rootScope', '$scope', 'dataCaso', '$uibModal', 'Caso', '$timeout', 'authUser', 'ngAudio', 'Ejecutivo',
-		function ($rootScope, $scope, dataCaso, $uibModal, Caso, $timeout, authUser, ngAudio, Ejecutivo) {
-			var vm  = this;
-			vm.caso = dataCaso.data;
+		'$rootScope', '$scope', 'dataCaso', 'dataEjecutivos', '$uibModal', 'Caso', '$timeout', 'authUser', 'ngAudio', 'Ejecutivo', '$ngBootbox', 'NotifService',
+		function ($rootScope, $scope, dataCaso, dataEjecutivos, $uibModal, Caso, $timeout, authUser, ngAudio, Ejecutivo, $ngBootbox, NotifService) {
+			var vm = this;
 			
-			console.log('ola');
+			App.blockUI({
+				target      : '#ui-view',
+				message     : '<b> Cargando datos del caso </b>',
+				boxed       : true,
+				zIndex      : 99999,
+				overlayColor: App.getBrandColor('grey')
+			});
 			
-			setTimeout(function () {
+			if (dataCaso.$resolved && dataEjecutivos.$resolved) {
+				vm.ejecutivos = dataEjecutivos.data;
+				vm.caso       = dataCaso.data;
+				
+				vm.validacionesVista = {
+					esLider       : function () {
+						return vm.caso.lider.id == authUser.getSessionData().id;
+					},
+					estaProceso   : function () {
+						return vm.caso.estatus.id == 4;
+					},
+					estaPrecierre : function () {
+						return vm.caso.estatus.id == 5;
+					},
+					estaCerrado   : function () {
+						return vm.caso.estatus.id == 6;
+					},
+					estaSuspendido: function () {
+						return vm.caso.estatus.id == 7;
+					},
+					estaCancelado : function () {
+						return vm.caso.estatus.id == 8;
+					},
+					puedeReasignar: function () {
+						return vm.validacionesVista.esLider() && (vm.validacionesVista.estaProceso() || vm.validacionesVista.estaSuspendido() || vm.validacionesVista.estaCancelado());
+					}
+				};
+				
 				App.unblockUI('#ui-view');
-			}, 2000);
+			}
 			
 			vm.avisos = {
 				tienFechaPrecierre: function () {
 					return vm.caso.fecha_tentativa_precierre != null;
 				},
+				asignaCaso        : function () {
+					return vm.caso.estatus.id == 2;
+				},
 				reasignaCaso      : function () {
-					return vm.caso.estatus.id == 2 || vm.caso.estatus.id == 3;
+					return vm.caso.estatus.id == 3;
 				},
 				atrasoTarea       : function (tarea) {
 					if (tarea == null) {
@@ -41,11 +76,143 @@ angular.module('MetronicApp')
 			vm.reasignaCaso = {
 				formulario: null,
 				ejecutivos: vm.ejecutivos,
-				ejecutivo : null,
+				ejecutivo : vm.caso.lider.id,
 				motivo    : null,
 				guarda    : function () {
-					
+					$ngBootbox.confirm('<h4>¿Estás seguro de reasignar este caso?</h4>').then(function (result) {
+						App.scrollTop();
+						App.blockUI({
+							target      : '#ui-view',
+							message     : '<b> Reasignando caso </b>',
+							boxed       : true,
+							zIndex      : 99999,
+							overlayColor: App.getBrandColor('grey')
+						});
+						
+						var data = {
+							ejecutivo: vm.reasignaCaso.ejecutivo,
+							motivo   : vm.reasignaCaso.motivo
+						};
+						
+						Caso.reasigna({id: vm.caso.id}, data).$promise.then(function (response) {
+							if (response.$resolved) {
+								vm.reloadCaso();
+								NotifService.success('Se ha avisado al ejecutivo ' + vm.caso.lider.nombre + ' que ahora es líder de este caso', 'Se ha reasignado el caso');
+								App.unblockUI('#ui-view');
+							}
+						}, function (response) {
+							NotifService.error('Error al reasginar el caso, informa esto al departamento de desarrollo.', response.statusText + ' (' + response.status + ')');
+							App.unblockUI('#ui-view');
+						});
+					});
 				}
+			};
+			
+			vm.cambiaEstatus = {
+				estatus     : [
+					{
+						'id'     : 4,
+						'estatus': 'Proceso'
+					},
+					{
+						'id'     : 5,
+						'estatus': 'Precierre'
+					},
+					{
+						'id'     : 6,
+						'estatus': 'Cerrado'
+					},
+					{
+						'id'     : 7,
+						'estatus': 'Suspendido'
+					},
+					{
+						'id'     : 8,
+						'estatus': 'Cancelado'
+					}
+				],
+				estatusNuevo: vm.caso.estatus.id,
+				actuliza    : function () {
+					var msj = '';
+					
+					switch (vm.cambiaEstatus.estatusNuevo) {
+						case 4:
+							msj = 'La tarea cambiará a <b class="font-green-jungle">Proceso</b>. Escribe tu contraseña para confirmar y presiona OK.';
+							
+							break;
+						case 5:
+							msj = '<b class="font-red-thunderbird">IMPORTANTE: </b> Si cambias el estatus del caso a <b>precierre</b> las tareas se cerrarán al 100% sin tomar encuenta si la actividad se realizó y se enviará la encuesta de satisfacción al cliente.' +
+								' Si estás de acuerdo confirma escribiendo tu contraseña y presiona OK.';
+							
+							break;
+						case 6:
+							msj = '<b class="font-red-thunderbird">IMPORTANTE: </b> Si cambias el estatus del caso a <b>cerrado</b> las tareas se cerrarán al 100% sin tomar encuenta si la actividad se realizó y se dará como concluido el caso <b>sin enviar</b> encuesta de satisfacción al cliente.' +
+								' Si estás de acuerdo confirma escribiendo tu contraseña y presiona OK.';
+							
+							break;
+						case 7:
+							msj = '<b class="font-red-thunderbird">IMPORTANTE: </b> Si cambias el estatus del caso a <b>suspendido</b> el caso no podrá cambiar a precierre cuando todas las tareas hayan cerrado.' +
+								' Si estás de acuerdo confirma escribiendo tu contraseña y presiona OK.';
+							
+							break;
+						case 8:
+							msj = '<b class="font-red-thunderbird">IMPORTANTE: </b> Si cambias el estatus del caso a <b>cancelado</b> todas las tareas se cancelarán y no se enviará la encuesta de satisfacción al cliente.' +
+								' Si estás de acuerdo confirma escribiendo tu contraseña y presiona OK.';
+							break;
+					}
+					
+					$ngBootbox.prompt(msj).then(function (result) {
+						App.scrollTop();
+						App.blockUI({
+							target      : '#ui-view',
+							message     : '<b>Cambiando estatus</b>',
+							boxed       : true,
+							overlayColor: App.getBrandColor('grey'),
+							zIndex      : 99999
+						});
+						
+						var data = {
+							estatus : vm.cambiaEstatus.estatusNuevo,
+							password: result
+						};
+						Caso.cambiaEstatus({id: vm.caso.id}, data).$promise.then(function (response) {
+							vm.caso = response.data;
+							App.unblockUI('#ui-view');
+							NotifService.success('Se ha cambiado el estatus del caso correctamente.', 'Cambio de estatus correcto.');
+						}, function (response) {
+							App.unblockUI('#ui-view');
+							vm.cambiaEstatus.estatusNuevo = vm.caso.estatus.id;
+							NotifService.error('Error al cambiar el estatus del caso.', response.statusText + ' (' + response.status + ').');
+						});
+					}, function () {
+						vm.cambiaEstatus.estatusNuevo = vm.caso.estatus.id;
+					});
+				}
+			};
+			
+			vm.aceptaReasignacion = function () {
+				vm.cambiaEstatus.estatusNuevo = 4;
+				vm.cambiaEstatus.actuliza();
+			};
+			
+			vm.reloadCaso = function () {
+				App.blockUI({
+					target      : '#ui-view',
+					message     : '<b> Cargando datos del caso </b>',
+					boxed       : true,
+					zIndex      : 99999,
+					overlayColor: App.getBrandColor('grey')
+				});
+				
+				Caso.get({id: vm.caso.id}).$promise.then(function (response) {
+					if (response.$resolved) {
+						vm.caso = response.data;
+						App.unblockUI('#ui-view');
+					}
+				}, function (response) {
+					NotifService.error('Error al actualizar datos del caso, informa esto al departamento de desarrollo.', response.statusText + ' (' + response.status + ')');
+					App.unblockUI('#ui-view');
+				});
 			};
 			
 			vm.estaTrabajando = false;
@@ -303,25 +470,9 @@ angular.module('MetronicApp')
 			});
 			
 			$scope.$on('$viewContentLoaded', function () {
-				console.log('ola mundo');
 				// initialize core components
 				App.initAjax();
 				App.scrollTop();
-				App.blockUI({
-					target      : '#ui-view',
-					message     : '<b> Cargando datos del caso </b>',
-					boxed       : true,
-					zIndex      : 99999,
-					overlayColor: App.getBrandColor('grey')
-				});
-				
-				Ejecutivo.get({online: true}).$promise.then(function (response) {
-					if (response.$resolved) {
-						vm.ejecutivos = response.data;
-					}
-				});
-				
-				
 				dataCaso.$promise.catch(function (err) {
 					console.log(err);
 				});
