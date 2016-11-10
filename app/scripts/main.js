@@ -36,6 +36,7 @@ var MetronicApp = angular.module('MetronicApp', [
 	'angular-ladda',
 	'firebase',
 	'timer',
+        'fancyboxplus',
 	//Servicios
 	'authService'
 ]);
@@ -1336,7 +1337,7 @@ MetronicApp.config([
 					]
 				}
 			})
-			.state('c/cotizacion', {
+			.state('c-cotizacion', {
 				url        : '/c/cotizacion/:id',
 				parent     : 'tmpl',
 				templateUrl: 'views/vista-cliente/cotizacion/cotizacion.html',

@@ -63,8 +63,11 @@ angular.module('MetronicApp')
 					}),
 					DTColumnBuilder.newColumn(null).notSortable().renderWith(function (data, type, full, meta) {
 						return '<button ng-click="dashboardCtrl.tableCotizaciones.openModalInfoPago(' + data.id + ')" class="btn btn-xs yellow-casablanca" type="button">' +
-							'<i class="fa fa-search"></i>&nbsp;Revisar' +
-							'</button>';
+							'<i class="fa fa-bolt"></i>' +
+							'</button>&nbsp;' +
+							'<a ui-sref="c-cotizacion({ id:' + data.id + '})" class="btn btn-xs blue">' +
+							'<i class="fa fa-plus"></i>' +
+							'</a>&nbsp;';
 					}).withOption('sWidth', '14%')
 				],
 				reloadTable      : function () {

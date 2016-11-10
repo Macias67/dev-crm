@@ -51,3 +51,44 @@ div .todo-tasklist-item:hover {
 .dashboard-stat2 {
     padding: 15px 15px 10px;
 }
+
+/*Fancybox*/
+#fbplus-loading {
+    z-index: 10104;
+}
+
+#fbplus-overlay {
+    z-index: 10100;
+}
+
+#fbplus-wrap {
+    z-index: 10101;
+}
+
+#fbplus-content {
+    z-index: 10102;
+}
+
+#fbplus-hide-sel-frame {
+    z-index: 10101;
+}
+
+#fbplus-close {
+    z-index: 10103;
+}
+
+#fbplus-left, #fbplus-right {
+    z-index: 10102;
+}
+
+#fbplus-left-ico, #fbplus-right-ico {
+    z-index: 10102;
+}
+
+.fbplus-bg {
+    z-index: 10001;
+}
+
+#fbplus-title {
+    z-index: 10102;
+}

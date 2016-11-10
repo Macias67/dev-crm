@@ -17,17 +17,17 @@ angular.module('MetronicApp')
 		'$filter',
 		'NotifService',
 		'authUser',
-		function ($scope, $rootScope, Cotizacion, Pago, dataCotizacion, $filter, NotifService, authUser) {
+		'$timeout',
+		'ngAudio',
+		function ($scope, $rootScope, Cotizacion, Pago, dataCotizacion, $filter, NotifService, authUser, $timeout, ngAudio) {
 			var vm       = this;
 			vm.uploading = false;
 			vm.progress  = 0;
 			
-			if (dataCotizacion.$resolved) {
-				vm.cotizacion      = dataCotizacion.data;
+			vm.reloadPagos = function () {
 				vm.pagosPorRevisar = [];
 				vm.pagosValidos    = [];
 				vm.pagosInvalidos  = [];
-				
 				vm.cotizacion.pagos.forEach(function (pago, index) {
 					if (pago.revisado) {
 						if (pago.valido) {
@@ -41,6 +41,11 @@ angular.module('MetronicApp')
 						vm.pagosPorRevisar.push(pago);
 					}
 				});
+			};
+			
+			if (dataCotizacion.$resolved) {
+				vm.cotizacion = dataCotizacion.data;
+				vm.reloadPagos();
 			}
 			
 			vm.formArchivos = {
@@ -166,6 +171,7 @@ angular.module('MetronicApp')
 				Cotizacion.get({id: vm.cotizacion.id}).$promise.then(function (response) {
 					if (response.$resolved) {
 						vm.cotizacion = response.data;
+						vm.reloadPagos();
 						App.unblockUI('#ui-view');
 					}
 				}, function (response) {
@@ -174,6 +180,71 @@ angular.module('MetronicApp')
 				});
 			};
 			
+			var cont           = $('#chats');
+			var form           = $('.chat-form', cont);
+			var input          = $('input', form);
+			vm.usuarioActual   = authUser.getSessionData();
+			var getLastPostPos = function () {
+				var height = 0;
+				cont.find("li.out, li.in").each(function () {
+					height = height + $(this).outerHeight();
+				});
+				return height;
+			};
+			
+			input.keypress(function (e) {
+				if (e.which == 13) {
+					vm.chat.enviar();
+					return false; //<---- Add this line
+				}
+			});
+			
+			vm.chat = {
+				enviar: function () {
+					var inputText = angular.element('#mensaje');
+					var mensaje   = inputText.val();
+					if (mensaje.length == 0) {
+						return;
+					}
+					firebase.database().ref('cotizacion/' + vm.cotizacion.id + '/chat').push({
+						usuario  : {
+							id    : vm.usuarioActual.id,
+							nombre: vm.usuarioActual.nombre + ' ' + vm.usuarioActual.apellido,
+							color : '#5E738B',
+							class : 'blue-dark',
+							rol: vm.usuarioActual.cliente.razonsocial
+						},
+						visto    : [],
+						mensaje  : mensaje,
+						timestamp: moment().unix()
+					}).then(function (response) {
+						inputText.val('');
+					}, function (response) {
+					});
+				}
+			};
+			
+			vm.mensajesChat = [];
+			firebase.database().ref('cotizacion/' + vm.cotizacion.id + '/chat').on('value', function (snapshot) {
+				$timeout(function () {
+					vm.mensajesChat = snapshot.val();
+				});
+				
+				setTimeout(function () {
+					ngAudio.setUnlock(false);
+					ngAudio.load('sounds/duo.mp3').play();
+					cont.find('.scroller').slimScroll({
+						scrollTo: getLastPostPos()
+					});
+				});
+			});
+			
+			setTimeout(function () {
+				cont.find('.scroller').slimScroll({
+					scrollTo: getLastPostPos()
+				});
+			}, 2000);
+						
 			$scope.$on('$viewContentLoaded', function () {
 				// initialize core components
 				App.initAjax();

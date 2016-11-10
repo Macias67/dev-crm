@@ -49,18 +49,14 @@
 </div>
 
 <div class = "row">
-	<div class = "col-md-9">
+	<div class = "col-md-6">
 		<div class = "portlet light portlet-fit portlet-datatable ">
 			<div class = "portlet-title">
 				<div class = "caption">
 					<i class = " fa fa-file-pdf-o font-green"></i>
-					<span class = "caption-subject font-green sbold uppercase">Cotizaciones </span>
+					<span class = "caption-subject font-green sbold uppercase">Cotizaciones por revisar </span>
 				</div>
 				<div class = "actions">
-					<a href = "#/cliente/nuevo" class = "btn btn-xs green">
-						<i class = "fa fa-plus"></i>
-						 Nuevo cliente
-					</a>
 					<button type = "button" class = "btn btn-xs green" ng-click = "revisionPagosCtrl.reloadTable()">
 						<i class = "fa fa-refresh"></i>
 					</button>
@@ -77,219 +73,31 @@
 			</div>
 		</div>
 	</div>
-	<div class = "col-md-2"></div>
-</div>
-
-<script type = "text/ng-template" id = "modalRevision.html">
-	<div class = "modal-header">
-		<button type = "button" class = "close" aria-hidden = "true" ng-click = "modalRevisaCtrl.cancel()"></button>
-		<h4 class = "modal-title font-green-sharp"><i class = "fa file-pdf-o"></i> Cotización #{{modalRevisaCtrl.cotizacion.id}} </h4>
-	</div>
-	<div class = "modal-body">
-		<h4 class = "page-title"> {{modalRevisaCtrl.cotizacion.cliente.razonsocial}}
-			<span class = "badge bg-yellow-casablanca bg-font-yellow-casablanca badge-roundless" ng-if = "modalRevisaCtrl.cotizacion.cliente.distribuidor"><b>Distribuidor</b></span>
-		</h4>
-		
-		<div class = "row">
-			<div class = "col-lg-3 col-md-3 col-sm-6 col-xs-12">
-				<a class = "dashboard-stat red" href = "#">
-					<div class = "visual">
-						<i class = "fa fa-dollar"></i>
-					</div>
-					<div class = "details">
-						<div class = "number">
-							<span data-counter = "counterup" data-value = "1349">$ {{modalRevisaCtrl.cotizacion.total | number:2}}</span>
-						</div>
-						<div class = "desc"> Total Cotización </div>
-					</div>
-				</a>
-			</div>
-			<div class = "col-lg-3 col-md-3 col-sm-6 col-xs-12">
-				<a class = "dashboard-stat green" href = "#">
-					<div class = "visual">
-						<i class = "fa fa-history"></i>
-					</div>
-					<div class = "details">
-						<div class = "number">
-							<span data-counter = "counterup" data-value = "549">0</span>
-						</div>
-						<div class = "desc"> Pagos</div>
-					</div>
-				</a>
-			</div>
-			<div class = "col-lg-3 col-md-3 col-sm-6 col-xs-12">
-				<a class = "dashboard-stat red" href = "#">
-					<div class = "visual">
-						<i class = "fa fa-bar-chart-o"></i>
-					</div>
-					<div class = "details">
-						<div class = "number">
-							<span data-counter = "counterup" data-value = "12,5">0</span></div>
-						<div class = "desc"> CxC Pendientes </div>
-					</div>
-				</a>
-			</div>
-			<div class = "col-lg-3 col-md-3 col-sm-6 col-xs-12">
-				<a class = "dashboard-stat yellow-mint" href = "#">
-					<div class = "visual">
-						<i class = "fa fa-bar-chart-o"></i>
-					</div>
-					<div class = "details">
-						<div class = "number">
-							<span data-counter = "counterup" data-value = "12,5">10:23</span> hrs </div>
-						<div class = "desc"> Poliza </div>
-					</div>
-				</a>
-			</div>
-		</div>
-		
-		<div class = "row" ng-if = "modalRevisaCtrl.cotizacion.cxc">
-			<div class = "col-md-12">
-				<div class = "alert alert-danger">
-                                      Esta cotización es una <strong>Cuenta por Cobrar</strong>.
+	<div class = "col-md-6">
+		<div class = "portlet light portlet-fit portlet-datatable ">
+			<div class = "portlet-title">
+				<div class = "caption">
+					<i class = " fa fa-file-pdf-o font-green"></i>
+					<span class = "caption-subject font-green sbold uppercase">Cotizaciones abonadas </span>
 				</div>
-			</div>
-		</div>
-				
-		<div class = "row">
-			<div class = "col-md-5">
-				<div class = "col-md-12">
-					<h4 class = "form-section">Información de la cotización</h4>
-					<div class = "row static-info">
-						<div class = "col-md-4 name"> Ejecutivo: </div>
-						<div class = "col-md-8 value"> {{modalRevisaCtrl.cotizacion.ejecutivo.nombre}} </div>
-	                                </div>
-					<div class = "row static-info">
-						<div class = "col-md-4 name"> Fecha: </div>
-						<div class = "col-md-8 value">{{modalRevisaCtrl.cotizacion.fecha | amFromUnix | amDateFormat:'dddd, DD [de] MMMM [del] YYYY'}} </div>
-	                                </div>
-					<div class = "row static-info">
-						<div class = "col-md-4 name"> Hora: </div>
-						<div class = "col-md-8 value">{{modalRevisaCtrl.cotizacion.fecha | amFromUnix | amDateFormat:'[A las] h:mm A'}} </div>
-	                                </div>
-					<div class = "row static-info">
-						<div class = "col-md-4 name"> Vencimiento: </div>
-						<div class = "col-md-8 value" am-time-ago = "modalRevisaCtrl.cotizacion.vencimiento | amFromUnix"></div>
-	                                </div>
-					
-					<hr>
-					
-					<h4 class = "form-section"> Contacto  </h4>
-					<div class = "row static-info">
-						<div class = "col-md-4 name"> Nombre: </div>
-						<div class = "col-md-8 value">  {{modalRevisaCtrl.cotizacion.contacto.nombre}} </div>
-	                                </div>
-					<div class = "row static-info">
-						<div class = "col-md-4 name"> Teléfono: </div>
-						<div class = "col-md-8 value">  {{modalRevisaCtrl.cotizacion.contacto.telefono | telefono}} </div>
-	                                </div>
-					<div class = "row static-info">
-						<div class = "col-md-4 name"> Email: </div>
-						<div class = "col-md-8 value">  {{modalRevisaCtrl.cotizacion.contacto.email}} </div>
-	                                </div>
-					<div class = "row static-info">
-						<div class = "col-md-4 name"> Estatus: </div>
-						<div class = "col-md-8 value">
-							<span class = "badge bg-green-jungle bg-font-green-jungle badge-roundless" ng-if = "modalRevisaCtrl.cotizacion.contacto.online">
-								<b>Activo</b>
-							</span>
-							<span class = "badge bg-red-mint bg-font-red-mint badge-roundless" ng-if = "!modalRevisaCtrl.cotizacion.contacto.online">
-								<b>Inactivo</b>
-							</span>
-						</div>
-	                                </div>
-					
-					<hr>
-					
-					<h4 class = "form-section"> Oficina  </h4>
-					<div class = "row static-info">
-						<div class = "col-md-4 name"> Ciudad: </div>
-						<div class = "col-md-8 value">  {{modalRevisaCtrl.cotizacion.oficina.ciudad}} </div>
-	                                </div>
-					<div class = "row static-info">
-						<div class = "col-md-4 name"> Estado: </div>
-						<div class = "col-md-8 value">  {{modalRevisaCtrl.cotizacion.oficina.estado}} </div>
-	                                </div>
-				</div>
-			</div>
-			<div class = "col-md-7">
-				<div class = "col-md-12">
-					<button class = "btn blue btn-block btn-outline">
-						<i class = "fa fa-file-pdf-o"></i> Ver PDF
+				<div class = "actions">
+					<button type = "button" class = "btn btn-xs green" ng-click = "revisionPagosCtrl.tablePagosAbonados.reloadTable()">
+						<i class = "fa fa-refresh"></i>
 					</button>
 				</div>
-				<hr>
-				<div class = "col-md-12">
-					<h4 class = "form-section">Detalle cotización</h4>
-					<div class = "table-scrollable table-scrollable-borderless">
-						<table class = "table table-hover table-light">
-							<thead>
-								<tr>
-									<th> Código </th>
-									<th> Producto </th>
-									<th> Subtotal </th>
-									<th> I.V.A. </th>
-									<th> Total </th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr ng-repeat = "producto in modalRevisaCtrl.cotizacion.productos">
-									<td> {{producto.codigo}} </td>
-									<td> {{producto.nombre}} </td>
-									<td> $ {{producto.subtotal | number:2}} </td>
-									<td> $ {{producto.iva | number:2}} </td>
-									<td>
-										<b>$ {{producto.total | number:2}} </b>
-									</td>
-								</tr>
-							</tbody>
-							<tfoot>
-								<tr>
-									<td><b>TOTAL: </b></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td>
-										<span class = "label label-sm label-danger"> <b>$ {{modalRevisaCtrl.cotizacion.total | number:2}} </b></span>
-									</td>
-								</tr>
-							</tfoot>
-						</table>
-					</div>
-				</div>
-				<div class = "col-md-12">
-					<h4 class = "form-section">Pagos a validar</h4>
-					<div class = "portlet-body">
-						<div class = "note note-info" ng-repeat = "pago in modalRevisaCtrl.cotizacion.pagos" ng-show = "!pago.valido">
-							<h4 class = "block">Pago por ${{pago.cantidad | number:2}} | <span class="label bold" ng-class="{'label-success' : pago.tipo == 'total', 'label-danger' : pago.tipo == 'abono'}"> {{pago.tipo}} </span></h4>
-							<h6>Subido por: {{pago.contacto}}</h6>
-							<b>{{pago.fecha  | amFromUnix | amDateFormat:'dddd, DD [de] MMMM [del] YYYY [a las] h:mm A'}}</b> | <b am-time-ago = "pago.fecha  | amFromUnix"></b>
-							<p ng-if = "pago.comentario == ''"> <i>Sin comentarios</i> </p>
-							<p ng-if = "pago.comentario != ''"> {{pago.comentario}} </p>
-							<hr>
-							<p>Archivos ligados: </p>
-							<p ng-repeat = "comprobante  in pago.comprobantes">
-								<a
-									href = "{{comprobante.download_url}}"
-									target = "_blank">
-									<i class="fa" ng-class="{'fa-file-pdf-o' : comprobante.content_type == 'application/pdf', 'fa-file-image-o' : comprobante.content_type == 'image/jpeg'}"></i>
-									 {{comprobante.name}} | {{comprobante.size/1000 | number:2}} KB
-								</a>
-							</p>
-							<hr>
-							<button type = "button" class = "btn green-jungle btn-sm" ng-click = "modalRevisaCtrl.indicaPagada(pago.id, $index)"><i class = "fa fa-check"></i> Pagada</button>
-							<button type = "button" class = "btn red-thunderbird btn-sm" ng-click = "modalRevisaCtrl.indicaIrregular(pago.id)"><i class = "fa fa-ban"></i> Irregular</button>
-						</div>
-					</div>
-				</div>
+			</div>
+			<div class = "portlet-body">
+				<table id = "tablePagosAbonados"
+				       datatable = ""
+				       dt-options = "revisionPagosCtrl.tablePagosAbonados.dtOptions"
+				       dt-columns = "revisionPagosCtrl.tablePagosAbonados.dtColumns"
+				       dt-instance = "revisionPagosCtrl.tablePagosAbonados.dtInstance"
+				       class = "table table-hover table-light">
+				</table>
 			</div>
 		</div>
-		<!--{{modalRevisaCtrl.cotizacion | json}}-->
 	</div>
-	<div class = "modal-footer">
-		<button class = "btn grey-mint btn-outline" ng-click = "modalRevisaCtrl.cancel()">Cerrar</button>
-	</div>
-</script>
+</div>
 
 <script type = "text/ng-template" id = "modalConfirmaPago.html">
 	<div class = "modal-header">
