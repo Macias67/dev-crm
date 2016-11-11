@@ -8,7 +8,7 @@
  * Controller of the MetronicApp
  */
 angular.module('MetronicApp')
-	.controller('DashboardCtrl', [
+	.controller('DashboardClienteController', [
 		'$scope', '$rootScope', 'CRM_APP', 'DTOptionsBuilder', 'DTColumnBuilder', '$compile', 'authUser', '$uibModal', 'Cotizacion',
 		function ($scope, $rootScope, CRM_APP, DTOptionsBuilder, DTColumnBuilder, $compile, authUser, $uibModal, Cotizacion) {
 			var vm = this;
@@ -102,6 +102,66 @@ angular.module('MetronicApp')
 							}
 						});
 					});
+				}
+			};
+			
+			vm.tableCasosPrecierre = {
+				dtInstance: {},
+				dtOptions : DTOptionsBuilder.fromSource('http://api.crm/api/casos?estatus=5')
+					.withFnServerData(function (sSource, aoData, fnCallback, oSettings) {
+						oSettings.jqXHR = $.ajax({
+							'dataType'  : 'json',
+							'type'      : 'GET',
+							'url'       : 'http://api.crm/api/casos?estatus=5&cliente=' + authUser.getSessionData().cliente.id,
+							'data'      : aoData,
+							'success'   : fnCallback,
+							'beforeSend': function (xhr) {
+								xhr.setRequestHeader('Accept', CRM_APP.accept);
+								xhr.setRequestHeader('Authorization', 'Bearer ' + authUser.getToken());
+							}
+						});
+					})
+					.withLanguageSource('//cdn.datatables.net/plug-ins/1.10.11/i18n/Spanish.json')
+					.withDataProp('data')
+					.withOption('createdRow', function (row, data, dataIndex) {
+						// Recompiling so we can bind Angular directive to the DT
+						$compile(angular.element(row).contents())($scope);
+					})
+					.withOption('fnRowCallback', function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+					})
+					.withPaginationType('bootstrap_full_number')
+					.withBootstrap(),
+				
+				dtColumns  : [
+					DTColumnBuilder.newColumn('id').withTitle('ID').withOption('sWidth', '5%'),
+					DTColumnBuilder.newColumn('null').withTitle('Caso').renderWith(function (data, type, full) {
+						return 'Caso #' + full.id;
+					}).withOption('sWidth', '20%'),
+					DTColumnBuilder.newColumn('null').withTitle('Fecha de precierre').renderWith(function (data, type, full) {
+						return moment(full.fecha_precierre, 'X').format('D [de] MMM [a las] h:mm a');
+					}).withOption('sWidth', '30%'),
+					DTColumnBuilder.newColumn('null').withTitle('Vigencia').renderWith(function (data, type, full) {
+						return moment(full.fecha_precierre, 'X').add(15, 'd').format('D [de] MMM');
+					}).withOption('sWidth', '10%'),
+					DTColumnBuilder.newColumn(null).withTitle('Estatus').notSortable().renderWith(function (data, type, full, meta) {
+						return '<span class="label label-sm label-success bg-' + data.estatus.class + '"><b>' + data.estatus.estatus + '</b></span>';
+					}).withOption('sWidth', '10%'),
+					DTColumnBuilder.newColumn(null).notSortable().renderWith(function (data, type, full, meta) {
+						return '<a ui-sref="c-encuesta({ id: ' + data.id + ' })" class="btn btn-xs green-jungle" type="button">' +
+							'<i class="fa fa-check"></i>&nbsp;Responder' +
+							'</a>';
+					}).withOption('sWidth', '10%')
+				],
+				reloadTable: function () {
+					App.blockUI({
+						target      : '#tableCasosPrecierre',
+						animate     : true,
+						overlayColor: App.getBrandColor('grey')
+					});
+					vm.tableCasosProceso.dtInstance.reloadData();
+					setTimeout(function () {
+						App.unblockUI('#tableCasosPrecierre');
+					}, 1500);
 				}
 			};
 			

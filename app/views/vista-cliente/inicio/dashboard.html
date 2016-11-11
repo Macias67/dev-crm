@@ -106,7 +106,7 @@
 <!-- END DASHBOARD STATS 1-->
 
 <div class = "row">
-	<div class = "col-md-8">
+	<div class = "col-md-6">
 		<!-- BEGIN BORDERED TABLE PORTLET-->
 		<div class = "portlet light portlet-fit ">
 			<div class = "portlet-title">
@@ -115,21 +115,46 @@
 					<span class = "caption-subject font-red sbold uppercase">Cotizaciones pendientes</span>
 				</div>
 				<div class = "actions">
-					<button type="button" class="btn btn-xs green" ng-click="dashboardCtrl.tableCotizaciones.reloadTable()">
-						<i class="fa fa-refresh"></i>
+					<button type = "button" class = "btn btn-xs green" ng-click = "dashboardClienteController.tableCotizaciones.reloadTable()">
+						<i class = "fa fa-refresh"></i>
 					</button>
 				</div>
 			</div>
 			<div class = "portlet-body">
 				<table id = "tableCotizaciones"
 				       datatable = ""
-				       dt-options = "dashboardCtrl.tableCotizaciones.dtOptions"
-				       dt-columns = "dashboardCtrl.tableCotizaciones.dtColumns"
-				       dt-instance = "dashboardCtrl.tableCotizaciones.dtInstance"
+				       dt-options = "dashboardClienteController.tableCotizaciones.dtOptions"
+				       dt-columns = "dashboardClienteController.tableCotizaciones.dtColumns"
+				       dt-instance = "dashboardClienteController.tableCotizaciones.dtInstance"
 				       class = "table table-hover table-light">
 				</table>
 			</div>
 		</div>
 		<!-- END BORDERED TABLE PORTLET-->
+	</div>
+	<div class = "col-md-6">
+		<div class = "portlet light portlet-fit ">
+			<div class = "portlet-title">
+				<div class = "caption">
+					<i class = "icon-settings font-red"></i>
+					<span class = "caption-subject font-red sbold uppercase">Encuestas a responder</span>
+					<span class="caption-helper">Tienes hasta 15 días para responder.</span>
+				</div>
+				<div class = "actions">
+					<button type = "button" class = "btn btn-xs green" ng-click = "dashboardClienteController.tableCasosPrecierre.reloadTable()">
+						<i class = "fa fa-refresh"></i>
+					</button>
+				</div>
+			</div>
+			<div class = "portlet-body">
+				<table id = "tableCasosPrecierre"
+				       datatable = ""
+				       dt-options = "dashboardClienteController.tableCasosPrecierre.dtOptions"
+				       dt-columns = "dashboardClienteController.tableCasosPrecierre.dtColumns"
+				       dt-instance = "dashboardClienteController.tableCasosPrecierre.dtInstance"
+				       class = "table table-hover table-light">
+				</table>
+			</div>
+		</div>
 	</div>
 </div>

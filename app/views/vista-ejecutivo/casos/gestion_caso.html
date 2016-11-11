@@ -55,15 +55,15 @@
 			<p> Puedes aceptar el caso asginando tareas o reasignar el caso a otro ejecutivo. </p>
 			<br>
 			<p>
-			    <button type = "button" class = "btn red-sunglo">
+			    <button type = "button" class = "btn red-sunglo" ng-click = "gestionCasosCtrl.reasignaCaso.abreModal()">
 				    <b><i class = "fa fa-refresh"></i> Reasignar caso</b>
 			    </button>
 			</p>
 		</div>
 		<div class = "alert bg-yellow-saffron bg-font-yellow-saffron" ng-show = "gestionCasosCtrl.avisos.reasignaCaso() && gestionCasosCtrl.validacionesVista.esLider()">
 			<h4 class = "alert-heading bold">Se te ha reasignado este caso.</h4>
-			<p>El ejecutivo <b>{{gestionCasosCtrl.caso.reasginaciones[0].anterior.nombre}}</b> te ha reasginado el caso por el siguiente motivo:
-				<i class = "bold">"{{gestionCasosCtrl.caso.reasginaciones[0].motivo}}"</i>, para aceptar el cambio cambia el estatus del caso a <b>proceso</b> o haz click <a href = "javascript:;" ng-click = "gestionCasosCtrl.aceptaReasignacion()">aquí</a>.</p>
+			<p>El ejecutivo <b>{{gestionCasosCtrl.caso.reasginaciones[0].anterior.nombre}}</b> te ha reasginado el caso por el siguiente motivo: <i class="lead">"{{gestionCasosCtrl.caso.reasginaciones[0].motivo}}"</i></p><br>
+			<p>Para aceptar el caso haz click <a href = "javascript:;" ng-click = "gestionCasosCtrl.aceptaReasignacion()">aquí</a>.</p>
 		</div>
 	</div>
 	<div class = "col-md-3">
@@ -91,10 +91,10 @@
 			</div>
 		</div>
 		<div class = "mt-widget-2 margin-bottom-30">
-			<div class = "mt-head" style = "background-image: url(../assets/pages/img/background/32.jpg);">
+			<div class = "mt-head" style = "background-image: url(https://static.pexels.com/photos/33972/pexels-photo.jpg);">
 				<div class = "mt-head-label">
-					<button type = "button" class = "btn sbold uppercase btn-outline white">
-						<i class = "fa fa-eye"></i>
+					<button type = "button" class = "btn sbold uppercase btn-outline blue-ebonyclay">
+						<i class = "fa fa-user"></i>
 						Ver cliente
 					</button>
 				</div>
@@ -133,15 +133,14 @@
 					<i class = " icon-layers font-green"></i>
 					<span class = "caption-subject font-green bold uppercase">Detalles cotización</span>
 				</div>
-				<div class = "tools">
-					<a href = "javascript:;" class = "expand" data-original-title = "Abrir/Cerrar" title = "Abrir/Cerrar"></a>
-				</div>
 			</div>
-			<div class = "portlet-body portlet-collapsed">
-				<dl ng-repeat = "producto in gestionCasosCtrl.caso.cotizacion.productos">
-					<dt>{{($index+1)+'. '+producto.nombre}}</dt>
-					<dd ng-if = "producto.descripcion != ''">{{producto.descripcion}}</dd>
-				</dl>
+			<div class = "portlet-body">
+				<div class = "list-group">
+					<div class = "list-group-item" ng-repeat = "producto in gestionCasosCtrl.caso.cotizacion.productos">
+						<h4 class = "list-group-item-heading">{{($index+1)+'. '+producto.nombre}}</h4>
+						<p class = "list-group-item-text">{{producto.descripcion}}</p>
+					</div>
+				</div>
 			</div>
 		</div>
 		<div class = "portlet light portlet-fit ">
@@ -254,7 +253,7 @@
 						<span class = "caption-subject font-green bold uppercase">Tareas</span>
 					</div>
 					<div class = "actions">
-						<a class = "btn btn-circle green-jungle" ng-click = "gestionCasosCtrl.nuevaTarea(gestionCasosCtrl.caso.id)" ng-show = "gestionCasosCtrl.validacionesVista.esLider() || gestionCasosCtrl.validacionesVista.estaProceso()">
+						<a class = "btn btn-circle green-jungle" ng-click = "gestionCasosCtrl.nuevaTarea(gestionCasosCtrl.caso.id)" ng-show = "gestionCasosCtrl.validacionesVista.esLider() && gestionCasosCtrl.validacionesVista.estaProceso()">
 							<i class = "fa fa-plus"></i> <b>Nueva tarea</b>
 						</a>
 						<a class = "btn btn-circle blue-steel" ng-click = "gestionCasosCtrl.modalDistribucionTareas()">
@@ -279,8 +278,7 @@
 									</div>
 									<img class = "todo-userpic pull-left" src = "../assets/pages/media/users/avatar4.jpg" width = "27px" height = "27px">
 									<div class = "todo-tasklist-item-title">{{tarea.ejecutivo.nombre}}</div>
-									<div class = "todo-tasklist-item-text" ng-class = "{'font-green-jungle': gestionCasosCtrl.isWorking(tarea.id)}">
-										<i class = "fa fa-cog fa-spin" ng-show = "gestionCasosCtrl.isWorking(tarea.id)" title = "Trabajando en estos momentos..."></i>
+									<div class = "todo-tasklist-item-text">
 										<b>{{tarea.titulo}}</b>
 									</div>
 									<div class = "todo-tasklist-item-text"> {{tarea.descripcion}} </div>
@@ -331,7 +329,7 @@
 										</div>
 									</div>
 									<hr>
-									<div class = "todo-tasklist-controls" ng-show = "gestionCasosCtrl.validacionesVista.esLider() && gestionCasosCtrl.validacionesVista.estaProceso()">
+									<div class = "todo-tasklist-controls" ng-show = "gestionCasosCtrl.validacionesVista.esLider()">
 										<button type = "button" class = "btn red-mint btn-xs faa-parent animated-hover" ng-click = "gestionCasosCtrl.editaTiempos(tarea.id)">
 											<i class = "fa fa-clock-o faa-shake"></i>&nbsp;Tiempos
 										</button>
@@ -343,6 +341,9 @@
 										</button>
 										<button type = "button" class = "btn red btn-xs faa-parent animated-hover" ng-click = "gestionCasosCtrl.modalReasgina(tarea.id)">
 											<i class = "fa fa-refresh faa-spin"></i>&nbsp;Reasginar
+										</button>
+										<button type = "button" class = "btn green-sharp btn-xs faa-parent animated-hover" ng-click = "gestionCasosCtrl.irTarea(tarea.id)">
+											<i class = "fa fa-mail-forward faa-horizontal"></i>&nbsp;Ir a la tarea
 										</button>
 									</div>
 								</div>
@@ -366,7 +367,9 @@
 			<div class = "portlet-body">
 				
 				<h4>Estatus del caso:</h4>
-				<div class = "btn {{gestionCasosCtrl.caso.estatus.class}} btn-block" style = "cursor:default;"> <b class = "uppercase">{{gestionCasosCtrl.caso.estatus.estatus}}</b></div>
+				<div class = "alert bg-{{gestionCasosCtrl.caso.estatus.class}} bg-font-{{gestionCasosCtrl.caso.estatus.class}} text-center" style = "padding: 5px;">
+					<h2 class = "uppercase bold" style = "margin-top: 10px;">{{gestionCasosCtrl.caso.estatus.estatus}}</h2>
+				</div>
 				
 				<hr>
 				
@@ -374,14 +377,19 @@
                                        <i class = "fa fa-warning"></i>  <strong> Aún no se tiene el cálculo tentativo de precierre del caso.</strong>
 				</div>
 				
-				<div class = "alert bg-red-thunderbird bg-font-red-thunderbird animated infinite pulse" ng-show = "gestionCasosCtrl.avisos.atrasoCaso() && gestionCasosCtrl.avisos.tienFechaPrecierre()">
+				<div class = "alert bg-red-thunderbird bg-font-red-thunderbird animated infinite pulse" ng-show = "gestionCasosCtrl.avisos.atrasoCaso() && gestionCasosCtrl.avisos.tienFechaPrecierre() && gestionCasosCtrl.validacionesVista.estaProceso()">
 					<b>El caso va atrasado.</b>
 					<p>La fecha tentativa de precierre fue programada para el {{gestionCasosCtrl.caso.fecha_tentativa_precierre | amFromUnix | amDateFormat:'D [de] MMMM [a las] h:mm a'}}, <span class = "bold" am-time-ago = "gestionCasosCtrl.caso.fecha_tentativa_precierre | amFromUnix"></span>.</p>
 				</div>
 				
-				<div class = "alert bg-yellow-soft bg-font-yellow-soft" ng-show = "!gestionCasosCtrl.avisos.atrasoCaso() && gestionCasosCtrl.avisos.tienFechaPrecierre()">
+				<div class = "alert bg-yellow-soft bg-font-yellow-soft" ng-show = "!gestionCasosCtrl.avisos.atrasoCaso() && gestionCasosCtrl.avisos.tienFechaPrecierre() && gestionCasosCtrl.validacionesVista.estaProceso()">
 					<b>A tiempo para terminar a la fecha tentativa.</b>
 					<p>La fecha tentativa de precierre esta establecida para el {{gestionCasosCtrl.caso.fecha_tentativa_precierre | amFromUnix | amDateFormat:'D [de] MMMM [a las] h:mm a'}}, <span class = "bold" am-time-ago = "gestionCasosCtrl.caso.fecha_tentativa_precierre | amFromUnix"></span>.</p>
+				</div>
+				
+				<div class = "alert bg-blue-steel bg-font-blue-steel" ng-show = "gestionCasosCtrl.validacionesVista.estaPrecierre()">
+					<b>Esperando que el cliente responda la encuesta.</b>
+					<p>El caso terminó el dia {{gestionCasosCtrl.caso.fecha_precierre | amFromUnix | amDateFormat:'D [de] MMMM [a las] h:mm a'}}.</p>
 				</div>
 				
 				<h5 ng-if = "gestionCasosCtrl.caso.tareas.length == 0">Avance general: <b>No se han asignado tareas.</b></h5>
@@ -425,7 +433,7 @@
 						</li>
 					</ul>
 				</div>
-				<div class = "chat-form" ng-show = "gestionCasosCtrl.validacionesVista.esLider()">
+				<div class = "chat-form" ng-show = "gestionCasosCtrl.validacionesVista.esLider() && gestionCasosCtrl.validacionesVista.estaProceso()">
 					<div class = "input-cont">
 						<input class = "form-control" type = "text" id = "mensaje" placeholder = "Escribe aquí tu mensaje."/>
 					</div>

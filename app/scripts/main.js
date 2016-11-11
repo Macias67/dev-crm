@@ -383,9 +383,7 @@ MetronicApp.controller('ModalTareaProcesoController', [
 			guarda       : function () {
 				vm.notas.loading = true;
 				var file         = vm.notas.form.file;
-				
-				console.log(vm.snapshot.key);
-				
+								
 				if (vm.notas.form.avance == 100) {
 					App.blockUI({
 						target      : '#ui-view',
@@ -1322,7 +1320,7 @@ MetronicApp.config([
 				data       : {
 					pageTitle: 'Bienvenido'
 				},
-				controller : 'DashboardCtrl as dashboardCtrl',
+				controller : 'DashboardClienteController as dashboardClienteController',
 				resolve    : {
 					deps: [
 						'$ocLazyLoad', function ($ocLazyLoad) {
@@ -1360,6 +1358,33 @@ MetronicApp.config([
 					dataCotizacion: [
 						'$stateParams', 'Cotizacion', function ($stateParams, Cotizacion) {
 							return Cotizacion.get({id: $stateParams.id}).$promise;
+						}
+					]
+				}
+			})
+			.state('c-encuesta', {
+				url        : '/c/encuesta/:id',
+				parent     : 'tmpl',
+				templateUrl: 'views/vista-cliente/encuesta/encuesta.html',
+				data       : {
+					pageTitle: 'Encuesta'
+				},
+				controller : 'EncuestaCtrl as encuestaCtrl',
+				resolve    : {
+					deps: [
+						'$ocLazyLoad', function ($ocLazyLoad) {
+							return $ocLazyLoad.load({
+								name        : 'MetronicApp',
+								insertBefore: '#ng_load_plugins_ng',
+								files       : [
+									'scripts/controllers/cliente/encuesta/encuesta.js'
+								]
+							});
+						}
+					],
+					dataCaso: [
+						'$stateParams', 'Caso', function ($stateParams, Caso) {
+							return Caso.get({id: $stateParams.id}).$promise;
 						}
 					]
 				}

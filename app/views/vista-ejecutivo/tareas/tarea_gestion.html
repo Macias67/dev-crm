@@ -55,7 +55,7 @@
 			<strong>Tarea reasignada.</strong>
 			Esta tarea se te ha reasginado por este motivo: <i class = "bold">{{gestionTareaCtrl.tarea.reasignaciones[0].motivo}}</i> Toma en cuenta que si esta tarea ya tenia eventos  agendadas, ahora aparecerán en tu agenda. Puedes eliminar los recordatorios y establecer fechas nuevas.
 		</div>
-		<div class = "alert bg-red-mint bg-font-red-mint animated flash" ng-show = "gestionTareaCtrl.avisos.defineFecha()">
+		<div class = "alert bg-red-mint bg-font-red-mint animated flash" ng-show = "gestionTareaCtrl.avisos.defineFecha() && gestionTareaCtrl.validacionesVista.esEncargado()">
 			<strong>¡Faltan datos por asignar!</strong>
 			Antes de continuar, debes establecer fecha de <b>inicio de la tarea</b>, <b>tiempo de duración aproximada</b> y <b>fecha de cierre tentativo</b>.
 		</div>
@@ -67,10 +67,6 @@
 		</div>
 		<div class = "alert bg-yellow-saffron bg-font-yellow-saffron" ng-show = "gestionTareaCtrl.avisos.excesoTiempo()">
 			<strong>¡Te has excedido con el tiempo estimado!</strong> Procura terminar lo antes posible para no atrasar la fecha de precierre del caso.
-		</div>
-		<div class = "alert alert-info alert-dismissable" ng-show = "gestionTareaCtrl.avisos.ultimaTarea()">
-			<button type = "button" class = "close" data-dismiss = "alert" aria-hidden = "true"></button>
-			<strong>Última tarea del caso. </strong> Esta es última tarea del caso por concluir, procura terminar dentro de tus fechas establecidas.
 		</div>
 	</div>
 	<div class = "col-md-9">
@@ -123,7 +119,7 @@
 			</div>
 			<div class = "col-md-5">
 				<div class = "mt-widget-2">
-					<div class = "mt-head" style = "background-image: url(../assets/pages/img/background/32.jpg);">
+					<div class = "mt-head" style = "background-image: url(https://static.pexels.com/photos/92628/pexels-photo-92628-medium.jpeg); background-size: cover;">
 						<div class = "mt-head-label">
 							<button type = "button" class = "btn sbold uppercase btn-outline white">
 								<i class = "fa fa-eye"></i>
@@ -180,7 +176,7 @@
 								</li>
 							</ul>
 						</div>
-						<div class = "chat-form">
+						<div class = "chat-form" ng-show = "gestionTareaCtrl.validacionesVista.esEncargado()">
 							<div class = "input-cont">
 								<input class = "form-control" type = "text" id = "mensaje" placeholder = "Escribe tu mensaje..."/>
 							</div>
@@ -206,10 +202,10 @@
 						</div>
 					</div>
 					<div class = "portlet-body">
-						<button class = "btn green-jungle btn-block btn-lg uppercase bold" ng-show = "!gestionTareaCtrl.trabajaTarea.tarea.estaTrabajando" ng-click = "gestionTareaCtrl.trabajaTarea.trabajar()">
+						<button class = "btn green-jungle btn-block btn-lg uppercase bold" ng-show = "!gestionTareaCtrl.trabajaTarea.tarea.estaTrabajando && gestionTareaCtrl.validacionesVista.esEncargado()" ng-click = "gestionTareaCtrl.trabajaTarea.trabajar()">
 							<i class = "fa fa-play"></i>&nbsp;&nbsp;Trabajar en la tarea
 						</button>
-						<button class = "btn red-thunderbird btn-block btn-lg uppercase bold" ng-show = "gestionTareaCtrl.trabajaTarea.tarea.estaTrabajando" ng-click = "gestionTareaCtrl.trabajaTarea.detener()">
+						<button class = "btn red-thunderbird btn-block btn-lg uppercase bold" ng-show = "gestionTareaCtrl.trabajaTarea.tarea.estaTrabajando && gestionTareaCtrl.validacionesVista.esEncargado()" ng-click = "gestionTareaCtrl.trabajaTarea.detener()">
 							<i class = "fa fa-stop"></i>&nbsp;&nbsp;Detener avance
 						</button>
 						<hr>
@@ -401,7 +397,7 @@
 		</div>
 	</div>
 	<div class = "col-md-3">
-		<div class = "portlet light" ng-class = "{'animated tada': gestionTareaCtrl.iniciaAnimacion}" ng-show = "gestionTareaCtrl.tarea.fecha_inicio == null || gestionTareaCtrl.tarea.fecha_tentativa_cierre == null || gestionTareaCtrl.tarea.duracion_minutos == 0">
+		<div class = "portlet light" id = "fechasProgramas" ng-class = "{'animated tada': gestionTareaCtrl.iniciaAnimacion}" ng-show = "gestionTareaCtrl.tarea.fecha_inicio == null && gestionTareaCtrl.validacionesVista.esEncargado()">
 			<div class = "portlet-title">
 				<div class = "caption">
 					<i class = "fa fa-calendar font-red-thunderbird"></i>
@@ -503,6 +499,29 @@
 				</form>
 			</div>
 		</div>
+		<div class = "mt-widget-1 margin-bottom-20 border-{{gestionTareaCtrl.tarea.ejecutivo.class}}" ng-hide = "gestionTareaCtrl.validacionesVista.esEncargado()" style = "background: white">
+			<div class = "mt-icon">
+				<a href = "#">
+					<i class = "icon-plus"></i>
+				</a>
+			</div>
+			<div class = "mt-img">
+				<img src = "../assets/pages/media/users/avatar80_8.jpg"> </div>
+			<div class = "mt-body">
+				<h3 class = "mt-username">{{gestionTareaCtrl.tarea.ejecutivo.nombre}}</h3>
+				<p class = "mt-user-title">Tarea #{{gestionTareaCtrl.tarea.id}}</p>
+				<div class = "mt-stats">
+					<div class = "btn-group btn-group btn-group-justified">
+						<a href = "javascript:;" class = "btn font-red">
+							<i class = "icon-bubbles"></i> 1,7k </a>
+						<a href = "javascript:;" class = "btn font-green">
+							<i class = "icon-social-twitter"></i> 2,6k </a>
+						<a href = "javascript:;" class = "btn font-yellow">
+							<i class = "icon-emoticon-smile"></i> 3,7k </a>
+					</div>
+				</div>
+			</div>
+		</div>
 		<div class = "portlet light">
 			<div class = "portlet-title">
 				<div class = "caption">
@@ -533,7 +552,7 @@
 				</div>
 				<br>
 				<div class = "row">
-					<div class = "col-md-12">
+					<div class = "col-md-12" ng-show="gestionTareaCtrl.validacionesVista.estaProceso()">
 						<dt>Fecha tentativa de precierre: </dt>
 						<dd ng-if = "gestionTareaCtrl.caso.fecha_tentativa_precierre == null">Aún sin calcularse.</dd>
 						<dd ng-if = "gestionTareaCtrl.caso.fecha_tentativa_precierre != null">
@@ -541,6 +560,15 @@
 								{{gestionTareaCtrl.caso.fecha_tentativa_precierre | amFromUnix | amDateFormat:'DD [de] MMM [del] YY [a las] h:mm a'}}
 								<small class = "font-green-jungle bold" ng-show = "!gestionTareaCtrl.avisos.terminoCaso()" am-time-ago = "gestionTareaCtrl.caso.fecha_tentativa_precierre | amFromUnix"></small>
 								<small class = "font-red-thunderbird bold" ng-show = "gestionTareaCtrl.avisos.terminoCaso()"> Debió terminar <span am-time-ago = "gestionTareaCtrl.caso.fecha_tentativa_precierre | amFromUnix"></span></small>
+							</h5>
+						</dd>
+					</div>
+					<div class = "col-md-12" ng-show="gestionTareaCtrl.validacionesVista.estaCerrado()">
+						<dt>Fecha de precierre: </dt>
+						<dd ng-if = "gestionTareaCtrl.caso.fecha_precierre == null">Aún sin calcularse.</dd>
+						<dd ng-if = "gestionTareaCtrl.caso.fecha_precierre != null">
+							<h5>
+								{{gestionTareaCtrl.caso.fecha_precierre | amFromUnix | amDateFormat:'DD [de] MMM [del] YY [a las] h:mm a'}}
 							</h5>
 						</dd>
 					</div>
@@ -564,86 +592,86 @@
 				<button class = "btn blue btn-block" ng-click = "gestionTareaCtrl.vistaCaso()"><b>Vista del caso</b></button>
 			</div>
 		</div>
-		<div class = "portlet light" id = "miagenda">
-					<div class = "portlet-title">
-						<div class = "caption">
-							<i class = "fa fa-calendar font-grey-gallery"></i>
-							<span class = "caption-subject bold font-grey-gallery uppercase"> Añadir a mi agenda</span>
-						</div>
-						<div class = "actions">
-							<button class = "btn btn-circle btn-icon-only btn-default" ng-click = "gestionTareaCtrl.agenda.reloadAgenda()">
-								<i class = "fa fa-refresh"></i>
-							</button>
-						</div>
-					</div>
-					<div class = "portlet-body">
-						<form name = "gestionTareaCtrl.agenda.formFechaAgenda">
-							<div class = "form-group">
-								<label>Fecha y hora: </label>
-								<div class = "input-group input-group-sm">
-									<input type = "text" class = "form-control"
-									       datetime-picker = "dd/MM/yyyy HH:mm"
-									       ng-model = "gestionTareaCtrl.agenda.fechaInicio"
-									       is-open = "gestionTareaCtrl.agenda.open"
-									       datepicker-options = "gestionTareaCtrl.agenda.options"
-									       placeholder = "Fecha de inicio"
-									       readonly
-									       required>
-									<span class = "input-group-btn">
-										<button class = "btn green bold" type = "button" ng-click = "gestionTareaCtrl.agenda.openCalendar()">
-											<i class = "fa fa-calendar"></i>
-										</button>
-									</span>
-								</div>
-							</div>
-							<div class = "form-group">
-								<label>Duración: </label>
-								<div class = "input-icon input-icon-sm right">
-									<i class = "fa fa-clock-o"></i>
-									<input type = "text" class = "form-control input-sm"
-									       ng-model = "gestionTareaCtrl.agenda.duracion"
-									       placeholder = "00:00"
-									       mask = "9?99:59"
-									       restrict = "reject"
-									       validate = "true"
-									       required>
-								</div>
-							</div>
-							<button class = "btn green-sharp btn-block bold uppercase"
-							        ng-click = "gestionTareaCtrl.agenda.guarda()"
-							        ng-disabled = "!gestionTareaCtrl.agenda.formFechaAgenda.$valid"> Añadir a mi agenda
-							</button>
-						</form>
-						<hr>
-						<h6>Mis recordatorios: </h6>
-						<b ng-show = "gestionTareaCtrl.recordatorios.length == 0">- No hay recordatorios.</b>
-						<div class = "table-scrollable table-scrollable-borderless" ng-show = "gestionTareaCtrl.recordatorios.length > 0">
-							<table class = "table table-hover table-light">
-								<thead>
-									<tr class = "uppercase">
-										<th> Fecha y hora </th>
-										<th></th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr ng-repeat = "recordatorio in gestionTareaCtrl.recordatorios">
-										<td> {{recordatorio.start | amFromUnix | amDateFormat:'DD [de] MMM [de] h:mm a'}} a {{recordatorio.end | amFromUnix | amDateFormat:'h:mm a'}}</td>
-										<td>
-											<button class = "btn btn-xs red-thunderbird" ng-click = "gestionTareaCtrl.agenda.elimina(recordatorio.id)">
-		                                                                                <i class = "fa fa-trash-o"></i>
-		                                                                        </button>
-										</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-						<hr>
-						<button class = "btn green-turquoise btn-block bold uppercase"
-						        ng-click = "gestionTareaCtrl.agenda.abreAgenda()"><i class = "fa fa-calendar"></i>  Ver mi agenda
-						</button>
-					</div>
+		<div class = "portlet light" id = "miagenda" ng-show = "gestionTareaCtrl.validacionesVista.esEncargado()">
+			<div class = "portlet-title">
+				<div class = "caption">
+					<i class = "fa fa-calendar font-grey-gallery"></i>
+					<span class = "caption-subject bold font-grey-gallery uppercase"> Añadir a mi agenda</span>
 				</div>
-		<div class = "portlet light">
+				<div class = "actions">
+					<button class = "btn btn-circle btn-icon-only btn-default" ng-click = "gestionTareaCtrl.agenda.reloadAgenda()">
+						<i class = "fa fa-refresh"></i>
+					</button>
+				</div>
+			</div>
+			<div class = "portlet-body">
+				<form name = "gestionTareaCtrl.agenda.formFechaAgenda">
+					<div class = "form-group">
+						<label>Fecha y hora: </label>
+						<div class = "input-group input-group-sm">
+							<input type = "text" class = "form-control"
+							       datetime-picker = "dd/MM/yyyy HH:mm"
+							       ng-model = "gestionTareaCtrl.agenda.fechaInicio"
+							       is-open = "gestionTareaCtrl.agenda.open"
+							       datepicker-options = "gestionTareaCtrl.agenda.options"
+							       placeholder = "Fecha de inicio"
+							       readonly
+							       required>
+							<span class = "input-group-btn">
+								<button class = "btn green bold" type = "button" ng-click = "gestionTareaCtrl.agenda.openCalendar()">
+									<i class = "fa fa-calendar"></i>
+								</button>
+							</span>
+						</div>
+					</div>
+					<div class = "form-group">
+						<label>Duración: </label>
+						<div class = "input-icon input-icon-sm right">
+							<i class = "fa fa-clock-o"></i>
+							<input type = "text" class = "form-control input-sm"
+							       ng-model = "gestionTareaCtrl.agenda.duracion"
+							       placeholder = "00:00"
+							       mask = "9?99:59"
+							       restrict = "reject"
+							       validate = "true"
+							       required>
+						</div>
+					</div>
+					<button class = "btn green-sharp btn-block bold uppercase"
+					        ng-click = "gestionTareaCtrl.agenda.guarda()"
+					        ng-disabled = "!gestionTareaCtrl.agenda.formFechaAgenda.$valid"> Añadir a mi agenda
+					</button>
+				</form>
+				<hr>
+				<h6>Mis recordatorios: </h6>
+				<b ng-show = "gestionTareaCtrl.recordatorios.length == 0">- No hay recordatorios.</b>
+				<div class = "table-scrollable table-scrollable-borderless" ng-show = "gestionTareaCtrl.recordatorios.length > 0">
+					<table class = "table table-hover table-light">
+						<thead>
+							<tr class = "uppercase">
+								<th> Fecha y hora </th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat = "recordatorio in gestionTareaCtrl.recordatorios">
+								<td> {{recordatorio.start | amFromUnix | amDateFormat:'DD [de] MMM [de] h:mm a'}} a {{recordatorio.end | amFromUnix | amDateFormat:'h:mm a'}}</td>
+								<td>
+									<button class = "btn btn-xs red-thunderbird" ng-click = "gestionTareaCtrl.agenda.elimina(recordatorio.id)">
+                                                                                <i class = "fa fa-trash-o"></i>
+                                                                        </button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<hr>
+				<button class = "btn green-turquoise btn-block bold uppercase"
+				        ng-click = "gestionTareaCtrl.agenda.abreAgenda()"><i class = "fa fa-calendar"></i>  Ver mi agenda
+				</button>
+			</div>
+		</div>
+		<div class = "portlet light" ng-show = "gestionTareaCtrl.validacionesVista.esEncargado()">
 			<div class = "portlet-title">
 				<div class = "caption">
 					<i class = "fa fa-refresh font-red"></i>
@@ -651,7 +679,7 @@
 				</div>
 			</div>
 			<div class = "portlet-body">
-				<form role="form">
+				<form role = "form">
 					<div class = "form-group">
 						<label class = "bold">Cambia estatus</label>
 						<div class = "form-group">

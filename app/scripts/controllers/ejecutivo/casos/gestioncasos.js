@@ -9,8 +9,8 @@
  */
 angular.module('MetronicApp')
 	.controller('GestionCasosCtrl', [
-		'$rootScope', '$scope', 'dataCaso', 'dataEjecutivos', '$uibModal', 'Caso', '$timeout', 'authUser', 'ngAudio', 'Ejecutivo', '$ngBootbox', 'NotifService',
-		function ($rootScope, $scope, dataCaso, dataEjecutivos, $uibModal, Caso, $timeout, authUser, ngAudio, Ejecutivo, $ngBootbox, NotifService) {
+		'$rootScope', '$scope', 'dataCaso', 'dataEjecutivos', '$uibModal', 'Caso', '$timeout', 'authUser', 'ngAudio', 'Ejecutivo', '$ngBootbox', 'NotifService', '$state',
+		function ($rootScope, $scope, dataCaso, dataEjecutivos, $uibModal, Caso, $timeout, authUser, ngAudio, Ejecutivo, $ngBootbox, NotifService, $state) {
 			var vm = this;
 			
 			App.blockUI({
@@ -74,6 +74,31 @@ angular.module('MetronicApp')
 			};
 			
 			vm.reasignaCaso = {
+				abreModal : function () {
+					App.blockUI({
+						target      : '#ui-view',
+						animate     : true,
+						overlayColor: App.getBrandColor('blue'),
+						zIndex      : 9999
+					});
+					$uibModal.open({
+						backdrop   : 'static',
+						templateUrl: 'views/vista-ejecutivo/casos/modal/modalReasignaCaso.html',
+						controller : 'ModalReasignaCaso as modalReasignaCaso',
+						resolve    : {
+							caso      : [
+								'Caso', function (Caso) {
+									return Caso.get({id: vm.caso.id}).$promise
+								}
+							],
+							ejecutivos: [
+								'Ejecutivo', function (Ejecutivo) {
+									return Ejecutivo.get({online: true}).$promise
+								}
+							]
+						}
+					});
+				},
 				formulario: null,
 				ejecutivos: vm.ejecutivos,
 				ejecutivo : vm.caso.lider.id,
@@ -137,7 +162,7 @@ angular.module('MetronicApp')
 					
 					switch (vm.cambiaEstatus.estatusNuevo) {
 						case 4:
-							msj = 'La tarea cambiará a <b class="font-green-jungle">Proceso</b>. Escribe tu contraseña para confirmar y presiona OK.';
+							msj = 'El caso cambiará a <b class="font-green-jungle">Proceso</b>. Escribe tu contraseña para confirmar y presiona OK.';
 							
 							break;
 						case 5:
@@ -182,7 +207,7 @@ angular.module('MetronicApp')
 						}, function (response) {
 							App.unblockUI('#ui-view');
 							vm.cambiaEstatus.estatusNuevo = vm.caso.estatus.id;
-							NotifService.error('Error al cambiar el estatus del caso.', response.statusText + ' (' + response.status + ').');
+							NotifService.error('La contraseña es incorrecta o no tienes permisos para cambiar el estatus.', response.statusText + ' (' + response.status + ').');
 						});
 					}, function () {
 						vm.cambiaEstatus.estatusNuevo = vm.caso.estatus.id;
@@ -213,19 +238,6 @@ angular.module('MetronicApp')
 					NotifService.error('Error al actualizar datos del caso, informa esto al departamento de desarrollo.', response.statusText + ' (' + response.status + ')');
 					App.unblockUI('#ui-view');
 				});
-			};
-			
-			vm.estaTrabajando = false;
-			vm.isWorking      = function (id) {
-				firebase.database().ref('tarea-enproceso').orderByChild('idTarea').equalTo(id).on('value', function (snapshot) {
-					if (snapshot.val() != null) {
-						snapshot.forEach(function (childSnapshot) {
-							vm.estaTrabajando = childSnapshot.val().estaTrabajando;
-						});
-					}
-				});
-				
-				return vm.estaTrabajando;
 			};
 			
 			vm.calculoAvanceGeneral = function () {
@@ -394,6 +406,10 @@ angular.module('MetronicApp')
 						]
 					}
 				});
+			};
+			
+			vm.irTarea = function (idTarea) {
+				$state.go('gestion-tarea', {idtarea: idTarea});
 			};
 			
 			var cont           = $('#chats');
@@ -1137,6 +1153,62 @@ angular.module('MetronicApp')
 				}, function (response) {
 					App.unblockUI('#modalEditaTarea');
 					NotifService.error('Error al actualizar los datos de la tarea.', response.statusText + ' (' + response.status + ')');
+				});
+			};
+			
+			vm.cancel = function () {
+				$uibModalInstance.dismiss('cancel');
+			};
+		}
+	])
+	.controller('ModalReasignaCaso', [
+		'$rootScope',
+		'$scope',
+		'$uibModalInstance',
+		'caso',
+		'ejecutivos',
+		'$ngBootbox',
+		'$timeout',
+		'Caso',
+		'NotifService',
+		function ($rootScope, $scope, $uibModalInstance, caso, ejecutivos, $ngBootbox, $timeout, Caso, NotifService) {
+			var vm = this;
+			
+			App.unblockUI('#ui-view');
+			vm.caso       = caso.data;
+			vm.ejecutivos = [];
+			ejecutivos.data.forEach(function (ejecutivo, index) {
+				if (ejecutivo.id != vm.caso.lider.id) {
+					vm.ejecutivos.push(ejecutivo);
+				}
+			});
+			
+			vm.form = {
+				ejecutivo : null,
+				motivo    : null,
+				formulario: null
+			};
+			
+			vm.guardar = function () {
+				App.blockUI({
+					target      : '#modalEditaTarea',
+					message     : '<b> Reasignando </b>',
+					boxed       : true,
+					zIndex      : 99999,
+					overlayColor: App.getBrandColor('grey')
+				});
+				
+				delete vm.form.formulario;
+				
+				Caso.reasigna({id: vm.caso.id}, vm.form).$promise.then(function (response) {
+					if (response.$resolved) {
+						NotifService.success('Se ha avisado al ejecutivo ' + response.data.anterior.nombre + ' que ahora es líder de este caso', 'Se ha reasignado el caso');
+						App.unblockUI('#ui-view');
+						$uibModalInstance.dismiss('cancel');
+					}
+				}, function (response) {
+					NotifService.error('Error al reasginar el caso, informa esto al departamento de desarrollo.', response.statusText + ' (' + response.status + ')');
+					App.unblockUI('#ui-view');
 				});
 			};
 			

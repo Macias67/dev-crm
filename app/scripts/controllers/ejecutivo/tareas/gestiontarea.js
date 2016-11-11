@@ -33,7 +33,32 @@ angular.module('MetronicApp')
 		function ($rootScope, $scope, dataTarea, $uibModal, authUser, $state, Caso, Tarea, NotifService, $filter, TareaNota, NotaFB, $timeout, TareaAgenda, EjecutivoAgenda, $q, $firebaseArray, $firebaseObject, TareaTiempos, $ngBootbox, ngAudio) {
 			var vm = this;
 			
-			vm.tarea           = dataTarea.data;
+			if (dataTarea.$resolved) {
+				vm.tarea             = dataTarea.data;
+				vm.validacionesVista = {
+					esEncargado   : function () {
+						return vm.tarea.ejecutivo.id == authUser.getSessionData().id;
+					},
+					estaAsignado  : function () {
+						return vm.tarea.estatus.id == 1;
+					},
+					estaReasignado: function () {
+						return vm.tarea.estatus.id == 2;
+					},
+					estaProceso   : function () {
+						return vm.tarea.estatus.id == 3;
+					},
+					estaCerrado   : function () {
+						return vm.tarea.estatus.id == 4;
+					},
+					estaSuspendido: function () {
+						return vm.tarea.estatus.id == 5;
+					},
+					puedeReasignar: function () {
+						return vm.validacionesVista.esEncargado() && (vm.validacionesVista.estaProceso() || vm.validacionesVista.estaSuspendido());
+					}
+				};
+			}
 			vm.iniciaAnimacion = false;
 			
 			vm.fechas = {
@@ -884,18 +909,6 @@ angular.module('MetronicApp')
 						},
 						excesoTiempo   : function () {
 							return vm.tarea.duracion_real_segundos > vm.tarea.duracion_tentativa_segundos;
-						},
-						ultimaTarea    : function () {
-							var esUltima = true;
-							angular.forEach(vm.caso.tareas, function (tarea, index) {
-								if (tarea.id != vm.tarea.id) {
-									if (tarea.avance != 100) {
-										esUltima = false;
-									}
-								}
-							});
-							
-							return esUltima && vm.avisos.tienFechaCierre();
 						}
 					};
 					
