@@ -112,7 +112,7 @@ angular.module('MetronicApp')
 						oSettings.jqXHR = $.ajax({
 							'dataType'  : 'json',
 							'type'      : 'GET',
-							'url'       : 'http://api.crm/api/casos?estatus=5&cliente=' + authUser.getSessionData().cliente.id,
+							'url'       : 'http://api.crm/api/casos?estatus=5&cliente=' + authUser.getSessionData().cliente.id+'&respondida=0',
 							'data'      : aoData,
 							'success'   : fnCallback,
 							'beforeSend': function (xhr) {

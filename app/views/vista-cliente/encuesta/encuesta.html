@@ -49,11 +49,148 @@
 	</div>
 </div>
 
-<div class="row">
+<div class = "row">
 	<div class = "col-md-6">
-		
 	</div>
 	<div class = "col-md-6">
-		
+		<div class = "portlet light ">
+			<div class = "portlet-title">
+				<div class = "caption font-red-sunglo">
+					<i class = "icon-settings font-red-sunglo"></i>
+					<span class = "caption-subject bold uppercase">Diganos que opina de nuestro servicio</span>
+				</div>
+			</div>
+			<div class = "portlet-body form">
+				<form role = "form" name = "encuestaCtrl.formulario.form">
+					<div class = "form-body">
+						<div class = "form-group">
+							<label class = "lead">¿Usted fue atendido con amabilidad y respeto todo el tiempo? <span class = "required" aria-required = "true"> * </span></label>
+							<div class = "mt-radio-inline">
+								<label class = "mt-radio">
+									<input type = "radio" ng-model = "encuestaCtrl.formulario.pregunta1" ng-change = "encuestaCtrl.onChangeP1()" name = "pregunta1" value = "si" required> Sí
+									<span></span>
+								</label>
+								<label class = "mt-radio">
+									<input type = "radio" ng-model = "encuestaCtrl.formulario.pregunta1" name = "pregunta1" value = "no"> No
+									<span></span>
+								</label>
+							</div>
+						</div>
+						<div class = "form-group" ng-show = "encuestaCtrl.formulario.pregunta1 == 'no'">
+							<label>¿Por qué? <span class = "required" aria-required = "true"> * </span></label>
+							<textarea class = "form-control" rows = "3" ng-model = "encuestaCtrl.formulario.porquep1" ng-required = "{{encuestaCtrl.formulario.pregunta1 == 'no'}}"></textarea>
+						</div>
+						
+						<hr>
+						
+						<div class = "form-group">
+							<label class = "lead">¿Durante el desarrollo de su caso se le brindo información suficiente, clara y oportuna sobre los trabajos a realizar? <span class = "required" aria-required = "true"> * </span></label>
+							<div class = "mt-radio-inline">
+								<label class = "mt-radio">
+									<input type = "radio" ng-model = "encuestaCtrl.formulario.pregunta2" ng-change = "encuestaCtrl.onChangeP2()" name = "pregunta2" value = "si" required> Sí
+									<span></span>
+								</label>
+								<label class = "mt-radio">
+									<input type = "radio" ng-model = "encuestaCtrl.formulario.pregunta2" name = "pregunta2" value = "no"> No
+									<span></span>
+								</label>
+							</div>
+						</div>
+							<div class = "form-group" ng-show = "encuestaCtrl.formulario.pregunta2 == 'no'">
+							<label>¿Por qué? <span class = "required" aria-required = "true"> * </span></label>
+							<textarea class = "form-control" rows = "3" ng-model = "encuestaCtrl.formulario.porquep2" ng-required = "{{encuestaCtrl.formulario.pregunta2 == 'no'}}"></textarea>
+						</div>
+						
+						<hr>
+						
+						<div class = "form-group">
+							<label class = "lead">¿Cómo calificaría nuestro tiempo de respuesta y solución a este caso? <span class = "required" aria-required = "true"> * </span></label>
+							<select class = "form-control" ng-model = "encuestaCtrl.formulario.pregunta3" required>
+								<option value = "1">1</option>
+								<option value = "2">2</option>
+								<option value = "3">3</option>
+								<option value = "4">4</option>
+								<option value = "5">5</option>
+								<option value = "6">6</option>
+								<option value = "7">7</option>
+								<option value = "8">8</option>
+								<option value = "9">9</option>
+								<option value = "10">10</option>
+							</select>
+							<p class = "help-block">(1= Muy Lentos - 10 = Respuesta inmediata)</p>
+						</div>
+						
+						<hr>
+						
+						<div class = "form-group">
+							<label class = "lead">¿Cómo calificaría el conocimiento o experiencia del asesor asignado? <span class = "required" aria-required = "true"> * </span></label>
+							<select class = "form-control" ng-model = "encuestaCtrl.formulario.pregunta4" required>>
+								<option value = "1">1</option>
+								<option value = "2">2</option>
+								<option value = "3">3</option>
+								<option value = "4">4</option>
+								<option value = "5">5</option>
+								<option value = "6">6</option>
+								<option value = "7">7</option>
+								<option value = "8">8</option>
+								<option value = "9">9</option>
+								<option value = "10">10</option>
+							</select>
+							<p class = "help-block"> (1= Sin experiencia - 10 = Muy experto)</p>
+						</div>
+						
+						<hr>
+						
+						<div class = "form-group">
+							<label class = "lead">¿Estaría dispuesto a recomendar nuestros servicios a alguien más? <span class = "required" aria-required = "true"> * </span></label>
+							<div class = "mt-radio-inline">
+								<label class = "mt-radio">
+									<input type = "radio" ng-model = "encuestaCtrl.formulario.pregunta5" ng-change = "encuestaCtrl.onChangeP5()" name = "pregunta5" value = "si" required> Sí
+									<span></span>
+								</label>
+								<label class = "mt-radio">
+									<input type = "radio" ng-model = "encuestaCtrl.formulario.pregunta5" ng-change = "encuestaCtrl.onChangeP5()" name = "pregunta5" value = "no"> Ahora no
+									<span></span>
+								</label>
+								<label class = "mt-radio">
+									<input type = "radio" ng-model = "encuestaCtrl.formulario.pregunta5" ng-change = "encuestaCtrl.onChangeP5()" name = "pregunta5" value = "nunca"> Nunca
+									<span></span>
+								</label>
+							</div>
+						</div>
+						<div class = "form-group" ng-show = "encuestaCtrl.formulario.pregunta5 == 'si'">
+							<div class = "row">
+								<div class = "col-md-4">
+									<label>Nombre</label>
+									<input type = "text" class = "form-control" ng-model = "encuestaCtrl.formulario.datosp5.nombre">
+								</div>
+								<div class = "col-md-4">
+									<label>Email</label>
+									<input type = "text" class = "form-control" ng-model = "encuestaCtrl.formulario.datosp5.email">
+								</div>
+								<div class = "col-md-4">
+									<label>Télefono</label>
+									<input type = "text" class = "form-control" ng-model = "encuestaCtrl.formulario.datosp5.telefono">
+								</div>
+							</div>
+						</div>
+						<div class = "form-group" ng-show = "encuestaCtrl.formulario.pregunta5 == 'nunca'">
+							<label>¿Por qué?</label>
+							<textarea class = "form-control" rows = "3" ng-model = "encuestaCtrl.formulario.porquep5"></textarea>
+						</div>
+						
+						<hr>
+						
+						<div class = "form-group">
+							<label class = "lead">¿Hay algo en lo que usted considera que tenemos que mejorar?</label>
+							<textarea class = "form-control" rows = "3" ng-model = "encuestaCtrl.formulario.opinion"></textarea>
+						</div>
+					</div>
+					<div class = "form-actions">
+						<button type = "button" class = "btn blue" ng-click = "encuestaCtrl.formulario.enviar()">Envíar</button>
+					</div>
+				</form>
+			</div>
+		</div>
 	</div>
 </div>
